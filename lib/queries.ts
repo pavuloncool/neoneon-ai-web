@@ -282,3 +282,78 @@ export const getUiStrings = cache(async (locale: string): Promise<Record<string,
     { locale }
   )
 )
+
+// ── Strona główna (one-pager): wyceny i FAQ ──────────────────────────────────
+
+export interface PricingRate {
+  id: string
+  key: string | null
+  label: string | null // z Ustawień wycen w danym języku, a bez niej — nazwa w Studio
+  amountPLN: number | null
+  amountEUR: number | null
+}
+
+export interface PricingData {
+  settings: {
+    showRates: boolean | null
+    currency: 'PLN' | 'EUR' | null
+    roundingPLN: number | null
+    roundingEUR: number | null
+    note: string | null
+    validFrom: string | null
+  } | null
+  rates: PricingRate[]
+  examples: {
+    id: string
+    title: string | null
+    summary: string | null
+    items: { _key: string; task: string | null; hoursMin: number | null; hoursMax: number | null; rateId: string | null }[] | null
+  }[]
+}
+
+// Ustawienia wycen: dokument pojedynczy pricingSettings-{język}. Stawki są wspólne dla języków,
+// nazwy stawek — w ustawieniach danego języka (brak = nazwa w Studio). Przykłady: dokumenty w danym języku.
+export const getPricing = cache(async (locale: Locale): Promise<PricingData> => {
+  const raw = await sanityFetch<{
+    settings: (NonNullable<PricingData['settings']> & { rateLabels: { rateId: string | null; label: string | null }[] | null }) | null
+    rates: (Omit<PricingRate, 'label'> & { name: string | null })[]
+    examples: PricingData['examples']
+  }>(
+    groq`{
+      "settings": *[_id == "pricingSettings-" + $locale][0]{
+        showRates, currency, roundingPLN, roundingEUR, note, validFrom,
+        "rateLabels": rateLabels[]{ "rateId": rate._ref, label }
+      },
+      "rates": *[_type == "hourlyRate"] | order(order asc){ "id": _id, "key": key.current, name, amountPLN, amountEUR },
+      "examples": *[_type == "pricingExample" && locale == $locale] | order(order asc){
+        "id": _id,
+        title,
+        summary,
+        items[]{ _key, task, hoursMin, hoursMax, "rateId": rate._ref }
+      }
+    }`,
+    { locale }
+  )
+  const labels = new Map((raw.settings?.rateLabels ?? []).flatMap((l) => (l.rateId && l.label ? [[l.rateId, l.label] as const] : [])))
+  const s = raw.settings
+  return {
+    settings: s
+      ? { showRates: s.showRates, currency: s.currency, roundingPLN: s.roundingPLN, roundingEUR: s.roundingEUR, note: s.note, validFrom: s.validFrom }
+      : null,
+    rates: raw.rates.map(({ name, ...rate }) => ({ ...rate, label: labels.get(rate.id) ?? name })),
+    examples: raw.examples,
+  }
+})
+
+export interface FaqEntry {
+  id: string
+  question: string
+  answer: string
+}
+
+export const getHomeFaq = cache(async (locale: Locale): Promise<FaqEntry[]> =>
+  sanityFetch<FaqEntry[]>(
+    groq`*[_type == "faqEntry" && locale == $locale && showOnHome != false && defined(question) && defined(answer)] | order(order asc){ "id": _id, question, answer }`,
+    { locale }
+  )
+)

@@ -1,5 +1,5 @@
 // sanity/schemaTypes/link.ts
-// Wspólny link: do strony z page buildera, do kategorii, do wyszukiwarki albo na zewnątrz.
+// Wspólny link: do strony z page buildera, do kategorii, do wyszukiwarki, do sekcji strony głównej albo na zewnątrz.
 // Adres wylicza lib/links.ts (resolveHref).
 
 import { defineField, defineType } from 'sanity'
@@ -20,6 +20,7 @@ export const link = defineType({
           { title: 'Strona', value: 'page' },
           { title: 'Kategoria', value: 'category' },
           { title: 'Wyszukiwarka', value: 'search' },
+          { title: 'Sekcja strony głównej', value: 'anchor' },
           { title: 'Adres zewnętrzny', value: 'external' },
         ],
         layout: 'radio',
@@ -44,6 +45,19 @@ export const link = defineType({
       ...categoryRefField(),
       hidden: ({ parent }) => parent?.linkType !== 'category',
       validation: (r) => r.custom((value, ctx) => ((ctx.parent as { linkType?: string })?.linkType === 'category' && !value ? 'Wybierz kategorię' : true)),
+    }),
+    defineField({
+      name: 'anchor',
+      title: 'Sekcja',
+      description: 'Kotwica sekcji strony głównej, np. proces, uslugi, wyceny, o-mnie (EN: process, services, pricing, about).',
+      type: 'string',
+      hidden: ({ parent }) => parent?.linkType !== 'anchor',
+      validation: (r) =>
+        r.custom((value, ctx) => {
+          if ((ctx.parent as { linkType?: string })?.linkType !== 'anchor') return true
+          if (!value) return 'Podaj kotwicę sekcji'
+          return /^[a-z0-9-]+$/.test(value) ? true : 'Tylko małe litery, cyfry i myślniki, bez #'
+        }),
     }),
     defineField({
       name: 'url',

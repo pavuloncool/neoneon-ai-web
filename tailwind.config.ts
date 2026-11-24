@@ -25,6 +25,9 @@ const config: Config = {
         muted: '#6b6b6b',
         accent: '#c8a96e',       // złoto — subtelny akcent
         border: '#e5e5e0',
+        // Tokeny one-pagera — wartości w styles/globals.css (:root / .dark)
+        'accent-ai': 'var(--accent-ai)',
+        'accent-edit': 'var(--accent-edit)',
       },
       typography: {
         DEFAULT: {

@@ -9,6 +9,7 @@ import { ContactForm } from '@/components/blog/lazy'
 import { PortableTextRenderer } from '@/components/blog/PortableTextRenderer'
 import { TranslationStore } from '@/components/layout/TranslationStore'
 import { getPageTranslation } from '@/lib/queries'
+import { pagePath } from '@/lib/links'
 import { CategoryTiles } from './CategoryTiles'
 import { FeatureGrid } from './FeatureGrid'
 import { Hero } from './Hero'
@@ -55,7 +56,7 @@ export function createPageSections(heroNeon: HeroNeonComponent) {
     // Odpowiednik strony w drugim języku dla przełącznika języka (adresy mogą się różnić,
     // np. /pl/o-mnie ↔ /en/about). Bez tłumaczenia — strona główna drugiego języka.
     const translation = await getPageTranslation(page.id, otherLocale(locale))
-    const translationPath = translation ? (translation.isHome ? '/' : `/${translation.slug ?? ''}`) : '/'
+    const translationPath = translation ? pagePath(translation) : '/'
 
     return (
       <div className={page.width === 'wide' ? 'max-w-5xl mx-auto px-6 py-16' : 'max-w-3xl mx-auto px-6 py-16'}>

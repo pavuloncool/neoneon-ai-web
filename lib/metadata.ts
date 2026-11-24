@@ -5,6 +5,7 @@
 
 import type { Metadata } from 'next'
 import { getPageTranslation, getSiteSettings } from '@/lib/queries'
+import { pagePath } from '@/lib/links'
 import { SITE_NAME, localeUrl } from '@/lib/site'
 import { OG_LOCALE, otherLocale, type Locale } from '@/lib/locales'
 import type { Page, SanityImage } from '@/types'
@@ -55,15 +56,14 @@ export async function seoMetadata({ locale, path, altPath, title, description, i
 export async function pageMetadata(page: Page | null, locale: Locale): Promise<Metadata> {
   if (!page) return {}
   const translation = await getPageTranslation(page.id, otherLocale(locale))
-  const altPath = !translation ? null : translation.isHome ? '' : translation.slug ? `/${translation.slug}` : null
+  const altPath = !translation ? null : translation.isHome || translation.slug ? pagePath(translation) : null
   return seoMetadata({
     locale,
-    path: page.isHome ? '' : `/${page.slug}`,
+    path: pagePath(page),
     altPath,
-    // Bez tytułu SEO podstrona dostaje swój tytuł; strona główna — tytuł domyślny z ustawień
-    title: page.seo?.title ?? (page.isHome ? null : page.title),
+    // Bez tytułu SEO strona dostaje swój tytuł (także lista bloga — dawna strona główna)
+    title: page.seo?.title ?? page.title,
     description: page.seo?.description,
     image: page.seo?.image,
-    absoluteTitle: !!page.isHome,
   })
 }

@@ -3,4 +3,4 @@
 // strona, ani kategoria. Kategorie są dokumentami `category` w Sanity (etap 4).
 // Importowany też przez schematy Sanity — bez zależności od Next i aliasu „@/”.
 
-export const APP_RESERVED_SLUGS = ['search', 'studio', 'api', 'home']
+export const APP_RESERVED_SLUGS = ['search', 'studio', 'api', 'home', 'blog']

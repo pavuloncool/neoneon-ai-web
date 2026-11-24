@@ -3,7 +3,7 @@
 // sanity.config.ts — Studio osadzone pod /studio (app/studio/[[...tool]]/page.tsx)
 
 import { defineConfig, type DocumentActionComponent } from 'sanity'
-import { structureTool } from 'sanity/structure'
+import { structureTool, type StructureBuilder } from 'sanity/structure'
 import { presentationTool, defineDocuments, defineLocations } from 'sanity/presentation'
 import { visionTool } from '@sanity/vision'
 import {
@@ -26,12 +26,30 @@ const TRANSLATION_ACTIONS = [useDeleteTranslationAction, useDuplicateWithTransla
 const HIDDEN_TEMPLATES = [
   'comment', 'contactMessage', 'siteSettings', 'uiStrings',
   'article', 'article-parameterized', 'page', 'page-parameterized', 'category', 'category-parameterized',
+  'pricingSettings', 'pricingExample', 'pricingExample-parameterized', 'faqEntry', 'faqEntry-parameterized',
 ]
 
-// Dokumenty pojedyncze: siteSettings-pl/en, uiStrings-pl/en
-const SINGLETON_TYPES = ['siteSettings', 'uiStrings']
+// Dokumenty pojedyncze: siteSettings-pl/en, uiStrings-pl/en, pricingSettings-pl/en
+const SINGLETON_TYPES = ['siteSettings', 'uiStrings', 'pricingSettings']
+const SINGLETON_TITLES: Record<string, string> = {
+  siteSettings: 'Ustawienia strony',
+  uiStrings: 'Teksty interfejsu',
+  pricingSettings: 'Ustawienia wycen',
+}
+// Typy, których wersje PL/EN łączy wtyczka document-internationalization
+const TRANSLATED_TYPES = ['article', 'page', 'category', 'pricingExample', 'faqEntry']
 // Języki z lib/locales.ts — domyślny (PL) pierwszy
 const LOCALES = LOCALES_DEFAULT_FIRST.map((id) => ({ id, title: LOCALE_LABELS[id].short }))
+
+// Pozycje Structure dla dokumentu pojedynczego w każdym języku: `${type}-pl`, `${type}-en`
+function singletonItems(S: StructureBuilder, type: string) {
+  return LOCALES.map(({ id, title }) =>
+    S.listItem()
+      .title(`${SINGLETON_TITLES[type]} ${title}`)
+      .id(`${type}-${id}`)
+      .child(S.document().schemaType(type).documentId(`${type}-${id}`).title(`${SINGLETON_TITLES[type]} ${title}`))
+  )
+}
 
 export default defineConfig({
   name: 'neoneon',
@@ -51,7 +69,7 @@ export default defineConfig({
       if (schemaType === 'category') {
         return [...prev.map((a) => (a.action === 'publish' ? createCategoryPublishAction(a) : a)), ...TRANSLATION_ACTIONS]
       }
-      if (schemaType === 'article' || schemaType === 'page') return [...prev, ...TRANSLATION_ACTIONS]
+      if (TRANSLATED_TYPES.includes(schemaType)) return [...prev, ...TRANSLATION_ACTIONS]
       return prev
     },
   },
@@ -94,12 +112,19 @@ export default defineConfig({
                 S.documentList().title(`Strony ${title}`).filter('_type == "page" && locale == $locale').params({ locale: id })
               )
             ),
-            ...SINGLETON_TYPES.flatMap((type) =>
-              LOCALES.map(({ id, title }) =>
-                S.listItem()
-                  .title(`${type === 'siteSettings' ? 'Ustawienia strony' : 'Teksty interfejsu'} ${title}`)
-                  .id(`${type}-${id}`)
-                  .child(S.document().schemaType(type).documentId(`${type}-${id}`).title(`${type === 'siteSettings' ? 'Ustawienia strony' : 'Teksty interfejsu'} ${title}`))
+            ...['siteSettings', 'uiStrings'].flatMap((type) => singletonItems(S, type)),
+            S.divider(),
+            // Strona główna (one-pager): wyceny i FAQ
+            S.documentTypeListItem('hourlyRate').title('Stawki godzinowe'),
+            ...LOCALES.map(({ id, title }) =>
+              S.listItem().title(`Przykładowe wyceny ${title}`).child(
+                S.documentList().title(`Przykładowe wyceny ${title}`).filter('_type == "pricingExample" && locale == $locale').params({ locale: id }).defaultOrdering([{ field: 'order', direction: 'asc' }])
+              )
+            ),
+            ...singletonItems(S, 'pricingSettings'),
+            ...LOCALES.map(({ id, title }) =>
+              S.listItem().title(`FAQ ${title}`).child(
+                S.documentList().title(`FAQ ${title}`).filter('_type == "faqEntry" && locale == $locale').params({ locale: id }).defaultOrdering([{ field: 'order', direction: 'asc' }])
               )
             ),
           ]),
@@ -115,7 +140,7 @@ export default defineConfig({
       resolve: {
         // Który dokument edytować, gdy w podglądzie otwarta jest dana strona
         mainDocuments: defineDocuments([
-          { route: '/:locale', filter: '_type == "page" && isHome == true && locale == $locale' },
+          { route: '/:locale/blog', filter: '_type == "page" && isHome == true && locale == $locale' },
           {
             route: '/:locale/:category/:slug',
             filter: '_type == "article" && slug.current == $slug && locale == $locale',
@@ -132,7 +157,7 @@ export default defineConfig({
                 doc?.slug && doc.locale && doc.categorySlug
                   ? [
                       { title: doc.title || 'Artykuł', href: `/${doc.locale}/${doc.categorySlug}/${doc.slug}` },
-                      { title: `Strona główna (${LOCALE_LABELS[toLocale(doc.locale)].short})`, href: `/${doc.locale}` },
+                      { title: `Blog (${LOCALE_LABELS[toLocale(doc.locale)].short})`, href: `/${doc.locale}/blog` },
                     ]
                   : [],
             }),
@@ -141,7 +166,7 @@ export default defineConfig({
             select: { title: 'title', slug: 'slug.current', locale: 'locale', isHome: 'isHome' },
             resolve: (doc) => ({
               locations: doc?.locale
-                ? [{ title: doc.title || 'Strona', href: doc.isHome ? `/${doc.locale}` : `/${doc.locale}/${doc.slug ?? ''}` }]
+                ? [{ title: doc.title || 'Strona', href: doc.isHome ? `/${doc.locale}/blog` : `/${doc.locale}/${doc.slug ?? ''}` }]
                 : [],
             }),
           }),
@@ -161,7 +186,7 @@ export default defineConfig({
     // połączoną z oryginałem dokumentem translation.metadata
     documentInternationalization({
       supportedLanguages: LOCALES_DEFAULT_FIRST.map((id) => ({ id, title: LOCALE_LABELS[id].name })),
-      schemaTypes: ['article', 'page', 'category'],
+      schemaTypes: TRANSLATED_TYPES,
       languageField: 'locale',
       apiVersion,
       metadataOmnisearchVisibility: false,

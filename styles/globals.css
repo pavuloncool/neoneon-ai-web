@@ -3,6 +3,17 @@
 @tailwind utilities;
 
 @layer base {
+  /* Tokeny one-pagera (brief, pkt 3.4). Wartości ROBOCZE — wybieramy je na sesji UI przed iteracją 1.
+     --accent-ai: praca AI (kod, stream). --accent-edit: znaki redakcyjne (skreślenia, notatki). */
+  :root {
+    --accent-ai: #12b5a6;
+    --accent-edit: #c8102e;
+  }
+  .dark {
+    --accent-ai: #3ee6d4;
+    --accent-edit: #ff5a5f;
+  }
+
   * {
     box-sizing: border-box;
     padding: 0;

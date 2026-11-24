@@ -75,5 +75,20 @@
     "languagePl": "Polski",
     "languageEn": "English",
     "footerNav": "Footer links"
+  },
+  "onePager": {
+    "metaDescription": "AI can write a website's code in a few hours. It won't decide what to tell your clients, in what order, or why they should trust you. That's my job: from decisions and copy to a working website.",
+    "heroTitle": "How to build a website with AI",
+    "aiRoleTitle": "AI is a coding tool. Not a decision-maker.",
+    "problemTitle": "The hardest part is the blank page",
+    "audienceTitle": "Who I work with",
+    "servicesTitle": "Three ways to work together",
+    "processTitle": "How I work",
+    "pricingTitle": "What does it cost? Examples",
+    "aboutTitle": "Paweł Kuligowski",
+    "faqTitle": "Frequently asked questions",
+    "blogTitle": "From the blog",
+    "ctaTitle": "Let's start with a conversation",
+    "placeholder": "Section under construction (iteration {iteration})."
   }
 }

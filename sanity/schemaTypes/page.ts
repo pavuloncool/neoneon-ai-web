@@ -35,8 +35,8 @@ export const page = defineType({
     }),
     defineField({
       name: 'isHome',
-      title: 'Strona główna',
-      description: 'Zaznacz tylko dla jednej strony w każdym języku.',
+      title: 'Strona bloga (/blog)',
+      description: 'Lista artykułów pod /pl/blog i /en/blog (dawna strona główna). Zaznacz tylko dla jednej strony w każdym języku. Strona główna to one-pager w kodzie.',
       type: 'boolean',
       initialValue: false,
       group: 'content',
@@ -91,7 +91,7 @@ export const page = defineType({
     select: { title: 'title', slug: 'slug.current', locale: 'locale', isHome: 'isHome' },
     prepare: ({ title, slug, locale, isHome }) => ({
       title,
-      subtitle: `${String(locale ?? '').toUpperCase()} · ${isHome ? 'strona główna' : `/${slug ?? ''}`}`,
+      subtitle: `${String(locale ?? '').toUpperCase()} · ${isHome ? '/blog' : `/${slug ?? ''}`}`,
     }),
   },
 })

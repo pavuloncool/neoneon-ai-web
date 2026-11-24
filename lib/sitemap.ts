@@ -5,6 +5,8 @@ import type { MetadataRoute } from 'next'
 import { localeUrl } from '@/lib/site'
 import type { Locale } from '@/lib/locales'
 import type { SitemapData } from '@/lib/queries'
+import { pagePath } from '@/lib/links'
+import { LOCALES } from '@/lib/locales'
 
 type Doc = { _id: string; locale: Locale; path: string; modifiedAt: string | null }
 
@@ -22,7 +24,7 @@ function newer(a: string | null, b: string | null): string | null {
 
 export function buildSitemap({ pages, articles, categories, translations }: SitemapData): MetadataRoute.Sitemap {
   const docs: Doc[] = [
-    ...pages.flatMap((p) => (p.isHome || p.slug ? [{ ...p, path: p.isHome ? '' : `/${p.slug}` }] : [])),
+    ...pages.flatMap((p) => (p.isHome || p.slug ? [{ ...p, path: pagePath(p) }] : [])),
     ...articles.map((a) => ({ ...a, path: `/${a.category}/${a.slug}` })),
   ]
   const byId = new Map(docs.map((d) => [d._id, d]))
@@ -34,14 +36,18 @@ export function buildSitemap({ pages, articles, categories, translations }: Site
   }
   const groupOf = (id: string) => groupIds.get(id) ?? [id]
 
-  const entries: MetadataRoute.Sitemap = docs.map((d) => {
+  // Strona główna (one-pager w kodzie) — w każdym języku, bez daty modyfikacji
+  const homeLanguages = withDefault(Object.fromEntries(LOCALES.map((l) => [l, localeUrl(l)])))
+  const homeEntries: MetadataRoute.Sitemap = LOCALES.map((l) => ({ url: localeUrl(l), alternates: { languages: homeLanguages } }))
+
+  const entries: MetadataRoute.Sitemap = [...homeEntries, ...docs.map((d) => {
     const group = groupOf(d._id).flatMap((id) => byId.get(id) ?? [])
     return {
       url: localeUrl(d.locale, d.path),
       lastModified: d.modifiedAt ?? undefined,
       alternates: { languages: withDefault(Object.fromEntries((group.length ? group : [d]).map((g) => [g.locale, localeUrl(g.locale, g.path)]))) },
     }
-  })
+  })]
 
   // Strony kategorii: tylko kategorie z artykułami. lastmod = najnowsza data modyfikacji jej artykułu.
   // Odpowiedniki językowe z translation.metadata kategorii (slug w każdym języku może być inny),
