@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/components/layout/ThemeProvider'
 import { cormorant, dmSans, dmMono } from '@/app/fonts'
 import { DraftTools } from '@/components/layout/DraftTools'
 import { HtmlClassGuard } from '@/components/layout/HtmlClassGuard'
+import { BootScript } from '@/components/layout/BootScript'
 import { SpeedInsightsClient } from '@/components/layout/SpeedInsightsClient'
 import { getSiteSettings } from '@/lib/queries'
 import { IS_PRODUCTION, SITE_NAME, SITE_URL, localeUrl } from '@/lib/site'
@@ -63,7 +64,7 @@ export default async function LocaleLayout({
       <head>
         {/* Znacznik JS przed hydracją — CSS ustawia stany startowe animacji tylko pod html.js.
             Siatka bezpieczeństwa: jeśli GSAP nie wystartował w 3 s, zdejmujemy znacznik i treść jest widoczna. */}
-        <script dangerouslySetInnerHTML={{ __html: MOTION_BOOTSTRAP }} />
+        <BootScript code={MOTION_BOOTSTRAP} />
       </head>
       <body className="bg-paper text-ink antialiased transition-colors duration-300">
         {/* Przywraca klasy js / dark|light na <html> po zmianie języka (przed malowaniem) */}
