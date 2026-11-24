@@ -157,9 +157,15 @@ export const featureGrid = defineType({
 export const contactForm = defineType({
   name: 'contactForm',
   title: 'Formularz kontaktowy',
-  description: 'Etykiety pól i komunikaty formularza edytujesz w „Teksty interfejsu”.',
+  description: 'Etykiety pól, komunikaty i tekst obok formularza są w kodzie (messages: contactForm) — według briefu strony.',
   type: 'object',
-  fields: [simpleText('intro', 'Tekst obok formularza')],
+  fields: [
+    {
+      ...simpleText('intro', 'Tekst obok formularza (nieużywany)'),
+      description: 'Nie jest wyświetlany — tekst obok formularza pochodzi z briefu (messages: contactForm.lead).',
+      readOnly: true,
+    },
+  ],
   preview: { prepare: () => ({ title: 'Formularz kontaktowy' }) },
 })
 

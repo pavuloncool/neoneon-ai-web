@@ -291,5 +291,50 @@
     "ctaTitle": "Let's start with a conversation",
     "ctaText": "Describe in a few sentences what you sell and what website you have today, or that you don't have one. I usually reply within a few hours.",
     "ctaButton": "Write to me"
+  },
+  "contactForm": {
+    "lead": "Briefly describe your project. The more specifics, the faster I can reply with a useful proposal. I usually reply within a few hours.",
+    "name": "Full name",
+    "email": "Email",
+    "company": "Company or current website",
+    "needsLegend": "What do you need?",
+    "needs": {
+      "copy": "Website copy",
+      "website": "A website from decisions to launch",
+      "content": "Content and blog",
+      "audit": "AI visibility audit",
+      "unsure": "Not sure yet"
+    },
+    "start": "When do you want to start?",
+    "startOptions": {
+      "asap": "As soon as possible",
+      "month": "Within a month",
+      "quarter": "In 2–3 months",
+      "unsure": "Not sure"
+    },
+    "budget": "Approximate budget, net",
+    "budgetOptions": {
+      "upTo3k": "up to PLN 3,000",
+      "from3to8k": "PLN 3,000–8,000",
+      "from8to15k": "PLN 8,000–15,000",
+      "over15k": "over PLN 15,000",
+      "unsure": "Not sure"
+    },
+    "message": "Message",
+    "privacyBefore": "I have read the ",
+    "privacyLink": "privacy policy",
+    "privacyAfter": ".",
+    "submit": "Send message",
+    "sending": "Sending…",
+    "success": "Thank you, your message has arrived. I'll reply to {email}.",
+    "serverError": "The message couldn't be sent. Please try again in a moment or email me directly at {email}.",
+    "errors": {
+      "name": "Enter your name.",
+      "email": "Enter an email address like name@domain.com.",
+      "needs": "Select at least one option.",
+      "message": "Write a few sentences about your project (at least 20 characters).",
+      "privacy": "Confirm that you have read the privacy policy."
+    },
+    "preferEmail": "Prefer email?"
   }
 }

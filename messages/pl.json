@@ -291,5 +291,50 @@
     "ctaTitle": "Zacznijmy od rozmowy",
     "ctaText": "Opisz w kilku zdaniach, co sprzedajesz i jaką stronę masz dziś, albo że nie masz żadnej. Odpowiadam zwykle w ciągu kilku godzin.",
     "ctaButton": "Napisz do mnie"
+  },
+  "contactForm": {
+    "lead": "Opisz krótko swój projekt. Im więcej konkretów, tym szybciej odpowiem z sensowną propozycją. Odpowiadam zwykle w ciągu kilku godzin.",
+    "name": "Imię i nazwisko",
+    "email": "E-mail",
+    "company": "Firma lub adres obecnej strony",
+    "needsLegend": "Czego potrzebujesz?",
+    "needs": {
+      "copy": "Tekst na stronę",
+      "website": "Strona od decyzji do wdrożenia",
+      "content": "Treści i blog",
+      "audit": "Audyt widoczności w AI",
+      "unsure": "Jeszcze nie wiem"
+    },
+    "start": "Kiedy chcesz zacząć?",
+    "startOptions": {
+      "asap": "Jak najszybciej",
+      "month": "W ciągu miesiąca",
+      "quarter": "Za 2–3 miesiące",
+      "unsure": "Nie wiem"
+    },
+    "budget": "Orientacyjny budżet netto",
+    "budgetOptions": {
+      "upTo3k": "do 3 000 zł",
+      "from3to8k": "3 000–8 000 zł",
+      "from8to15k": "8 000–15 000 zł",
+      "over15k": "powyżej 15 000 zł",
+      "unsure": "Nie wiem"
+    },
+    "message": "Wiadomość",
+    "privacyBefore": "Zapoznałem(-am) się z ",
+    "privacyLink": "polityką prywatności",
+    "privacyAfter": ".",
+    "submit": "Wyślij wiadomość",
+    "sending": "Wysyłam…",
+    "success": "Dziękuję, wiadomość dotarła. Odpiszę na adres {email}.",
+    "serverError": "Nie udało się wysłać wiadomości. Spróbuj jeszcze raz za chwilę albo napisz bezpośrednio na {email}.",
+    "errors": {
+      "name": "Wpisz imię.",
+      "email": "Wpisz adres e-mail w formacie nazwa@domena.pl.",
+      "needs": "Zaznacz przynajmniej jedną opcję.",
+      "message": "Napisz kilka zdań o projekcie (min. 20 znaków).",
+      "privacy": "Zaznacz, że znasz politykę prywatności."
+    },
+    "preferEmail": "Wolisz e-mail?"
   }
 }

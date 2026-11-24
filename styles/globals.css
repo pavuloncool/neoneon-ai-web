@@ -510,6 +510,33 @@
   }
 }
 
+/* ── Formularz kontaktowy (components/blog/ContactForm.tsx) ── */
+/* Podkreślenie pola rysowane od lewej przy fokusie (scaleX, 0,3 s); przy ograniczonym ruchu — od razu */
+.contact-field-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s cubic-bezier(0.215, 0.61, 0.355, 1); /* ≈ power3.out */
+  pointer-events: none;
+}
+.contact-field:focus-within .contact-field-line {
+  transform: scaleX(1);
+}
+.contact-field:has([aria-invalid='true']) .contact-field-line {
+  transform: scaleX(1);
+  color: var(--accent-edit);
+}
+@media (prefers-reduced-motion: reduce) {
+  .contact-field-line {
+    transition: none;
+  }
+}
+
 /* ── Hero: zapłon neonu (components/sections/HeroNeon.tsx) ── */
 /* Kursywa: w dzień złoty tusz, w nocy neon. Na jasnym tle ciemniejsze złoto — accent #c8a96e ma
    kontrast 2.15:1, #9a7a3e ma 3.84:1 (SC 1.4.3, duży tekst ≥ 3:1). */

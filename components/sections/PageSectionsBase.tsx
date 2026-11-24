@@ -15,7 +15,6 @@ import { FeatureGrid } from './FeatureGrid'
 import { Hero } from './Hero'
 import type { HeroNeonProps } from './HeroNeon'
 import { RecentArticles } from './RecentArticles'
-import { SimpleText } from './SimpleText'
 import { TextImage } from './TextImage'
 import type { Page, Section } from '@/types'
 import { otherLocale, type Locale } from '@/lib/locales'
@@ -35,11 +34,9 @@ function renderSection(section: Section, locale: Locale, heroNeon: HeroNeonCompo
     case 'featureGrid':
       return <FeatureGrid section={section} />
     case 'contactForm':
-      return (
-        <ContactForm>
-          <SimpleText value={section.intro} />
-        </ContactForm>
-      )
+      // Tekst obok formularza to lead z briefu (messages: contactForm.lead); dawne „intro” z Sanity
+      // nie jest już wyświetlane (powtarzało lead i miało stary ton)
+      return <ContactForm />
     case 'richText':
       return section.body?.length ? (
         <div className="mb-16">
