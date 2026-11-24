@@ -6,12 +6,16 @@ import { JsonLd } from '@/components/seo/JsonLd'
 import { HomeSection } from '@/components/home/HomeSection'
 import { Hero } from '@/components/home/Hero'
 import { AiRole, type AiRoleCard } from '@/components/home/AiRole'
+import { Problem, type ProblemTexts } from '@/components/home/Problem'
 import { TranslationStore } from '@/components/layout/TranslationStore'
 import { seoMetadata } from '@/lib/metadata'
 import { CONTACT_PATH, ONE_PAGER_SECTIONS, sectionAnchor } from '@/lib/onePager'
 import { SITE_NAME, SITE_URL, localeUrl } from '@/lib/site'
 import type { Metadata } from 'next'
 import type { Locale } from '@/lib/locales'
+
+// Sekcje już zbudowane (mają własne komponenty powyżej listy zaślepek)
+const BUILT = new Set(['hero', 'aiRole', 'problem'])
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
   const { locale } = await params
@@ -67,8 +71,24 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
         }}
       />
 
+      <Problem
+        id={sectionAnchor('problem', locale)}
+        contactHref={CONTACT_PATH[locale]}
+        texts={{
+          title: t('problemTitle'),
+          lead: t('problemLead'),
+          before: t('problemBefore'),
+          note: t('problemNote'),
+          after: t.raw('problemAfter') as string[],
+          caption: t('problemCaption'),
+          gaps: t.raw('problemGaps') as ProblemTexts['gaps'],
+          closing: t('problemClosing'),
+          cta: t('problemCta'),
+        }}
+      />
+
       {/* Sekcje jeszcze niezbudowane (kolejne iteracje) */}
-      {ONE_PAGER_SECTIONS.filter((s) => s.key !== 'hero' && s.key !== 'aiRole').map((s) => (
+      {ONE_PAGER_SECTIONS.filter((s) => !BUILT.has(s.key)).map((s) => (
         <HomeSection key={s.key} id={s.anchor[locale]} title={t(`${s.key}Title`)}>
           <p className="mt-6 text-sm text-muted">{t('placeholder', { iteration: s.iteration })}</p>
         </HomeSection>

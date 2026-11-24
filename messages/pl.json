@@ -112,6 +112,27 @@
       }
     ],
     "problemTitle": "Najtrudniejszy moment to pusta strona",
+    "problemLead": "Masz produkt albo usługę i wiesz o nich więcej niż ktokolwiek. A jednak kiedy trzeba napisać stronę główną, powstaje tekst, który mógłby należeć do każdej firmy w branży. AI tego nie naprawi, często jeszcze to utrwala.",
+    "problemBefore": "W dzisiejszym dynamicznym świecie oferujemy kompleksowe, innowacyjne rozwiązania szyte na miarę Twoich potrzeb.",
+    "problemNote": "Co konkretnie?",
+    "problemAfter": [
+      "Prowadzimy sprawy spadkowe. Pierwsza konsultacja trwa godzinę i kończy się planem działania na piśmie.",
+      "Zajęcia w grupach do 8 osób. Na pierwszych dwóch nauczysz się podstawowych pozycji bez ryzyka kontuzji.",
+      "Wydajemy 6 książek rocznie. Każdą redagujemy dwa razy, zanim trafi do druku."
+    ],
+    "problemCaption": "Przykłady ilustracyjne.",
+    "problemGaps": [
+      {
+        "title": "Jakość",
+        "text": "Tekst nie odpowiada na pytania, które klient naprawdę zadaje."
+      },
+      {
+        "title": "Widoczność",
+        "text": "Wyszukiwarki i asystenci AI nie mają czego zacytować."
+      }
+    ],
+    "problemClosing": "Oba problemy mają to samo źródło: tekst bez konkretów. Asystenci AI cytują strony, które jasno odpowiadają na pytania. Ludzie wybierają te same.",
+    "problemCta": "Pokaż mi, jak to wygląda u mnie",
     "audienceTitle": "Dla kogo pracuję",
     "servicesTitle": "Trzy sposoby współpracy",
     "processTitle": "Jak pracuję",

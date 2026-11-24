@@ -112,6 +112,27 @@
       }
     ],
     "problemTitle": "The hardest part is the blank page",
+    "problemLead": "You have a product or a service and you know more about it than anyone. Yet when it's time to write the homepage, you end up with copy that could belong to any company in your industry. AI won't fix that. It often makes it worse.",
+    "problemBefore": "In today's fast-paced world, we offer comprehensive, innovative solutions tailored to your needs.",
+    "problemNote": "Meaning what?",
+    "problemAfter": [
+      "We handle inheritance cases. The first consultation takes an hour and ends with a written action plan.",
+      "Classes for groups of up to 8. In the first two sessions you'll learn the basic poses without risking injury.",
+      "We publish 6 books a year. Each one is edited twice before it goes to print."
+    ],
+    "problemCaption": "Illustrative examples.",
+    "problemGaps": [
+      {
+        "title": "Quality",
+        "text": "The copy doesn't answer the questions clients actually ask."
+      },
+      {
+        "title": "Visibility",
+        "text": "Search engines and AI assistants have nothing to quote."
+      }
+    ],
+    "problemClosing": "Both problems have the same root: copy without specifics. AI assistants quote pages that answer questions clearly. People choose the same pages.",
+    "problemCta": "Show me how this looks for my business",
     "audienceTitle": "Who I work with",
     "servicesTitle": "Three ways to work together",
     "processTitle": "How I work",
