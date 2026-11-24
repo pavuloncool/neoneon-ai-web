@@ -77,8 +77,14 @@
     "footerNav": "Footer links"
   },
   "onePager": {
-    "metaDescription": "AI can write a website's code in a few hours. It won't decide what to tell your clients, in what order, or why they should trust you. That's my job: from decisions and copy to a working website.",
     "heroTitle": "How to build a website with AI",
+    "heroEyebrow": "Copy · Content strategy · Websites built with AI",
+    "heroSubtitle": "AI writes the code. Decisions stay on the human side.",
+    "heroLead": "AI can write a website's code in a few hours. It won't decide what to tell your clients, in what order, or why they should trust you. That's my job: from decisions and copy to a working website.",
+    "heroCtaPrimary": "Let's talk about your website",
+    "heroCtaSecondary": "See how I work",
+    "heroPrompt": "Build me a website for my law firm.",
+    "heroLastLine": "// What should convince your client? No data.",
     "aiRoleTitle": "AI is a coding tool. Not a decision-maker.",
     "problemTitle": "The hardest part is the blank page",
     "audienceTitle": "Who I work with",

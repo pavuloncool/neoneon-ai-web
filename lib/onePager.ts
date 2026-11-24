@@ -24,3 +24,6 @@ export type OnePagerSectionKey = (typeof ONE_PAGER_SECTIONS)[number]['key']
 export function sectionAnchor(key: OnePagerSectionKey, locale: Locale): string {
   return ONE_PAGER_SECTIONS.find((s) => s.key === key)!.anchor[locale]
 }
+
+// Strona kontaktowa (dokument `page` w Sanity; slug zależy od języka)
+export const CONTACT_PATH: Record<Locale, string> = { pl: '/kontakt', en: '/contact' }

@@ -351,6 +351,25 @@
   }
 }
 
+/* ── Hero one-pagera (components/home/Hero.tsx) ── */
+/* Kursor okna promptu: blok w kolorze bieżącego tekstu */
+.hero-cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.15em;
+  margin-left: 0.15em;
+  vertical-align: text-bottom;
+  background: currentColor;
+}
+
+/* Stan startowy (tylko z JS i bez prośby o ograniczenie ruchu; data-hero-done = stan przejął GSAP).
+   H1, eyebrow, lead i CTA nie są tu ukrywane — widoczne od pierwszego malowania (LCP). */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-home-hero]:not([data-hero-done]) :is([data-hero-subtitle], [data-hero-typed], [data-hero-line], [data-hero-cursor='last']) {
+    opacity: 0;
+  }
+}
+
 /* ── Hero: zapłon neonu (components/sections/HeroNeon.tsx) ── */
 /* Kursywa: w dzień złoty tusz, w nocy neon. Na jasnym tle ciemniejsze złoto — accent #c8a96e ma
    kontrast 2.15:1, #9a7a3e ma 3.84:1 (SC 1.4.3, duży tekst ≥ 3:1). */
