@@ -11,7 +11,9 @@ import { Audience } from '@/components/home/Audience'
 import { Services, type ServiceItem } from '@/components/home/Services'
 import { Process, type ProcessStep } from '@/components/home/Process'
 import { Pricing, type PricingCard, type PricingTexts } from '@/components/home/Pricing'
-import { getAboutData, getPricing } from '@/lib/queries'
+import { getAboutData, getHomeFaq, getPricing } from '@/lib/queries'
+import { Faq, type FaqItemView } from '@/components/home/Faq'
+import { FaqJsonLd } from '@/components/seo/FaqJsonLd'
 import { About } from '@/components/home/About'
 import { formatNumber, priceExamples, rateLine } from '@/lib/pricing'
 import { TranslationStore } from '@/components/layout/TranslationStore'
@@ -25,7 +27,7 @@ import type { Locale } from '@/lib/locales'
 const PERSON_NAME = 'Paweł Kuligowski'
 
 // Sekcje już zbudowane (mają własne komponenty powyżej listy zaślepek)
-const BUILT = new Set(['hero', 'aiRole', 'problem', 'audience', 'services', 'process', 'pricing', 'about'])
+const BUILT = new Set(['hero', 'aiRole', 'problem', 'audience', 'services', 'process', 'pricing', 'about', 'faq'])
 
 // Wyceny: dane z Sanity → karty z gotowymi tekstami. Wyłączone w Ustawieniach wycen = brak sekcji.
 // Błąd Sanity nie wywraca strony — sekcja po prostu się nie pokazuje.
@@ -102,6 +104,14 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
     console.error('O mnie: nie udało się pobrać danych z Sanity', error)
     return { portrait: null, post: null }
   })
+  // FAQ: opublikowane „Pytania FAQ” z Sanity; bez nich (albo przy błędzie Sanity) — teksty z messages
+  const faqFromSanity = await getHomeFaq(locale).catch((error) => {
+    console.error('FAQ: nie udało się pobrać danych z Sanity', error)
+    return []
+  })
+  const faq: FaqItemView[] = faqFromSanity.length
+    ? faqFromSanity
+    : (t.raw('faqItems') as { q: string; a: string }[]).map((item, i) => ({ id: `faq-${i}`, question: item.q, answer: item.a }))
 
   return (
     <>
@@ -227,6 +237,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
           portraitAlt: PERSON_NAME,
         }}
       />
+
+      <Faq id={sectionAnchor('faq', locale)} title={t('faqTitle')} items={faq} />
+      {/* FAQPage z tych samych danych co widok */}
+      <FaqJsonLd faq={faq} />
 
       {/* Sekcje jeszcze niezbudowane (kolejne iteracje) */}
       {ONE_PAGER_SECTIONS.filter((s) => !BUILT.has(s.key)).map((s) => (
