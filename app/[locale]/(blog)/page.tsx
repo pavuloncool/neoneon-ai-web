@@ -7,6 +7,7 @@ import { HomeSection } from '@/components/home/HomeSection'
 import { Hero } from '@/components/home/Hero'
 import { AiRole, type AiRoleCard } from '@/components/home/AiRole'
 import { Problem, type ProblemTexts } from '@/components/home/Problem'
+import { Audience } from '@/components/home/Audience'
 import { TranslationStore } from '@/components/layout/TranslationStore'
 import { seoMetadata } from '@/lib/metadata'
 import { CONTACT_PATH, ONE_PAGER_SECTIONS, contactHrefFor, sectionAnchor } from '@/lib/onePager'
@@ -15,7 +16,7 @@ import type { Metadata } from 'next'
 import type { Locale } from '@/lib/locales'
 
 // Sekcje już zbudowane (mają własne komponenty powyżej listy zaślepek)
-const BUILT = new Set(['hero', 'aiRole', 'problem'])
+const BUILT = new Set(['hero', 'aiRole', 'problem', 'audience'])
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
   const { locale } = await params
@@ -26,6 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
 export default async function HomePage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'onePager' })
+  const tHome = await getTranslations({ locale, namespace: 'home' })
 
   return (
     <>
@@ -84,6 +86,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
           gaps: t.raw('problemGaps') as ProblemTexts['gaps'],
           closing: t('problemClosing'),
           cta: t('problemCta'),
+        }}
+      />
+
+      <Audience
+        id={sectionAnchor('audience', locale)}
+        texts={{
+          title: t('audienceTitle'),
+          lead: t('audienceLead'),
+          industries: t.raw('audienceIndustries') as string[],
+          rest: t('audienceRest'),
+          text: t('audienceText'),
+          pause: tHome('rotatingPause'),
+          resume: tHome('rotatingResume'),
         }}
       />
 

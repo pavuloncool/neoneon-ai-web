@@ -421,6 +421,23 @@
   }
 }
 
+/* ── Dla kogo — rotujące słowo (components/home/Audience.tsx) ── */
+/* Lista branż: z animacją tylko dla czytników (sr-only); bez JS, po siatce bezpieczeństwa
+   i przy ograniczonym ruchu — widoczna pod zdaniem. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-audience] .slot-list {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}
+
 /* ── Hero: zapłon neonu (components/sections/HeroNeon.tsx) ── */
 /* Kursywa: w dzień złoty tusz, w nocy neon. Na jasnym tle ciemniejsze złoto — accent #c8a96e ma
    kontrast 2.15:1, #9a7a3e ma 3.84:1 (SC 1.4.3, duży tekst ≥ 3:1). */
