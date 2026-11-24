@@ -5,7 +5,9 @@ const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
 
 // Produkcja nie może wystartować z adresem podglądu albo bez HTTPS — canonical, hreflang i sitemapa
 // wskazałyby wtedy złą domenę (tak było: NEXT_PUBLIC_SITE_URL=https://neoneon.vercel.app w Vercel).
-if (process.env.VERCEL_ENV === 'production') {
+// SITE_STAGING=1 — świadomie roboczy adres *.vercel.app (bez indeksowania, patrz headers() i app/robots.ts).
+const IS_STAGING = process.env.SITE_STAGING === '1'
+if (process.env.VERCEL_ENV === 'production' && !IS_STAGING) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://neoneon.online'
   let host = ''
   try {
@@ -34,9 +36,9 @@ const nextConfig: NextConfig = {
       { source: '/stats/api/send', destination: 'https://cloud.umami.is/api/send' },
     ]
   },
-  // Poza produkcją (podglądy Vercel, lokalne buildy) — noindex na każdej odpowiedzi
+  // Poza produkcją (podglądy Vercel, wersja robocza SITE_STAGING=1, lokalne buildy) — noindex na każdej odpowiedzi
   async headers() {
-    if (process.env.VERCEL_ENV === 'production') return []
+    if (process.env.VERCEL_ENV === 'production' && !IS_STAGING) return []
     return [{ source: '/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] }]
   },
   images: {

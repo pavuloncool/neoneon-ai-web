@@ -17,6 +17,11 @@ export const SITE_NAME = 'neoneon'
 // W przeglądarce dostępne tylko NEXT_PUBLIC_VERCEL_ENV (Vercel ustawia je sam dla Next.js).
 export const IS_PRODUCTION = (process.env.VERCEL_ENV ?? process.env.NEXT_PUBLIC_VERCEL_ENV) === 'production'
 
+// SITE_STAGING=1 (Vercel → Environment Variables): produkcyjny build na adresie roboczym (*.vercel.app)
+// — wyłącza blokadę adresu w next.config.ts i indeksowanie (robots.txt + X-Robots-Tag).
+export const IS_STAGING = process.env.SITE_STAGING === '1'
+export const IS_INDEXABLE = IS_PRODUCTION && !IS_STAGING
+
 // Adresy e-mail formularzy (Resend): nadawca musi być w domenie zweryfikowanej w Resend
 export const FORM_FROM_EMAIL = 'formularz@neoneon.online'
 export const CONTACT_EMAIL = 'ask@neoneon.online'
