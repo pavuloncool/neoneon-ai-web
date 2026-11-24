@@ -30,16 +30,18 @@ export function LanguageSwitcher({
 
   return (
     <div className={cn('flex items-center gap-0 text-xs tracking-widest', className)}>
-      {/* SC 4.1.2 + SC 2.5.8 — aria-pressed informuje o aktywnym języku; py-1 = min. 24 px obszar dotyku */}
+      {/* SC 4.1.2 + SC 2.5.8 — aria-pressed informuje o aktywnym języku; py-1 = min. 24 px obszar dotyku.
+          SC 2.5.3 — nazwa dostępna zaczyna się od widocznego skrótu („PL, Polski”). Nieaktywny język w pigułce
+          mobilnej: white/70 (white/50 dawało kontrast 2,25:1). */}
       <button
         onClick={() => switchTo('pl')}
         aria-pressed={locale === 'pl'}
-        aria-label={labels.pl}
+        aria-label={`PL, ${labels.pl}`}
         className={cn(
           'px-1.5 py-1 transition-colors duration-200',
           locale === 'pl'
             ? dark ? 'text-white font-medium' : 'text-ink dark:text-white font-medium'
-            : dark ? 'text-white/50 hover:text-white' : 'text-muted hover:text-ink dark:hover:!text-white'
+            : dark ? 'text-white/70 hover:text-white' : 'text-muted hover:text-ink dark:hover:!text-white'
         )}
       >
         PL
@@ -48,12 +50,12 @@ export function LanguageSwitcher({
       <button
         onClick={() => switchTo('en')}
         aria-pressed={locale === 'en'}
-        aria-label={labels.en}
+        aria-label={`EN, ${labels.en}`}
         className={cn(
           'px-1.5 py-1 transition-colors duration-200',
           locale === 'en'
             ? dark ? 'text-white font-medium' : 'text-ink dark:text-white font-medium'
-            : dark ? 'text-white/50 hover:text-white' : 'text-muted hover:text-ink dark:hover:!text-white'
+            : dark ? 'text-white/70 hover:text-white' : 'text-muted hover:text-ink dark:hover:!text-white'
         )}
       >
         EN

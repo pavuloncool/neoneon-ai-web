@@ -33,7 +33,7 @@ export function FinalCta({ id, title, text, button, href }: { id: string; title:
     const heading = el.querySelector<HTMLElement>('[data-cta-heading]')!
     const cursor = el.querySelector<HTMLElement>('[data-cta-cursor]')!
     // words + chars: słowa nie łamią się w środku przy pisaniu
-    const split = SplitText.create(heading, { type: 'words,chars', aria: 'auto' })
+    const split = SplitText.create(heading, { type: 'words,chars', aria: 'none' })
     gsap.set(split.chars, { clipPath: 'inset(0 100% 0 0)' })
     finish()
     markMotionReady()
@@ -64,7 +64,11 @@ export function FinalCta({ id, title, text, button, href }: { id: string; title:
     <section ref={root} id={id} aria-labelledby={`${id}-title`} data-cta className="scroll-mt-20 border-t border-border dark:border-white/10">
       <div className="max-w-5xl mx-auto px-6 py-24 md:py-36">
         <h2 id={`${id}-title`} className="font-display font-light text-5xl md:text-7xl leading-[1.05]">
-          <span data-cta-heading>{title}</span>
+          {/* Kopia dla czytników + znaki animowane (aria-hidden): czytnik dostaje całe zdanie, nie litery */}
+          <span className="sr-only">{title}</span>
+          <span data-cta-heading aria-hidden="true">
+            {title}
+          </span>
           <span data-cta-cursor aria-hidden="true" className="hero-cursor ml-2" />
         </h2>
         <p className="mt-8 text-lg md:text-xl leading-relaxed text-muted max-w-2xl">{text}</p>

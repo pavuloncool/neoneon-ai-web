@@ -36,7 +36,10 @@ export interface AiRoleTexts {
   cards: AiRoleCard[]
 }
 
-const DIM = 0.35 // krycie wyszarzonej karty
+// Wyszarzenie dotyczy tylko tytułu karty (duży tekst): przy 50% ma kontrast ok. 3,7:1, więc spełnia WCAG AA
+// dla dużego tekstu. Opis i numer zostają w pełnym kontraście (przy wyszarzeniu całej karty Lighthouse
+// zgłaszał kontrast 1,6:1).
+const DIM = 0.5
 const SCRAMBLE = 0.8 // s
 
 // Kod w tle karty 4 (dekoracyjny)
@@ -72,7 +75,7 @@ export function AiRole({ id, texts }: { id: string; texts: AiRoleTexts }) {
 
     const cards = gsap.utils.toArray<HTMLElement>('[data-airole-card]', el)
     const labels = cards.map((c) => c.querySelector<HTMLElement>('[data-airole-label]')!)
-    const bodies = cards.map((c) => c.querySelector<HTMLElement>('[data-airole-body]')!)
+    const bodies = cards.map((c) => c.querySelector<HTMLElement>('[data-airole-body] h3')!)
     const bgCode = el.querySelector<HTMLElement>('[data-airole-bg]')
 
     // Stan startowy przejmuje GSAP: „AI?” i wyszarzenie
@@ -171,7 +174,7 @@ export function AiRole({ id, texts }: { id: string; texts: AiRoleTexts }) {
                   <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
                     <pre
                       data-airole-bg
-                      className="font-mono text-[11px] leading-5 text-accent-ai opacity-100 whitespace-pre px-6 pt-24 [mask-image:linear-gradient(to_bottom,transparent,black_35%,black_70%,transparent)]"
+                      className="font-mono text-xs leading-5 text-accent-ai opacity-100 whitespace-pre px-6 pt-24 [mask-image:linear-gradient(to_bottom,transparent,black_35%,black_70%,transparent)]"
                     >
                       <span className="block opacity-[0.16] dark:opacity-[0.2]">{[...BG_CODE, ...BG_CODE].join('\n')}</span>
                     </pre>

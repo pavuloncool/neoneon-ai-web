@@ -4,21 +4,19 @@
 import { getTranslations } from 'next-intl/server'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { Hero } from '@/components/home/Hero'
-import { AiRole, type AiRoleCard } from '@/components/home/AiRole'
-import { Problem, type ProblemTexts } from '@/components/home/Problem'
-import { Audience } from '@/components/home/Audience'
-import { Services, type ServiceItem } from '@/components/home/Services'
-import { Process, type ProcessStep } from '@/components/home/Process'
-import { Pricing, type PricingCard, type PricingTexts } from '@/components/home/Pricing'
+// Sekcje poniżej pierwszego ekranu — osobne pliki JS (components/home/lazy.tsx)
+import { About, AiRole, Audience, Faq, FinalCta, FromBlog, Pricing, Problem, Process, Services } from '@/components/home/lazy'
+import type { AiRoleCard } from '@/components/home/AiRole'
+import type { ProblemTexts } from '@/components/home/Problem'
+import type { ServiceItem } from '@/components/home/Services'
+import type { ProcessStep } from '@/components/home/Process'
+import type { PricingCard, PricingTexts } from '@/components/home/Pricing'
 import { getAboutData, getArticles, getHomeFaq, getPricing } from '@/lib/queries'
-import { FromBlog } from '@/components/home/FromBlog'
-import { FinalCta } from '@/components/home/FinalCta'
 import { BLOG_PATH } from '@/lib/links'
 import { formatDate } from '@/lib/utils'
 import { DATE_LOCALE, type Locale } from '@/lib/locales'
-import { Faq, type FaqItemView } from '@/components/home/Faq'
+import type { FaqItemView } from '@/components/home/Faq'
 import { FaqJsonLd } from '@/components/seo/FaqJsonLd'
-import { About } from '@/components/home/About'
 import { formatNumber, priceExamples, rateLine } from '@/lib/pricing'
 import { TranslationStore } from '@/components/layout/TranslationStore'
 import { AnchorScroll } from '@/components/blog/AnchorScroll'
@@ -34,7 +32,7 @@ const PERSON_NAME = 'Paweł Kuligowski'
 async function loadPricing(
   locale: Locale,
   t: Awaited<ReturnType<typeof getTranslations<'onePager'>>>,
-): Promise<{ texts: PricingTexts; cards: PricingCard[] } | null> {
+): Promise<{ texts: PricingTexts; cards: PricingCard[]; rates: ReturnType<typeof rateLine> } | null> {
   let data
   try {
     data = await getPricing(locale)
@@ -73,8 +71,10 @@ async function loadPricing(
     }
   })
 
+  // Bez opublikowanych przykładów sekcja się nie pokazuje — wtedy także bez stawek w JSON-LD
   return {
     cards,
+    rates: cards.length ? rates : [],
     texts: {
       title: t('pricingTitle'),
       lead: t('pricingLead'),
@@ -99,6 +99,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   const t = await getTranslations({ locale, namespace: 'onePager' })
   const tHome = await getTranslations({ locale, namespace: 'home' })
   const pricing = await loadPricing(locale, t)
+  const personId = `${localeUrl(locale)}#person`
   // Błąd Sanity: sekcja „O mnie” bez portretu i linku do wpisu (tekst zostaje)
   const about = await getAboutData(locale, t('aboutPostSlug')).catch((error) => {
     console.error('O mnie: nie udało się pobrać danych z Sanity', error)
@@ -133,10 +134,40 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
         data={{
           '@context': 'https://schema.org',
           '@type': 'Person',
+          '@id': personId,
           name: PERSON_NAME,
           jobTitle: t('personJobTitle'),
           url: `${localeUrl(locale)}#${sectionAnchor('about', locale)}`,
           knowsLanguage: ['pl', 'en'],
+        }}
+      />
+      {/* Usługa: Polska i zdalnie, PL/EN; stawki godzinowe (HUR) tylko gdy sekcja wycen jest widoczna */}
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'ProfessionalService',
+          '@id': `${localeUrl(locale)}#service`,
+          name: SITE_NAME,
+          url: localeUrl(locale),
+          description: t('heroLead'),
+          areaServed: [{ '@type': 'Country', name: locale === 'pl' ? 'Polska' : 'Poland' }, { '@type': 'Place', name: locale === 'pl' ? 'Zdalnie' : 'Remote' }],
+          availableLanguage: ['pl', 'en'],
+          founder: { '@id': personId },
+          ...(pricing && pricing.rates.length
+            ? {
+                makesOffer: pricing.rates.map((rate) => ({
+                  '@type': 'Offer',
+                  name: rate.label,
+                  priceSpecification: {
+                    '@type': 'UnitPriceSpecification',
+                    price: rate.amount,
+                    priceCurrency: rate.currency,
+                    unitCode: 'HUR',
+                    valueAddedTaxIncluded: false,
+                  },
+                })),
+              }
+            : {}),
         }}
       />
       {/* Przełącznik języka: strona główna drugiego języka */}

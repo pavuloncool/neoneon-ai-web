@@ -6,7 +6,7 @@ import { localeUrl } from '@/lib/site'
 import type { Locale } from '@/lib/locales'
 import type { SitemapData } from '@/lib/queries'
 import { pagePath } from '@/lib/links'
-import { LOCALES } from '@/lib/locales'
+import { HREFLANG, LOCALES } from '@/lib/locales'
 import { REDIRECTED_PAGE_SLUGS } from '@/lib/onePager'
 import { LEGAL_PATHS } from '@/lib/legal'
 
@@ -16,8 +16,12 @@ const LEGAL_SLUGS = Object.values(LEGAL_PATHS).flatMap((paths) => Object.values(
 type Doc = { _id: string; locale: Locale; path: string; modifiedAt: string | null }
 
 // Jak w lib/metadata.ts: x-default wskazuje wersję PL, jeśli istnieje
+// Klucze hreflang z regionem (pl-PL, en-GB — brief 3.3)
 function withDefault(languages: Partial<Record<Locale, string>>): Record<string, string> {
-  return languages.pl ? { ...languages, 'x-default': languages.pl } : (languages as Record<string, string>)
+  const out: Record<string, string> = Object.fromEntries(
+    (Object.entries(languages) as [Locale, string][]).map(([l, url]) => [HREFLANG[l], url]),
+  )
+  return languages.pl ? { ...out, 'x-default': languages.pl } : out
 }
 
 // Późniejsza z dwóch dat ISO (różne formaty strefy, więc porównanie przez Date.parse)

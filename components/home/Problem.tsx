@@ -61,7 +61,8 @@ export function Problem({ id, texts, contactHref }: { id: string; texts: Problem
     const strike = createStrike(before, before.parentElement as HTMLElement)
 
     // ── Zdania „po”: słowa (każdy wariant osobno)
-    const words = afters.map((a) => SplitText.create(a, { type: 'words', aria: 'auto' }).words as HTMLElement[])
+    // Słowa w warstwie aria-hidden; czytnik dostaje kopię sr-only (bez aria-label na <ins>)
+    const words = afters.map((a) => SplitText.create(a.querySelector<HTMLElement>('[data-problem-words]')!, { type: 'words', aria: 'none' }).words as HTMLElement[])
 
     // Stan startowy przejmuje GSAP (CSS ukrywał elementy pod html.js do tej pory)
     gsap.set(afters, { autoAlpha: 0 })
@@ -180,7 +181,10 @@ export function Problem({ id, texts, contactHref }: { id: string; texts: Problem
                   aria-hidden={i > 0 ? true : undefined}
                   className={`col-start-1 row-start-1 block no-underline text-xl md:text-2xl leading-relaxed ${i > 0 ? 'max-lg:hidden invisible' : ''}`}
                 >
-                  {text}
+                  <span className="sr-only">{text}</span>
+                  <span data-problem-words aria-hidden="true">
+                    {text}
+                  </span>
                 </ins>
               ))}
             </div>

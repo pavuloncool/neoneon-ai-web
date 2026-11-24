@@ -121,8 +121,8 @@ export function Hero({ id, texts, contactHref, processHref }: { id: string; text
       })
     }
 
-    // Podtytuł: linie spod maski (SplitText z aria: czytnik dostaje pełne zdanie)
-    const split = SplitText.create(subtitle, { type: 'lines', mask: 'lines', aria: 'auto', autoSplit: true })
+    // Podtytuł: linie spod maski (czytnik dostaje pełne zdanie z kopii sr-only obok)
+    const split = SplitText.create(subtitle, { type: 'lines', mask: 'lines', aria: 'none', autoSplit: true })
 
     // Stan startowy elementów okna (CSS ukrywał je do tej pory pod html.js) — przejmuje GSAP
     gsap.set([prompt, last], { opacity: 1 })
@@ -188,8 +188,13 @@ export function Hero({ id, texts, contactHref, processHref }: { id: string; text
           <h1 id={`${id}-title`} className="mt-5 font-display font-light text-5xl md:text-6xl xl:text-7xl leading-[1.05]">
             {texts.title}
           </h1>
-          <p data-hero-subtitle className="mt-6 font-display italic font-light text-2xl md:text-3xl leading-snug">
-            {texts.subtitle}
+          {/* Kopia dla czytników + warstwa animowana (aria-hidden): SplitText z aria: 'auto' dawał aria-label
+              na <p>, niedozwolony dla elementu bez roli (Lighthouse: aria-prohibited-attr) */}
+          <p className="mt-6 font-display italic font-light text-2xl md:text-3xl leading-snug">
+            <span className="sr-only">{texts.subtitle}</span>
+            <span data-hero-subtitle aria-hidden="true" className="block">
+              {texts.subtitle}
+            </span>
           </p>
           <p className="mt-6 text-lg leading-relaxed text-muted max-w-xl">{texts.lead}</p>
           <div className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-4">

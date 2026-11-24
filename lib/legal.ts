@@ -6,8 +6,8 @@
 // Polityka prywatności i polityka cookies (PL/EN). Struktura według briefu (8.1, 8.2); lista cookies według
 // audytu z 24.11.2026 (kod + przeglądarka): NEXT_LOCALE (next-intl), theme (localStorage, next-themes),
 // neoneon_translation_path (sessionStorage), cookies Studio Sanity i trybu podglądu (tylko redaktorzy),
-// Cloudflare Turnstile w formularzu komentarzy, Vercel Speed Insights (bez cookies).
-// Przy zmianie integracji (np. włączenie Vercel Web Analytics albo Umami) zaktualizuj tę treść i datę.
+// Cloudflare Turnstile w formularzu komentarzy, Vercel Web Analytics i Speed Insights (bez cookies).
+// Przy zmianie integracji (np. włączenie Umami) zaktualizuj tę treść i datę.
 
 import type { Locale } from '@/lib/locales'
 import { PUBLIC_CONTACT_EMAIL } from '@/lib/site'
@@ -58,6 +58,7 @@ const PRIVACY: Record<Locale, LegalDoc> = {
             'Dane z formularza kontaktowego: imię i nazwisko, adres e-mail, nazwa firmy lub adres strony (jeśli je podasz), odpowiedzi z pól wyboru (czego potrzebujesz, kiedy chcesz zacząć, orientacyjny budżet) i treść wiadomości.',
             'Dane z formularza komentarzy pod artykułami: imię, adres e-mail i treść komentarza. Imię i komentarz są widoczne publicznie po zatwierdzeniu, adres e-mail nie.',
             'Dane techniczne w logach serwera: adres IP, rodzaj przeglądarki, adres odwiedzonej strony i czas wizyty.',
+            'Zbiorcze statystyki odwiedzin (Vercel Web Analytics): odwiedzona podstrona, źródło wejścia, przybliżona lokalizacja (kraj, region, miasto), system operacyjny, przeglądarka i rodzaj urządzenia. Odwiedzającego rozpoznaje tylko skrót (hash) tworzony z żądania, usuwany po 24 godzinach; dane nie są powiązane z Tobą ani z Twoim adresem IP.',
             'Zbiorcze pomiary szybkości ładowania strony (Vercel Speed Insights). Nie identyfikują Cię i nie używają cookies.',
           ] },
         ],
@@ -68,7 +69,7 @@ const PRIVACY: Record<Locale, LegalDoc> = {
           { type: 'list', items: [
             'Odpowiedź na wiadomość i przygotowanie oferty: art. 6 ust. 1 lit. b RODO (działania przed zawarciem umowy na Twoje żądanie) oraz art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes: odpowiedź na korespondencję).',
             'Publikacja i moderacja komentarzy: art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes: prowadzenie dyskusji pod artykułami). [ZWERYFIKUJ]',
-            'Bezpieczeństwo strony, ochrona przed spamem i statystyka wydajności: art. 6 ust. 1 lit. f RODO.',
+            'Bezpieczeństwo strony, ochrona przed spamem, statystyki odwiedzin i wydajności: art. 6 ust. 1 lit. f RODO.',
           ] },
         ],
       },
@@ -77,7 +78,7 @@ const PRIVACY: Record<Locale, LegalDoc> = {
         blocks: [
           { type: 'p', text: 'Dane przetwarzają w moim imieniu dostawcy usług, z których korzysta strona:' },
           { type: 'list', items: [
-            'Vercel Inc. (USA): hosting strony, logi serwera, Vercel Speed Insights.',
+            'Vercel Inc. (USA): hosting strony, logi serwera, Vercel Web Analytics i Vercel Speed Insights.',
             'Sanity AS (Norwegia): system zarządzania treścią, w którym zapisywane są wiadomości z formularza i komentarze. [ZWERYFIKUJ: lokalizacja serwerów projektu]',
             'Resend (USA): wysyłka powiadomień e-mail z formularzy. [ZWERYFIKUJ: pełna nazwa i adres dostawcy]',
             'Cloudflare, Inc. (USA): Turnstile, ochrona formularza komentarzy przed spamem.',
@@ -133,6 +134,7 @@ const PRIVACY: Record<Locale, LegalDoc> = {
             'Contact form data: full name, email address, company name or website (if you provide them), your answers in the choice fields (what you need, when you want to start, approximate budget) and your message.',
             'Comment form data under articles: name, email address and comment. Your name and comment become public once approved; your email address does not.',
             'Technical data in server logs: IP address, browser type, the page you visited and the time of the visit.',
+            'Aggregated visit statistics (Vercel Web Analytics): the page visited, referrer, approximate location (country, region, city), operating system, browser and device type. A visitor is recognised only by a hash created from the request, discarded after 24 hours; the data is not tied to you or your IP address.',
             'Aggregated page speed measurements (Vercel Speed Insights). They do not identify you and do not use cookies.',
           ] },
         ],
@@ -143,7 +145,7 @@ const PRIVACY: Record<Locale, LegalDoc> = {
           { type: 'list', items: [
             'Replying to your message and preparing a quote: Article 6(1)(b) GDPR (steps taken at your request before entering into a contract) and Article 6(1)(f) GDPR (legitimate interest: replying to correspondence).',
             'Publishing and moderating comments: Article 6(1)(f) GDPR (legitimate interest: hosting discussion under articles). [TO BE VERIFIED]',
-            'Website security, spam protection and performance statistics: Article 6(1)(f) GDPR.',
+            'Website security, spam protection, visit and performance statistics: Article 6(1)(f) GDPR.',
           ] },
         ],
       },
@@ -152,7 +154,7 @@ const PRIVACY: Record<Locale, LegalDoc> = {
         blocks: [
           { type: 'p', text: 'Your data is processed on my behalf by the service providers the website uses:' },
           { type: 'list', items: [
-            'Vercel Inc. (USA): website hosting, server logs, Vercel Speed Insights.',
+            'Vercel Inc. (USA): website hosting, server logs, Vercel Web Analytics and Vercel Speed Insights.',
             'Sanity AS (Norway): the content management system where form messages and comments are stored. [TO BE VERIFIED: project server location]',
             'Resend (USA): email notifications from the forms. [TO BE VERIFIED: provider legal name and address]',
             'Cloudflare, Inc. (USA): Turnstile, spam protection for the comment form.',
@@ -219,7 +221,7 @@ const COOKIES: Record<Locale, LegalDoc> = {
       {
         title: '3. Analityka',
         blocks: [
-          { type: 'p', text: 'Szybkość ładowania strony mierzy Vercel Speed Insights. To narzędzie nie używa cookies i nie identyfikuje odwiedzających. Strona nie używa cookies analitycznych ani marketingowych.' },
+          { type: 'p', text: 'Odwiedziny liczy Vercel Web Analytics, a szybkość ładowania mierzy Vercel Speed Insights. Oba narzędzia działają bez cookies i bez zapisów w przeglądarce, a dane są zbiorcze: nie identyfikują odwiedzających i nie śledzą ich między stronami. Strona nie używa cookies analitycznych ani marketingowych.' },
         ],
       },
       {
@@ -266,7 +268,7 @@ const COOKIES: Record<Locale, LegalDoc> = {
       {
         title: '3. Analytics',
         blocks: [
-          { type: 'p', text: 'Page loading speed is measured by Vercel Speed Insights. It does not use cookies and does not identify visitors. The website uses no analytics or marketing cookies.' },
+          { type: 'p', text: 'Visits are counted by Vercel Web Analytics and page loading speed is measured by Vercel Speed Insights. Both work without cookies or browser storage, and the data is aggregated: it does not identify visitors or track them across websites. The website uses no analytics or marketing cookies.' },
         ],
       },
       {

@@ -27,7 +27,8 @@ export interface NavProps {
 }
 
 const glass: React.CSSProperties = {
-  background: 'rgba(20,20,20,0.55)',
+  // 0,8 zamiast 0,55: biały tekst pigułki ma wystarczający kontrast także nad jasnymi sekcjami (WCAG 1.4.3)
+  background: 'rgba(20,20,20,0.8)',
   backdropFilter: 'blur(20px) saturate(180%)',
   WebkitBackdropFilter: 'blur(20px) saturate(180%)',
   border: '1px solid rgba(255,255,255,0.18)',

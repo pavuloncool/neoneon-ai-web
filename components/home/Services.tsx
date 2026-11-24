@@ -123,7 +123,7 @@ export function Services({ id, title, items }: { id: string; title: string; item
               data-service-card
               className="flex flex-col lg:grid lg:grid-rows-subgrid lg:row-span-5 rounded-xl border border-border dark:border-white/10 bg-paper dark:bg-[#141414] p-7"
             >
-              <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+              <p className="font-mono text-xs uppercase tracking-[0.14em] text-muted">
                 {/* Etykiety łamią się tylko między sobą, nigdy w środku */}
                 {item.tags.map((tag, j) => (
                   <span key={tag}>

@@ -7,7 +7,7 @@ import type { Metadata } from 'next'
 import { getPageTranslation, getSiteSettings } from '@/lib/queries'
 import { pagePath } from '@/lib/links'
 import { SITE_NAME, localeUrl } from '@/lib/site'
-import { OG_LOCALE, otherLocale, type Locale } from '@/lib/locales'
+import { HREFLANG, OG_LOCALE, otherLocale, type Locale } from '@/lib/locales'
 import type { Page, SanityImage } from '@/types'
 
 interface SeoInput {
@@ -27,9 +27,10 @@ export async function seoMetadata({ locale, path, altPath, title, description, i
   const settings = await getSiteSettings(locale)
   const other = otherLocale(locale)
   const url = localeUrl(locale, path)
-  const languages: Record<string, string> = { [locale]: url }
-  if (altPath !== null) languages[other] = localeUrl(other, altPath)
-  if (languages.pl) languages['x-default'] = languages.pl
+  const languages: Record<string, string> = { [HREFLANG[locale]]: url }
+  if (altPath !== null) languages[HREFLANG[other]] = localeUrl(other, altPath)
+  const plUrl = locale === 'pl' ? url : altPath !== null ? localeUrl('pl', altPath) : null
+  if (plUrl) languages['x-default'] = plUrl
 
   const img = image?.url ? image : settings?.ogImage
   const common = {

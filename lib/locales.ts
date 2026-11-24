@@ -19,6 +19,9 @@ export const LOCALE_LABELS: Record<Locale, { short: string; name: string }> = {
 
 export const OG_LOCALE: Record<Locale, string> = { pl: 'pl_PL', en: 'en_GB' }
 
+// Kody hreflang (brief 3.3: pl-PL, en-GB, x-default → PL) — metadane stron i sitemapa
+export const HREFLANG: Record<Locale, string> = { pl: 'pl-PL', en: 'en-GB' }
+
 // Formatowanie dat (Intl)
 export const DATE_LOCALE: Record<Locale, string> = { pl: 'pl-PL', en: 'en-GB' }
 

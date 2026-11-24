@@ -373,8 +373,8 @@
 /* ── Sub-hero „Gdzie AI pomaga” (components/home/AiRole.tsx) ── */
 /* Stan startowy: karty wyszarzone, etykieta ukryta do czasu, aż GSAP wpisze „AI?”. Tylko z JS i bez reduce. */
 @media (prefers-reduced-motion: no-preference) {
-  html.js [data-airole]:not([data-airole-done]) [data-airole-body] {
-    opacity: 0.35;
+  html.js [data-airole]:not([data-airole-done]) [data-airole-body] h3 {
+    opacity: 0.5;
   }
   html.js [data-airole]:not([data-airole-done]) :is([data-airole-label], [data-airole-bg]) {
     opacity: 0;

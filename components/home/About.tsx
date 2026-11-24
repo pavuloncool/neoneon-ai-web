@@ -73,7 +73,7 @@ export function About({ id, texts, portrait, postHref }: { id: string; texts: Ab
     const marks = gsap.utils.toArray<SVGPathElement>('[data-about-mark]', el)
     const paragraphs = gsap.utils.toArray<HTMLElement>('[data-about-p]', el)
     const strikeWrap = el.querySelector<HTMLElement>('[data-about-strike-wrap]')!
-    const splits = paragraphs.map((p) => SplitText.create(p, { type: 'lines', mask: 'lines', aria: 'auto', autoSplit: true }))
+    const splits = paragraphs.map((p) => SplitText.create(p, { type: 'lines', mask: 'lines', aria: 'none', autoSplit: true }))
     const lines = () => splits.flatMap((s) => s.lines)
 
     // Skreślenie: części fragmentu po podziale na linie czytane przy każdym przeliczeniu
@@ -150,12 +150,21 @@ export function About({ id, texts, portrait, postHref }: { id: string; texts: Ab
                 {i === STRIKE_PARAGRAPH ? (
                   // Nakładka kreski leży w opakowaniu, nie w akapicie dzielonym przez SplitText
                   <div data-about-strike-wrap className="relative">
-                    <p data-about-p>
-                      <WithStrike text={text} fragment={texts.strike} />
+                    <p>
+                      <span className="sr-only">{text}</span>
+                      <span data-about-p aria-hidden="true" className="block">
+                        <WithStrike text={text} fragment={texts.strike} />
+                      </span>
                     </p>
                   </div>
                 ) : (
-                  <p data-about-p>{text}</p>
+                  // Kopia dla czytników + warstwa animowana (aria-hidden) — bez aria-label na <p>
+                  <p>
+                    <span className="sr-only">{text}</span>
+                    <span data-about-p aria-hidden="true" className="block">
+                      {text}
+                    </span>
+                  </p>
                 )}
               </Fragment>
             ))}

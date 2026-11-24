@@ -82,7 +82,7 @@ export function FromBlog({ id, title, lead, cta, ctaHref, posts }: { id: string;
                   ) : (
                     <div aria-hidden="true" />
                   )}
-                  <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+                  <p className="mt-5 font-mono text-xs uppercase tracking-[0.14em] text-muted">
                     {post.date && post.dateTime ? <time dateTime={post.dateTime}>{post.date}</time> : null}
                     {post.date && post.category ? <span aria-hidden="true"> · </span> : null}
                     {post.category}
