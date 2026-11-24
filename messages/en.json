@@ -202,6 +202,29 @@
       }
     ],
     "processTitle": "How I work",
+    "processLead": "Decisions and copy take most of the time. The code comes quickly because I know what it needs to do.",
+    "processSteps": [
+      {
+        "title": "Conversation",
+        "text": "I ask about your clients, your offer, your competitors and what you don't want to promise. It takes 60–90 minutes."
+      },
+      {
+        "title": "Decisions and structure",
+        "text": "We decide who the website is for, which pages it needs and what visitors should do."
+      },
+      {
+        "title": "Copy",
+        "text": "I write the copy. You approve it before the build, not after."
+      },
+      {
+        "title": "Building with AI",
+        "text": "I code with AI. I review every change, and you get an online preview."
+      },
+      {
+        "title": "Launch and fixes",
+        "text": "Publishing, metadata, sitemap, first measurements. Feedback from the review goes in before launch."
+      }
+    ],
     "pricingTitle": "What does it cost? Examples",
     "aboutTitle": "Paweł Kuligowski",
     "faqTitle": "Frequently asked questions",

@@ -445,6 +445,47 @@
   }
 }
 
+/* ── Jak pracuję (components/home/Process.tsx) ── */
+/* Domyślnie (mobile, reduce, bez JS): pionowa lista z linią po lewej; linia pozioma i ciąg kodu ukryte. */
+.process-hline,
+.process-code {
+  display: none;
+}
+/* Desktop z animacją: poziomy tor kroków (przesuwa go GSAP przy przypiętej sekcji) */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  /* Przypięta sekcja na całą wysokość ekranu, treść wyśrodkowana w pionie */
+  html.js [data-process] .process-pin {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  html.js [data-process] .process-viewport {
+    overflow: hidden;
+  }
+  html.js [data-process] .process-track {
+    display: flex;
+    width: max-content;
+    max-width: none;
+    margin: 0;
+    /* Pierwszy krok wyrównany do lewej krawędzi treści (kontener max-w-6xl = 72rem, px-6) */
+    padding-left: max(1.5rem, calc((100vw - 72rem) / 2 + 1.5rem));
+    padding-right: 20vw;
+  }
+  html.js [data-process] .process-step {
+    width: min(30rem, 38vw);
+    flex-shrink: 0;
+    padding: 5.25rem 4rem 0 0;
+  }
+  html.js [data-process] .process-vline {
+    display: none;
+  }
+  html.js [data-process] .process-hline,
+  html.js [data-process] .process-code {
+    display: block;
+  }
+}
+
 /* ── Hero: zapłon neonu (components/sections/HeroNeon.tsx) ── */
 /* Kursywa: w dzień złoty tusz, w nocy neon. Na jasnym tle ciemniejsze złoto — accent #c8a96e ma
    kontrast 2.15:1, #9a7a3e ma 3.84:1 (SC 1.4.3, duży tekst ≥ 3:1). */

@@ -202,6 +202,29 @@
       }
     ],
     "processTitle": "Jak pracuję",
+    "processLead": "Najwięcej czasu zajmują decyzje i tekst. Kod powstaje szybko, bo wiem, co ma robić.",
+    "processSteps": [
+      {
+        "title": "Rozmowa",
+        "text": "Pytam o klientów, ofertę, konkurencję i o to, czego nie chcesz obiecywać. Trwa 60–90 minut."
+      },
+      {
+        "title": "Decyzje i struktura",
+        "text": "Ustalamy, dla kogo jest strona, jakie ma podstrony i co ma zrobić odwiedzający."
+      },
+      {
+        "title": "Tekst",
+        "text": "Piszę teksty. Dostajesz je do akceptacji przed budową, nie po."
+      },
+      {
+        "title": "Budowa z AI",
+        "text": "Koduję z AI. Każda zmiana przechodzi mój przegląd, a Ty dostajesz podgląd strony online."
+      },
+      {
+        "title": "Wdrożenie i poprawki",
+        "text": "Publikacja, metadane, mapa strony, pierwsze pomiary. Uwagi z przeglądu wprowadzam przed startem."
+      }
+    ],
     "pricingTitle": "Ile to kosztuje? Przykłady",
     "aboutTitle": "Paweł Kuligowski",
     "faqTitle": "Najczęściej zadawane pytania",

@@ -9,6 +9,7 @@ import { AiRole, type AiRoleCard } from '@/components/home/AiRole'
 import { Problem, type ProblemTexts } from '@/components/home/Problem'
 import { Audience } from '@/components/home/Audience'
 import { Services, type ServiceItem } from '@/components/home/Services'
+import { Process, type ProcessStep } from '@/components/home/Process'
 import { TranslationStore } from '@/components/layout/TranslationStore'
 import { seoMetadata } from '@/lib/metadata'
 import { CONTACT_PATH, ONE_PAGER_SECTIONS, contactHrefFor, sectionAnchor } from '@/lib/onePager'
@@ -17,7 +18,7 @@ import type { Metadata } from 'next'
 import type { Locale } from '@/lib/locales'
 
 // Sekcje już zbudowane (mają własne komponenty powyżej listy zaślepek)
-const BUILT = new Set(['hero', 'aiRole', 'problem', 'audience', 'services'])
+const BUILT = new Set(['hero', 'aiRole', 'problem', 'audience', 'services', 'process'])
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
   const { locale } = await params
@@ -107,6 +108,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
         id={sectionAnchor('services', locale)}
         title={t('servicesTitle')}
         items={(t.raw('servicesItems') as Omit<ServiceItem, 'href'>[]).map((item) => ({ ...item, href: contactHrefFor(locale, item.key) }))}
+      />
+
+      <Process
+        id={sectionAnchor('process', locale)}
+        title={t('processTitle')}
+        lead={t('processLead')}
+        steps={t.raw('processSteps') as ProcessStep[]}
       />
 
       {/* Sekcje jeszcze niezbudowane (kolejne iteracje) */}
