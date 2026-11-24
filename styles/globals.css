@@ -496,6 +496,13 @@
   }
 }
 
+/* ── Z bloga (components/home/FromBlog.tsx): karty ukryte do wejścia ── */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-blog]:not([data-blog-done]) [data-blog-card] {
+    opacity: 0;
+  }
+}
+
 /* ── Hero: zapłon neonu (components/sections/HeroNeon.tsx) ── */
 /* Kursywa: w dzień złoty tusz, w nocy neon. Na jasnym tle ciemniejsze złoto — accent #c8a96e ma
    kontrast 2.15:1, #9a7a3e ma 3.84:1 (SC 1.4.3, duży tekst ≥ 3:1). */

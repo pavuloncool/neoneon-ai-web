@@ -286,6 +286,8 @@
       }
     ],
     "blogTitle": "From the blog",
+    "blogLead": "I write about creating content and websites that people understand and AI assistants quote.",
+    "blogCta": "All articles",
     "ctaTitle": "Let's start with a conversation",
     "placeholder": "Section under construction (iteration {iteration})."
   }

@@ -11,7 +11,11 @@ import { Audience } from '@/components/home/Audience'
 import { Services, type ServiceItem } from '@/components/home/Services'
 import { Process, type ProcessStep } from '@/components/home/Process'
 import { Pricing, type PricingCard, type PricingTexts } from '@/components/home/Pricing'
-import { getAboutData, getHomeFaq, getPricing } from '@/lib/queries'
+import { getAboutData, getArticles, getHomeFaq, getPricing } from '@/lib/queries'
+import { FromBlog } from '@/components/home/FromBlog'
+import { BLOG_PATH } from '@/lib/links'
+import { formatDate } from '@/lib/utils'
+import { DATE_LOCALE, type Locale } from '@/lib/locales'
 import { Faq, type FaqItemView } from '@/components/home/Faq'
 import { FaqJsonLd } from '@/components/seo/FaqJsonLd'
 import { About } from '@/components/home/About'
@@ -22,12 +26,11 @@ import { seoMetadata } from '@/lib/metadata'
 import { CONTACT_PATH, ONE_PAGER_SECTIONS, contactHrefFor, sectionAnchor } from '@/lib/onePager'
 import { SITE_NAME, SITE_URL, localeUrl } from '@/lib/site'
 import type { Metadata } from 'next'
-import type { Locale } from '@/lib/locales'
 
 const PERSON_NAME = 'Paweł Kuligowski'
 
 // Sekcje już zbudowane (mają własne komponenty powyżej listy zaślepek)
-const BUILT = new Set(['hero', 'aiRole', 'problem', 'audience', 'services', 'process', 'pricing', 'about', 'faq'])
+const BUILT = new Set(['hero', 'aiRole', 'problem', 'audience', 'services', 'process', 'pricing', 'about', 'faq', 'blog'])
 
 // Wyceny: dane z Sanity → karty z gotowymi tekstami. Wyłączone w Ustawieniach wycen = brak sekcji.
 // Błąd Sanity nie wywraca strony — sekcja po prostu się nie pokazuje.
@@ -104,6 +107,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
     console.error('O mnie: nie udało się pobrać danych z Sanity', error)
     return { portrait: null, post: null }
   })
+  // Z bloga: trzy najnowsze wpisy w języku strony (getArticles przy błędzie zwraca pustą listę)
+  const recentPosts = await getArticles({ limit: 3, locale })
   // FAQ: opublikowane „Pytania FAQ” z Sanity; bez nich (albo przy błędzie Sanity) — teksty z messages
   const faqFromSanity = await getHomeFaq(locale).catch((error) => {
     console.error('FAQ: nie udało się pobrać danych z Sanity', error)
@@ -241,6 +246,24 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
       <Faq id={sectionAnchor('faq', locale)} title={t('faqTitle')} items={faq} />
       {/* FAQPage z tych samych danych co widok */}
       <FaqJsonLd faq={faq} />
+
+      <FromBlog
+        id={sectionAnchor('blog', locale)}
+        title={t('blogTitle')}
+        lead={t('blogLead')}
+        cta={t('blogCta')}
+        ctaHref={BLOG_PATH}
+        posts={recentPosts.map((a) => ({
+          id: a.id,
+          href: `/${a.category}/${a.slug}`,
+          title: a.title,
+          excerpt: a.excerpt ?? null,
+          date: a.published_at ? formatDate(a.published_at, DATE_LOCALE[locale]) : null,
+          dateTime: a.published_at ?? null,
+          category: a.category_title ?? null,
+          image: a.cover_image_url ? { url: a.cover_image_url, focalX: a.cover_focal_x ?? null, focalY: a.cover_focal_y ?? null } : null,
+        }))}
+      />
 
       {/* Sekcje jeszcze niezbudowane (kolejne iteracje) */}
       {ONE_PAGER_SECTIONS.filter((s) => !BUILT.has(s.key)).map((s) => (

@@ -286,6 +286,8 @@
       }
     ],
     "blogTitle": "Z bloga",
+    "blogLead": "Piszę o tym, jak tworzyć treści i strony, które ludzie rozumieją, a asystenci AI cytują.",
+    "blogCta": "Wszystkie artykuły",
     "ctaTitle": "Zacznijmy od rozmowy",
     "placeholder": "Sekcja w budowie (iteracja {iteration})."
   }
