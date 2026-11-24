@@ -148,6 +148,59 @@
     "audienceRest": "i potrzebujesz strony, która wyjaśnia, co robisz, bez żargonu i bez przesady.",
     "audienceText": "Najczęściej pracuję z firmami i osobami z branż niszowych, specjalistycznych i premium. Mają wiedzę, której klient nie ma, i muszą ją wyjaśnić tak, żeby budziła zaufanie. W branżach regulowanych, jak prawo, zdrowie czy suplementy, piszę z uwzględnieniem ograniczeń: co wolno obiecać, a czego nie.",
     "servicesTitle": "Trzy sposoby współpracy",
+    "servicesItems": [
+      {
+        "key": "copy",
+        "title": "Tekst na stronę",
+        "tags": [
+          "Copywriting",
+          "Redakcja",
+          "Tworzenie treści"
+        ],
+        "text": "Rozmowa, z której powstają teksty strony głównej, oferty, zakładki o mnie i FAQ. Albo redakcja tego, co już masz, także tekstów pisanych z AI.",
+        "points": [
+          "wywiad zamiast briefu do samodzielnego wypełnienia",
+          "struktura strony i kolejność argumentów",
+          "teksty po polsku i angielsku",
+          "metadane SEO i FAQ pod wyszukiwarki i asystentów AI"
+        ],
+        "cta": "Zacznijmy od tekstu"
+      },
+      {
+        "key": "website",
+        "title": "Strona od decyzji do wdrożenia",
+        "tags": [
+          "Landing page",
+          "Strona www",
+          "Aplikacja webowa"
+        ],
+        "text": "Najpierw ustalamy, co strona ma robić. Potem buduję ją z AI jako narzędziem do kodowania, na Next.js i Sanity, z panelem, w którym sam zmienisz teksty.",
+        "points": [
+          "landing page pod jedną usługę lub kampanię",
+          "strona firmowa z blogiem",
+          "prosta aplikacja webowa: formularze, kalkulatory, zapisy",
+          "wdrożenie na Vercel i przegląd każdej zmiany przed publikacją"
+        ],
+        "cta": "Porozmawiajmy o stronie"
+      },
+      {
+        "key": "content",
+        "title": "Treści, które pracują dalej",
+        "tags": [
+          "Content marketing",
+          "Rozwój treści",
+          "Audyt widoczności w AI"
+        ],
+        "text": "Plan bloga i artykuły, które odpowiadają na pytania Twoich klientów i dają asystentom AI powód, żeby Cię cytować.",
+        "points": [
+          "plan tematów oparty na pytaniach klientów",
+          "artykuły eksperckie i advertoriale",
+          "aktualizacja starych treści",
+          "sprawdzenie, jak Twoja firma wypada w ChatGPT, Perplexity, Gemini i Google"
+        ],
+        "cta": "Zaplanujmy treści"
+      }
+    ],
     "processTitle": "Jak pracuję",
     "pricingTitle": "Ile to kosztuje? Przykłady",
     "aboutTitle": "Paweł Kuligowski",

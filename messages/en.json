@@ -148,6 +148,59 @@
     "audienceRest": "and need a website that explains what you do, without jargon and without exaggeration.",
     "audienceText": "I mostly work with businesses and people in niche, specialist and premium fields. They have knowledge their clients don't, and they need to explain it in a way that builds trust. In regulated fields such as law, health or supplements, I write within the limits: what you can promise and what you can't.",
     "servicesTitle": "Three ways to work together",
+    "servicesItems": [
+      {
+        "key": "copy",
+        "title": "Website copy",
+        "tags": [
+          "Copywriting",
+          "Editing",
+          "Content creation"
+        ],
+        "text": "A conversation that turns into copy for your homepage, offer, about page and FAQ. Or editing what you already have, including copy written with AI.",
+        "points": [
+          "an interview instead of a brief you fill in alone",
+          "page structure and order of arguments",
+          "copy in Polish and English",
+          "SEO metadata and FAQ for search engines and AI assistants"
+        ],
+        "cta": "Start with the copy"
+      },
+      {
+        "key": "website",
+        "title": "A website from decisions to launch",
+        "tags": [
+          "Landing page",
+          "Website",
+          "Web app"
+        ],
+        "text": "First we decide what the website should do. Then I build it with AI as a coding tool, on Next.js and Sanity, with a panel where you can edit the copy yourself.",
+        "points": [
+          "a landing page for one service or campaign",
+          "a company website with a blog",
+          "a simple web app: forms, calculators, sign-ups",
+          "deployment on Vercel and a review of every change before it goes live"
+        ],
+        "cta": "Let's talk about your website"
+      },
+      {
+        "key": "content",
+        "title": "Content that keeps working",
+        "tags": [
+          "Content marketing",
+          "Content development",
+          "AI visibility audit"
+        ],
+        "text": "A blog plan and articles that answer your clients' questions and give AI assistants a reason to quote you.",
+        "points": [
+          "a topic plan based on clients' questions",
+          "expert articles and advertorials",
+          "updating older content",
+          "checking how your business shows up in ChatGPT, Perplexity, Gemini and Google"
+        ],
+        "cta": "Let's plan the content"
+      }
+    ],
     "processTitle": "How I work",
     "pricingTitle": "What does it cost? Examples",
     "aboutTitle": "Paweł Kuligowski",
