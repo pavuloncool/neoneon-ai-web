@@ -5,6 +5,10 @@ import { getPricing, getSiteSettings } from '@/lib/queries'
 import { resolveHref } from '@/lib/links'
 import { priceExamples } from '@/lib/pricing'
 import { sectionAnchor } from '@/lib/onePager'
+import { LEGAL_PATHS, getLegalDoc } from '@/lib/legal'
+
+// Linki do polityk z Sanity pomijamy — stopka dodaje je sama (z kodu), żeby się nie dublowały
+const LEGAL_HREFS = Object.values(LEGAL_PATHS).flatMap((paths) => Object.values(paths))
 import type { NavItem } from '@/types'
 import { toLocale, type Locale } from '@/lib/locales'
 
@@ -75,7 +79,11 @@ export default async function BlogLayout({
       </main>
       <Footer
         text={settings?.footerText ?? '© {year} NEONEON.'}
-        links={toLinks(settings?.footerLinks, hidden)}
+        links={toLinks(settings?.footerLinks, hidden).filter((l) => !LEGAL_HREFS.includes(l.href))}
+        legalLinks={(['privacy', 'cookies'] as const).map((key) => ({
+          href: LEGAL_PATHS[key][toLocale(locale)],
+          label: getLegalDoc(key, toLocale(locale)).title,
+        }))}
         navLabel={a11y.footerNav ?? fallback('footerNav')}
       />
     </>

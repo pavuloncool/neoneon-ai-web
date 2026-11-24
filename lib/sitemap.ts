@@ -8,6 +8,10 @@ import type { SitemapData } from '@/lib/queries'
 import { pagePath } from '@/lib/links'
 import { LOCALES } from '@/lib/locales'
 import { REDIRECTED_PAGE_SLUGS } from '@/lib/onePager'
+import { LEGAL_PATHS } from '@/lib/legal'
+
+// Polityki są w kodzie (lib/legal.ts) — strony Sanity o tych slugach nie są już wyświetlane
+const LEGAL_SLUGS = Object.values(LEGAL_PATHS).flatMap((paths) => Object.values(paths).map((p) => p.slice(1)))
 
 type Doc = { _id: string; locale: Locale; path: string; modifiedAt: string | null }
 
@@ -26,7 +30,7 @@ function newer(a: string | null, b: string | null): string | null {
 export function buildSitemap({ pages, articles, categories, translations }: SitemapData): MetadataRoute.Sitemap {
   const docs: Doc[] = [
     // Strony przekierowane 301 na sekcję strony głównej (next.config.ts) nie trafiają do sitemapy
-    ...pages.flatMap((p) => ((p.isHome || p.slug) && !REDIRECTED_PAGE_SLUGS.includes(p.slug ?? '') ? [{ ...p, path: pagePath(p) }] : [])),
+    ...pages.flatMap((p) => ((p.isHome || p.slug) && !REDIRECTED_PAGE_SLUGS.includes(p.slug ?? '') && !LEGAL_SLUGS.includes(p.slug ?? '') ? [{ ...p, path: pagePath(p) }] : [])),
     ...articles.map((a) => ({ ...a, path: `/${a.category}/${a.slug}` })),
   ]
   const byId = new Map(docs.map((d) => [d._id, d]))
@@ -41,6 +45,11 @@ export function buildSitemap({ pages, articles, categories, translations }: Site
   // Strona główna (one-pager w kodzie) — w każdym języku, bez daty modyfikacji
   const homeLanguages = withDefault(Object.fromEntries(LOCALES.map((l) => [l, localeUrl(l)])))
   const homeEntries: MetadataRoute.Sitemap = LOCALES.map((l) => ({ url: localeUrl(l), alternates: { languages: homeLanguages } }))
+  // Polityki prywatności i cookies (w kodzie) — z odpowiednikami językowymi
+  for (const paths of Object.values(LEGAL_PATHS)) {
+    const languages = withDefault(Object.fromEntries(LOCALES.map((l) => [l, localeUrl(l, paths[l])])))
+    homeEntries.push(...LOCALES.map((l) => ({ url: localeUrl(l, paths[l]), alternates: { languages } })))
+  }
 
   const entries: MetadataRoute.Sitemap = [...homeEntries, ...docs.map((d) => {
     const group = groupOf(d._id).flatMap((id) => byId.get(id) ?? [])

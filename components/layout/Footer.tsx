@@ -5,10 +5,12 @@ import { linkHref } from '@/lib/links'
 export interface FooterProps {
   text: string
   links: { href: string; label: string; external: boolean }[]
+  // Polityki (w kodzie, lib/legal.ts) — zawsze na końcu stopki
+  legalLinks?: { href: string; label: string }[]
   navLabel: string
 }
 
-export function Footer({ text, links, navLabel }: FooterProps) {
+export function Footer({ text, links, legalLinks = [], navLabel }: FooterProps) {
   const linkClass = 'text-sm text-muted hover:text-ink dark:hover:!text-white transition-colors'
   return (
     <footer className="mt-24 border-t border-border">
@@ -25,6 +27,9 @@ export function Footer({ text, links, navLabel }: FooterProps) {
               <Link key={link.href} href={linkHref(link.href)} className={linkClass}>{link.label}</Link>
             )
           )}
+          {legalLinks.map((link) => (
+            <Link key={link.href} href={link.href} className={linkClass}>{link.label}</Link>
+          ))}
         </nav>
       </div>
     </footer>
