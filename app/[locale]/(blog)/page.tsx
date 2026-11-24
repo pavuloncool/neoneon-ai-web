@@ -3,7 +3,6 @@
 // Lista bloga (dawna strona główna z page buildera) jest pod /{locale}/blog.
 import { getTranslations } from 'next-intl/server'
 import { JsonLd } from '@/components/seo/JsonLd'
-import { HomeSection } from '@/components/home/HomeSection'
 import { Hero } from '@/components/home/Hero'
 import { AiRole, type AiRoleCard } from '@/components/home/AiRole'
 import { Problem, type ProblemTexts } from '@/components/home/Problem'
@@ -13,6 +12,7 @@ import { Process, type ProcessStep } from '@/components/home/Process'
 import { Pricing, type PricingCard, type PricingTexts } from '@/components/home/Pricing'
 import { getAboutData, getArticles, getHomeFaq, getPricing } from '@/lib/queries'
 import { FromBlog } from '@/components/home/FromBlog'
+import { FinalCta } from '@/components/home/FinalCta'
 import { BLOG_PATH } from '@/lib/links'
 import { formatDate } from '@/lib/utils'
 import { DATE_LOCALE, type Locale } from '@/lib/locales'
@@ -23,14 +23,11 @@ import { formatNumber, priceExamples, rateLine } from '@/lib/pricing'
 import { TranslationStore } from '@/components/layout/TranslationStore'
 import { AnchorScroll } from '@/components/blog/AnchorScroll'
 import { seoMetadata } from '@/lib/metadata'
-import { CONTACT_PATH, ONE_PAGER_SECTIONS, contactHrefFor, sectionAnchor } from '@/lib/onePager'
+import { CONTACT_PATH, contactHrefFor, sectionAnchor } from '@/lib/onePager'
 import { SITE_NAME, SITE_URL, localeUrl } from '@/lib/site'
 import type { Metadata } from 'next'
 
 const PERSON_NAME = 'Paweł Kuligowski'
-
-// Sekcje już zbudowane (mają własne komponenty powyżej listy zaślepek)
-const BUILT = new Set(['hero', 'aiRole', 'problem', 'audience', 'services', 'process', 'pricing', 'about', 'faq', 'blog'])
 
 // Wyceny: dane z Sanity → karty z gotowymi tekstami. Wyłączone w Ustawieniach wycen = brak sekcji.
 // Błąd Sanity nie wywraca strony — sekcja po prostu się nie pokazuje.
@@ -265,12 +262,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
         }))}
       />
 
-      {/* Sekcje jeszcze niezbudowane (kolejne iteracje) */}
-      {ONE_PAGER_SECTIONS.filter((s) => !BUILT.has(s.key)).map((s) => (
-        <HomeSection key={s.key} id={s.anchor[locale]} title={t(`${s.key}Title`)}>
-          <p className="mt-6 text-sm text-muted">{t('placeholder', { iteration: s.iteration })}</p>
-        </HomeSection>
-      ))}
+      <FinalCta
+        id={sectionAnchor('cta', locale)}
+        title={t('ctaTitle')}
+        text={t('ctaText')}
+        button={t('ctaButton')}
+        href={CONTACT_PATH[locale]}
+      />
     </>
   )
 }

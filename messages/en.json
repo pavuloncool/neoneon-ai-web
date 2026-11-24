@@ -289,6 +289,7 @@
     "blogLead": "My articles, case studies, tips and opinions",
     "blogCta": "All articles",
     "ctaTitle": "Let's start with a conversation",
-    "placeholder": "Section under construction (iteration {iteration})."
+    "ctaText": "Describe in a few sentences what you sell and what website you have today, or that you don't have one. I usually reply within a few hours.",
+    "ctaButton": "Write to me"
   }
 }

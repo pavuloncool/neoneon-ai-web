@@ -1,4 +1,5 @@
 import { Link } from '@/i18n/navigation'
+import { linkHref } from '@/lib/links'
 
 // Dane z ustawień strony w Sanity (siteSettings) — przygotowuje je app/[locale]/(blog)/layout.tsx
 export interface FooterProps {
@@ -16,12 +17,12 @@ export function Footer({ text, links, navLabel }: FooterProps) {
           {text.replace('{year}', String(new Date().getFullYear()))}
         </p>
         {/* SC 1.3.1 — aria-label odróżnia nawigację stopki */}
-        <nav aria-label={navLabel} className="flex gap-6">
+        <nav aria-label={navLabel} className="flex flex-wrap gap-x-6 gap-y-2">
           {links.map((link) =>
             link.external ? (
               <a key={link.href} href={link.href} className={linkClass} target="_blank" rel="noopener noreferrer">{link.label}</a>
             ) : (
-              <Link key={link.href} href={link.href} className={linkClass}>{link.label}</Link>
+              <Link key={link.href} href={linkHref(link.href)} className={linkClass}>{link.label}</Link>
             )
           )}
         </nav>

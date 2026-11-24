@@ -289,6 +289,7 @@
     "blogLead": "Moje artykuły, case studies, podpowiedzi i opinie",
     "blogCta": "Wszystkie artykuły",
     "ctaTitle": "Zacznijmy od rozmowy",
-    "placeholder": "Sekcja w budowie (iteracja {iteration})."
+    "ctaText": "Opisz w kilku zdaniach, co sprzedajesz i jaką stronę masz dziś, albo że nie masz żadnej. Odpowiadam zwykle w ciągu kilku godzin.",
+    "ctaButton": "Napisz do mnie"
   }
 }

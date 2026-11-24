@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { Link, usePathname } from '@/i18n/navigation'
 import { useTheme } from 'next-themes'
 import { cn } from '@/lib/utils'
+import { linkHref } from '@/lib/links'
 import { useHydrated } from '@/lib/useHydrated'
 import { useState, useEffect, useRef } from 'react'
 import { Search, X } from 'lucide-react'
@@ -12,7 +13,7 @@ import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher'
 
 // Dane z ustawień strony w Sanity (siteSettings) — przygotowuje je app/[locale]/(blog)/layout.tsx
 export interface NavProps {
-  links: { href: string; label: string; external: boolean }[]
+  links: { href: string; label: string; external: boolean; highlight?: boolean }[]
   logo: { light: string; dark: string; alt: string }
   labels: {
     mainNav: string
@@ -105,7 +106,7 @@ function NavLink({ link, className, onClick, children }: { link: NavProps['links
   if (link.external) {
     return <a href={link.href} className={className} onClick={onClick} target="_blank" rel="noopener noreferrer">{children ?? link.label}</a>
   }
-  return <Link href={link.href} className={className} onClick={onClick}>{children ?? link.label}</Link>
+  return <Link href={linkHref(link.href)} className={className} onClick={onClick}>{children ?? link.label}</Link>
 }
 
 // Desktop: rolling text — dwie kopie etykiety w masce, druga aria-hidden; hover/focus-visible przesuwa
@@ -264,12 +265,17 @@ export function Nav({ links, logo, labels }: NavProps) {
                 return (
                   <li key={link.href}>
                     {/* Aktywny link zachowuje dotychczasowy styl; pozostałe: rolling text + złote podkreślenie */}
-                    <NavLink link={link} className={cn(
-                      'text-sm tracking-wide px-3 py-1.5 transition-colors',
-                      active ? 'bg-ink text-paper dark:bg-white dark:text-ink' : 'nav-roll-link text-muted hover:text-ink dark:hover:!text-white'
-                    )}>
-                      {active ? link.label : <RollingLabel label={link.label} />}
-                    </NavLink>
+                    {/* Pozycja wyróżniona (np. „Kontakt”): przycisk zamiast linku tekstowego */}
+                    {link.highlight ? (
+                      <NavLink link={link} className="ml-2 text-sm tracking-wide rounded-full px-4 py-1.5 bg-ink text-paper dark:bg-white dark:text-ink transition-opacity hover:opacity-85 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" />
+                    ) : (
+                      <NavLink link={link} className={cn(
+                        'text-sm tracking-wide px-3 py-1.5 transition-colors',
+                        active ? 'bg-ink text-paper dark:bg-white dark:text-ink' : 'nav-roll-link text-muted hover:text-ink dark:hover:!text-white'
+                      )}>
+                        {active ? link.label : <RollingLabel label={link.label} />}
+                      </NavLink>
+                    )}
                   </li>
                 )
               })}

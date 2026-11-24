@@ -1,17 +1,33 @@
 import { getTranslations } from 'next-intl/server'
 import { Nav } from '@/components/layout/Nav'
 import { Footer } from '@/components/layout/Footer'
-import { getSiteSettings } from '@/lib/queries'
+import { getPricing, getSiteSettings } from '@/lib/queries'
 import { resolveHref } from '@/lib/links'
+import { priceExamples } from '@/lib/pricing'
+import { sectionAnchor } from '@/lib/onePager'
 import type { NavItem } from '@/types'
-import { toLocale } from '@/lib/locales'
+import { toLocale, type Locale } from '@/lib/locales'
 
-// Pozycje menu z Sanity → { href, label }; pomija linki bez celu (np. usunięta strona)
-function toLinks(items?: NavItem[] | null) {
+// Pozycje menu z Sanity → { href, label, highlight }; pomija linki bez celu (np. usunięta strona)
+// i linki do ukrytych sekcji strony głównej
+function toLinks(items: NavItem[] | null | undefined, hiddenHrefs: string[]) {
   return (items ?? []).flatMap((item) => {
     const resolved = resolveHref(item.link)
-    return resolved ? [{ ...resolved, label: item.label }] : []
+    if (!resolved || hiddenHrefs.includes(resolved.href)) return []
+    return [{ ...resolved, label: item.label, highlight: Boolean(item.highlight) }]
   })
+}
+
+// Sekcja wycen nie renderuje się, gdy jest wyłączona albo bez opublikowanych przykładów —
+// wtedy znika też link „Wyceny” (brief 5.7)
+async function hiddenSectionHrefs(locale: Locale): Promise<string[]> {
+  try {
+    const pricing = await getPricing(locale)
+    const visible = pricing.settings?.showRates !== false && priceExamples(pricing).length > 0
+    return visible ? [] : [`/#${sectionAnchor('pricing', locale)}`]
+  } catch {
+    return [`/#${sectionAnchor('pricing', locale)}`]
+  }
 }
 
 export default async function BlogLayout({
@@ -23,6 +39,7 @@ export default async function BlogLayout({
 }) {
   const { locale } = await params
   const settings = await getSiteSettings(toLocale(locale))
+  const hidden = await hiddenSectionHrefs(toLocale(locale))
   const a11y = settings?.a11y ?? {}
   // Zapasowe etykiety a11y (gdy pole w Ustawieniach strony jest puste) — w języku strony
   const fallback = await getTranslations({ locale: toLocale(locale), namespace: 'a11y' })
@@ -37,7 +54,7 @@ export default async function BlogLayout({
         {a11y.skipToContent ?? fallback('skipToContent')}
       </a>
       <Nav
-        links={toLinks(settings?.navigation)}
+        links={toLinks(settings?.navigation, hidden)}
         logo={{
           light: settings?.logoLight?.url ?? '/neoneon-light.webp',
           dark: settings?.logoDark?.url ?? '/neoneon-dark.webp',
@@ -58,7 +75,7 @@ export default async function BlogLayout({
       </main>
       <Footer
         text={settings?.footerText ?? '© {year} NEONEON.'}
-        links={toLinks(settings?.footerLinks)}
+        links={toLinks(settings?.footerLinks, hidden)}
         navLabel={a11y.footerNav ?? fallback('footerNav')}
       />
     </>

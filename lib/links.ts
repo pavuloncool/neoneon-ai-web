@@ -41,6 +41,12 @@ export function resolveHref(link?: SanityLink | null): ResolvedLink | null {
   }
 }
 
+// Adres dla <Link> z next-intl. Kotwica strony głównej ('/#proces') jako obiekt — inaczej next-intl
+// sklei '/pl' + '/#proces' w '/pl/#proces' (zbędne przekierowanie /pl/ → /pl); z obiektem wychodzi '/pl#proces'.
+export function linkHref(href: string): string | { pathname: string; hash: string } {
+  return href.startsWith('/#') ? { pathname: '/', hash: href.slice(2) } : href
+}
+
 // Slug kategorii w linku, kafelku i artykule: z dokumentu `category`
 export const CATEGORY_SLUG = `categoryRef->slug.current`
 

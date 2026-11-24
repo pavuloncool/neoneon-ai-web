@@ -205,7 +205,7 @@ export async function getCommentsByArticle(articleId: string): Promise<Comment[]
 // ── Treść strony: ustawienia, strony z sekcji, teksty interfejsu ──────────
 
 const IMAGE_PROJECTION = groq`{ "url": asset->url, alt, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height, hotspot }`
-const NAV_PROJECTION = groq`{ label, "link": link${LINK_PROJECTION} }`
+const NAV_PROJECTION = groq`{ label, highlight, "link": link${LINK_PROJECTION} }`
 
 // cache(): layout, metadane i strona w jednym żądaniu dzielą jedno zapytanie
 export const getSiteSettings = cache(async (locale: Locale): Promise<SiteSettings | null> =>

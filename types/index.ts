@@ -72,6 +72,7 @@ export interface SanityImage {
 
 export interface NavItem {
   label: string
+  highlight?: boolean | null
   link: import('@/lib/links').SanityLink | null
 }
 

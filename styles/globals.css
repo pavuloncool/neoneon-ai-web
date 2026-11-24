@@ -503,6 +503,13 @@
   }
 }
 
+/* ── CTA końcowe (components/home/FinalCta.tsx): nagłówek ukryty do „wpisania” ── */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-cta]:not([data-cta-done]) [data-cta-heading] {
+    opacity: 0;
+  }
+}
+
 /* ── Hero: zapłon neonu (components/sections/HeroNeon.tsx) ── */
 /* Kursywa: w dzień złoty tusz, w nocy neon. Na jasnym tle ciemniejsze złoto — accent #c8a96e ma
    kontrast 2.15:1, #9a7a3e ma 3.84:1 (SC 1.4.3, duży tekst ≥ 3:1). */
