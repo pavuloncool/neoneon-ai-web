@@ -26,7 +26,8 @@ export interface ServiceItem {
   href: string
 }
 
-// Odręczne podkreślenie (lekko falujące); drugi wariant dla urozmaicenia
+// Odręczne podkreślenie (lekko falujące); drugi wariant dla urozmaicenia. Bez non-scaling-stroke (DrawSVG
+// nie mierzy wtedy długości); w pionie skala 1:1 (viewBox 12 = wysokość 12 px), więc grubość się nie zmienia.
 const UNDERLINES = ['M2,7 C40,3 90,10 140,5 S190,6 198,4', 'M2,5 C50,9 100,2 150,7 S192,4 198,6', 'M2,6 C45,2 95,9 145,4 S188,8 198,5']
 const HOVER = 0.3 // s
 const STROKE = 2.2
@@ -148,7 +149,6 @@ export function Services({ id, title, items }: { id: string; title: string; item
                       stroke="var(--accent-edit)"
                       strokeWidth={STROKE}
                       strokeLinecap="round"
-                      vectorEffect="non-scaling-stroke"
                     />
                     {item.key === 'website' ? (
                       <path
@@ -158,7 +158,6 @@ export function Services({ id, title, items }: { id: string; title: string; item
                         stroke="var(--accent-ai)"
                         strokeWidth={STROKE_BOLD}
                         strokeLinecap="round"
-                        vectorEffect="non-scaling-stroke"
                         opacity={0}
                       />
                     ) : null}

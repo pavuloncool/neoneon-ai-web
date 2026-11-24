@@ -159,7 +159,8 @@ export function Process({ id, title, lead, steps }: { id: string; title: string;
 
         <div data-process-viewport className="process-viewport mt-14">
           <ol data-process-track className="process-track relative max-w-6xl mx-auto px-6">
-            {/* Linia pionowa (mobile, reduce, bez JS) */}
+            {/* Linia pionowa (mobile, reduce, bez JS). Bez non-scaling-stroke: DrawSVG nie mierzy wtedy długości
+                (ostrzeżenie GSAP), a skala w poprzek linii jest 1:1, więc grubość się nie zmienia */}
             <svg
               data-process-vline
               aria-hidden="true"
@@ -167,7 +168,7 @@ export function Process({ id, title, lead, steps }: { id: string; title: string;
               viewBox="0 0 16 1000"
               preserveAspectRatio="none"
             >
-              <path d="M8,0 C13,140 3,280 8,420 S13,700 8,840 S4,960 8,1000" fill="none" stroke="var(--accent-edit)" strokeWidth={2} strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+              <path d="M8,0 C13,140 3,280 8,420 S13,700 8,840 S4,960 8,1000" fill="none" stroke="var(--accent-edit)" strokeWidth={2} strokeLinecap="round" />
             </svg>
 
             {/* Linia pozioma (desktop): odcinki „pióra”, ścieżka prowadząca znacznika, ciąg kodu przy kroku 4 */}
