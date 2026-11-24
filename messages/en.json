@@ -86,6 +86,31 @@
     "heroPrompt": "Build me a website for my law firm.",
     "heroLastLine": "// What should convince your client? No data.",
     "aiRoleTitle": "AI is a coding tool. Not a decision-maker.",
+    "aiRoleLead": "Building a website has four stages. In the first three, AI can make suggestions, but it doesn't know your market, your clients or what sets you apart. That's why decisions, design and planning stay with people. AI gets the job where it's fastest: the code.",
+    "aiRoleWho": "Who:",
+    "aiRoleUnknown": "AI?",
+    "aiRoleCards": [
+      {
+        "title": "Decisions",
+        "text": "Who the site is for, what it should sell, what we don't promise.",
+        "who": "You and me"
+      },
+      {
+        "title": "Design",
+        "text": "Structure, order of sections, tone and copy.",
+        "who": "You and me"
+      },
+      {
+        "title": "Plan",
+        "text": "Scope, pages, blog topics, deadlines.",
+        "who": "You and me"
+      },
+      {
+        "title": "Code",
+        "text": "Components, animations, deployment. I review every change before it goes live.",
+        "who": "AI + me"
+      }
+    ],
     "problemTitle": "The hardest part is the blank page",
     "audienceTitle": "Who I work with",
     "servicesTitle": "Three ways to work together",

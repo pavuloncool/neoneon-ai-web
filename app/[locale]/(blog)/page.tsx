@@ -5,6 +5,7 @@ import { getTranslations } from 'next-intl/server'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { HomeSection } from '@/components/home/HomeSection'
 import { Hero } from '@/components/home/Hero'
+import { AiRole, type AiRoleCard } from '@/components/home/AiRole'
 import { TranslationStore } from '@/components/layout/TranslationStore'
 import { seoMetadata } from '@/lib/metadata'
 import { CONTACT_PATH, ONE_PAGER_SECTIONS, sectionAnchor } from '@/lib/onePager'
@@ -55,7 +56,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
         }}
       />
 
-      {ONE_PAGER_SECTIONS.filter((s) => s.key !== 'hero').map((s) => (
+      <AiRole
+        id={sectionAnchor('aiRole', locale)}
+        texts={{
+          title: t('aiRoleTitle'),
+          lead: t('aiRoleLead'),
+          whoLabel: t('aiRoleWho'),
+          unknown: t('aiRoleUnknown'),
+          cards: t.raw('aiRoleCards') as AiRoleCard[],
+        }}
+      />
+
+      {/* Sekcje jeszcze niezbudowane (kolejne iteracje) */}
+      {ONE_PAGER_SECTIONS.filter((s) => s.key !== 'hero' && s.key !== 'aiRole').map((s) => (
         <HomeSection key={s.key} id={s.anchor[locale]} title={t(`${s.key}Title`)}>
           <p className="mt-6 text-sm text-muted">{t('placeholder', { iteration: s.iteration })}</p>
         </HomeSection>

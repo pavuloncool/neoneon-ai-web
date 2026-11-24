@@ -86,6 +86,31 @@
     "heroPrompt": "Zbuduj mi stronę dla mojej kancelarii.",
     "heroLastLine": "// Co ma przekonać Twojego klienta? Brak danych.",
     "aiRoleTitle": "AI to narzędzie do kodowania. Nie do decyzji.",
+    "aiRoleLead": "Budowa strony ma cztery etapy. W pierwszych trzech AI może podpowiadać, ale nie zna Twojego rynku, klientów ani tego, co odróżnia Cię od konkurencji. Dlatego decyzje, projekt i plan zostają po stronie ludzi. AI dostaje pracę tam, gdzie jest najszybsze: przy kodzie.",
+    "aiRoleWho": "Kto:",
+    "aiRoleUnknown": "AI?",
+    "aiRoleCards": [
+      {
+        "title": "Decyzje",
+        "text": "Dla kogo jest strona, co ma sprzedawać, czego nie obiecujemy.",
+        "who": "Ty i ja"
+      },
+      {
+        "title": "Projekt",
+        "text": "Struktura, kolejność sekcji, ton i teksty.",
+        "who": "Ty i ja"
+      },
+      {
+        "title": "Plan",
+        "text": "Zakres, podstrony, tematy na bloga, terminy.",
+        "who": "Ty i ja"
+      },
+      {
+        "title": "Kod",
+        "text": "Komponenty, animacje, wdrożenie. Każdą zmianę przeglądam przed publikacją.",
+        "who": "AI + ja"
+      }
+    ],
     "problemTitle": "Najtrudniejszy moment to pusta strona",
     "audienceTitle": "Dla kogo pracuję",
     "servicesTitle": "Trzy sposoby współpracy",
