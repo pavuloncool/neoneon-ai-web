@@ -493,6 +493,16 @@
   }
 }
 
+/* ── O mnie (components/home/About.tsx): portret i tekst ukryte do wejścia sekcji ── */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-about]:not([data-about-done]) [data-about-photo] {
+    clip-path: inset(100% 0 0 0);
+  }
+  html.js [data-about]:not([data-about-done]) [data-about-text] {
+    opacity: 0;
+  }
+}
+
 /* ── Hero: zapłon neonu (components/sections/HeroNeon.tsx) ── */
 /* Kursywa: w dzień złoty tusz, w nocy neon. Na jasnym tle ciemniejsze złoto — accent #c8a96e ma
    kontrast 2.15:1, #9a7a3e ma 3.84:1 (SC 1.4.3, duży tekst ≥ 3:1). */

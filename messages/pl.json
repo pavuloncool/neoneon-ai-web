@@ -237,6 +237,15 @@
     "pricingCta": "Poproś o wycenę swojego projektu",
     "pricingDevEmpty": "Brak opublikowanych przykładów wycen w Sanity — sekcja na produkcji się nie pokaże (komunikat widoczny tylko w trybie dev).",
     "aboutTitle": "Paweł Kuligowski",
+    "aboutCaption": "Redaktor, autor tekstów, buduje strony z AI",
+    "aboutText": "Jestem redaktorem naczelnym wydania online magazynu Luxury Boutique. Wcześniej, w latach 2009–2013, tłumaczyłem dokumenty w międzynarodowej kancelarii prawnej. Tam nauczyłem się, że precyzja tekstu ma konsekwencje. Od początku kariery pracuję jako freelancer. Tę stronę zbudowałem z AI, nie będąc programistą, i opisałem, jak to zrobiłem. Wiem więc z praktyki, gdzie AI przyspiesza pracę, a gdzie trzeba je zatrzymać.",
+    "aboutLink": "Przeczytaj, jak zbudowałem tę stronę",
+    "aboutFacts": [
+      "redaktor naczelny wydania online magazynu",
+      "tłumacz EN–PL w kancelarii prawnej (2009–2013)",
+      "teksty po polsku i angielsku"
+    ],
+    "aboutPostSlug": "moja-strona-z-ai",
     "faqTitle": "Najczęściej zadawane pytania",
     "blogTitle": "Z bloga",
     "ctaTitle": "Zacznijmy od rozmowy",

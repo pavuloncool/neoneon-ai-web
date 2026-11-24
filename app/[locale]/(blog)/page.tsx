@@ -11,9 +11,11 @@ import { Audience } from '@/components/home/Audience'
 import { Services, type ServiceItem } from '@/components/home/Services'
 import { Process, type ProcessStep } from '@/components/home/Process'
 import { Pricing, type PricingCard, type PricingTexts } from '@/components/home/Pricing'
-import { getPricing } from '@/lib/queries'
+import { getAboutData, getPricing } from '@/lib/queries'
+import { About } from '@/components/home/About'
 import { formatNumber, priceExamples, rateLine } from '@/lib/pricing'
 import { TranslationStore } from '@/components/layout/TranslationStore'
+import { AnchorScroll } from '@/components/blog/AnchorScroll'
 import { seoMetadata } from '@/lib/metadata'
 import { CONTACT_PATH, ONE_PAGER_SECTIONS, contactHrefFor, sectionAnchor } from '@/lib/onePager'
 import { SITE_NAME, SITE_URL, localeUrl } from '@/lib/site'
@@ -21,7 +23,7 @@ import type { Metadata } from 'next'
 import type { Locale } from '@/lib/locales'
 
 // Sekcje już zbudowane (mają własne komponenty powyżej listy zaślepek)
-const BUILT = new Set(['hero', 'aiRole', 'problem', 'audience', 'services', 'process', 'pricing'])
+const BUILT = new Set(['hero', 'aiRole', 'problem', 'audience', 'services', 'process', 'pricing', 'about'])
 
 // Wyceny: dane z Sanity → karty z gotowymi tekstami. Wyłączone w Ustawieniach wycen = brak sekcji.
 // Błąd Sanity nie wywraca strony — sekcja po prostu się nie pokazuje.
@@ -93,6 +95,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   const t = await getTranslations({ locale, namespace: 'onePager' })
   const tHome = await getTranslations({ locale, namespace: 'home' })
   const pricing = await loadPricing(locale, t)
+  // Błąd Sanity: sekcja „O mnie” bez portretu i linku do wpisu (tekst zostaje)
+  const about = await getAboutData(locale, t('aboutPostSlug')).catch((error) => {
+    console.error('O mnie: nie udało się pobrać danych z Sanity', error)
+    return { portrait: null, post: null }
+  })
 
   return (
     <>
@@ -109,6 +116,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
       />
       {/* Przełącznik języka: strona główna drugiego języka */}
       <TranslationStore path="/" />
+      {/* Wejście z kotwicą (/pl#o-mnie, przekierowanie z /pl/o-mnie, linki z menu): sekcje przypięte
+          dokładają wysokość po załadowaniu — cel ustawiany ponownie po każdej zmianie wysokości */}
+      <AnchorScroll />
 
       {/* Hero — jedyny H1 strony */}
       <Hero
@@ -189,6 +199,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
           cards={pricing.cards}
         />
       ) : null}
+
+      <About
+        id={sectionAnchor('about', locale)}
+        portrait={about.portrait}
+        postHref={about.post ? `/${about.post.category}/${about.post.slug}` : null}
+        texts={{
+          title: t('aboutTitle'),
+          caption: t('aboutCaption'),
+          text: t('aboutText'),
+          facts: t.raw('aboutFacts') as string[],
+          link: t('aboutLink'),
+        }}
+      />
 
       {/* Sekcje jeszcze niezbudowane (kolejne iteracje) */}
       {ONE_PAGER_SECTIONS.filter((s) => !BUILT.has(s.key)).map((s) => (

@@ -357,3 +357,26 @@ export const getHomeFaq = cache(async (locale: Locale): Promise<FaqEntry[]> =>
     { locale }
   )
 )
+
+// O mnie: portret z sekcji „tekst + obraz” strony „O mnie” (edytowalny w Studio) i adres wpisu o budowie strony
+export interface AboutData {
+  portrait: { url: string; width: number; height: number; lqip: string | null; alt: string | null } | null
+  post: { slug: string; category: string } | null
+}
+
+export const getAboutData = cache(async (locale: Locale, postSlug: string): Promise<AboutData> =>
+  sanityFetch<AboutData>(
+    groq`{
+      "portrait": *[_type == "page" && locale == $locale && slug.current in ["o-mnie", "about"]][0]
+        .sections[_type == "textImage" && defined(image.asset)][0].image{
+          "url": asset->url,
+          "width": asset->metadata.dimensions.width,
+          "height": asset->metadata.dimensions.height,
+          "lqip": asset->metadata.lqip,
+          alt
+        },
+      "post": *[_type == "article" && locale == $locale && slug.current == $postSlug][0]{ "slug": slug.current, "category": ${ARTICLE_CATEGORY} }
+    }`,
+    { locale, postSlug }
+  )
+)

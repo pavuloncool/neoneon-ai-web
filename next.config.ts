@@ -25,8 +25,11 @@ const nextConfig: NextConfig = {
   // Dawne polskie adresy sprzed page buildera (zaindeksowane w Google) → nowe slugi
   async redirects() {
     return [
-      { source: '/pl/about', destination: '/pl/o-mnie', permanent: true },
-      { source: '/pl/contact', destination: '/pl/kontakt', permanent: true },
+      // „O mnie” to sekcja strony głównej (brief, pkt 2) — 301 na kotwicę
+      { source: '/pl/o-mnie', destination: '/pl#o-mnie', statusCode: 301 as const },
+      { source: '/en/about', destination: '/en#about', statusCode: 301 as const },
+      { source: '/pl/about', destination: '/pl#o-mnie', statusCode: 301 as const },
+      { source: '/pl/contact', destination: '/pl/kontakt', statusCode: 301 as const },
     ]
   },
   // Umami (analityka bez cookies) serwowana z własnej domeny — mniej blokowana przez adblockery
