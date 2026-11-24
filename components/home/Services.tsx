@@ -113,12 +113,15 @@ export function Services({ id, title, items }: { id: string; title: string; item
           {title}
         </h2>
 
-        <ul data-services-grid className="mt-12 grid gap-6 lg:grid-cols-3">
+        {/* Desktop: wspólne wiersze dla wszystkich kart (subgrid) — etykiety, tytuł, opis, punkty i CTA
+            zaczynają się na tej samej wysokości; tytuł przy dolnej krawędzi wiersza, więc podkreślenia
+            leżą w jednej linii niezależnie od liczby wersów tytułu. */}
+        <ul data-services-grid className="mt-12 grid gap-6 lg:gap-y-0 lg:grid-cols-3 lg:grid-rows-[auto_auto_auto_1fr_auto]">
           {items.map((item, i) => (
             <li
               key={item.key}
               data-service-card
-              className="flex flex-col rounded-xl border border-border dark:border-white/10 bg-paper dark:bg-[#141414] p-7"
+              className="flex flex-col lg:grid lg:grid-rows-subgrid lg:row-span-5 rounded-xl border border-border dark:border-white/10 bg-paper dark:bg-[#141414] p-7"
             >
               <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
                 {/* Etykiety łamią się tylko między sobą, nigdy w środku */}
@@ -129,7 +132,7 @@ export function Services({ id, title, items }: { id: string; title: string; item
                   </span>
                 ))}
               </p>
-              <h3 className="mt-5 font-display text-3xl leading-tight">
+              <h3 className="mt-5 lg:self-end font-display text-3xl leading-tight">
                 <span className="relative inline-block pb-3">
                   {item.title}
                   <svg
@@ -163,7 +166,7 @@ export function Services({ id, title, items }: { id: string; title: string; item
                 </span>
               </h3>
               <p className="mt-5 text-[16px] leading-relaxed text-muted">{item.text}</p>
-              <ul className="mt-6 space-y-2.5 text-[15px] leading-snug flex-1">
+              <ul className="mt-6 space-y-2.5 text-[15px] leading-snug flex-1 lg:self-start">
                 {item.points.map((point) => (
                   <li key={point} className="flex gap-3">
                     <span aria-hidden="true" className="mt-[0.6em] h-px w-3 shrink-0 bg-current opacity-50" />
