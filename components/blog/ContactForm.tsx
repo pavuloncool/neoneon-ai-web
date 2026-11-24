@@ -19,7 +19,7 @@ import '@/lib/gsap-text'
 import '@/lib/gsap-svg'
 import { Flip } from '@/lib/gsap-flip'
 import { cn } from '@/lib/utils'
-import { CONTACT_EMAIL } from '@/lib/site'
+import { PUBLIC_CONTACT_EMAIL } from '@/lib/site'
 import { toLocale } from '@/lib/locales'
 import {
   BUDGET_OPTIONS,
@@ -223,8 +223,8 @@ export function ContactForm({ children }: { children?: React.ReactNode }) {
         {children}
         <p>
           {t('preferEmail')}{' '}
-          <a href={`mailto:${CONTACT_EMAIL}`} className="underline underline-offset-4 text-ink dark:text-white">
-            {CONTACT_EMAIL}
+          <a href={`mailto:${PUBLIC_CONTACT_EMAIL}`} className="underline underline-offset-4 text-ink dark:text-white">
+            {PUBLIC_CONTACT_EMAIL}
           </a>
         </p>
       </div>
@@ -330,7 +330,7 @@ export function ContactForm({ children }: { children?: React.ReactNode }) {
 
             {status === 'error' ? (
               <p role="alert" className="text-sm text-accent-edit">
-                {t('serverError', { email: CONTACT_EMAIL })}
+                {t('serverError', { email: PUBLIC_CONTACT_EMAIL })}
               </p>
             ) : null}
 

@@ -25,6 +25,9 @@ export const IS_INDEXABLE = IS_PRODUCTION && !IS_STAGING
 // Adresy e-mail formularzy (Resend): nadawca musi być w domenie zweryfikowanej w Resend
 export const FORM_FROM_EMAIL = 'formularz@neoneon.online'
 export const CONTACT_EMAIL = 'ask@neoneon.online'
+// Adres pokazywany na stronie (formularz kontaktowy: „Wolisz e-mail?”, komunikat błędu wysyłki).
+// CONTACT_EMAIL powyżej to adresat powiadomień z formularzy — osobno.
+export const PUBLIC_CONTACT_EMAIL = 'web@neoneon.online'
 
 // path bez prefiksu języka: '' = strona główna, '/o-mnie', '/ux-strategies/slug'
 export function localeUrl(locale: Locale, path = ''): string {
