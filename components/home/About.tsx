@@ -4,7 +4,7 @@
 // O mnie (brief 5.8 w wersji z aktualizacji): nie CV — problem klienta → sposób pracy → cel → jedna linijka faktów.
 // Portret odsłania się od dołu (clip-path inset(100% 0 0 0) → inset(0), 1,1 s, expo.out), wokół rysują się
 // DrawSVG znaczniki cięcia jak na korekcie drukarskiej (cztery narożniki). Tekst: SplitText po liniach z maską,
-// stagger 0,06 s. Jedyny efekt związany z treścią: w akapicie 4 fragment „wypełnić stronę” / „fill a website”
+// stagger 0,06 s. Jedyny efekt związany z treścią: w akapicie 4 fragment „skreślam je” / „I cut it”
 // zostaje skreślony (wspólny komponent z „Pustej strony”, lib/strike.ts), raz, przy wejściu akapitu.
 // Skreślony fragment zostaje w DOM i jest czytelny (zwykły <span>, nie <del> — treść zdania się nie zmienia).
 // Mobile: to samo. Reduce / bez JS: statycznie, skreślenie narysowane (przekreślenie CSS).
