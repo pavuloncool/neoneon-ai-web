@@ -3,7 +3,6 @@ import { dataset, projectId } from './sanity/env'
 
 export default defineCliConfig({
   api: { projectId, dataset },
-  // Studio osadzone pod https://neoneon.online/studio, zarejestrowane dla Dashboard Sanity:
-  // npx sanity deploy --external --url https://neoneon.online/studio
-  deployment: { appId: 's6fhdhb8r8pu95qz6jmtvbim' },
+  // appId Studio starego projektu (n81gbqh8) usunięty — po wdrożeniu nowej wersji zarejestruj Studio:
+  // npx sanity deploy --external --url https://<domena>/studio
 })

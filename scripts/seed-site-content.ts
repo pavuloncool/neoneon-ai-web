@@ -27,7 +27,7 @@ const env = Object.fromEntries(
 if (!env.SANITY_API_WRITE_TOKEN) throw new Error('Brak SANITY_API_WRITE_TOKEN w .env.local')
 
 const client = createClient({
-  projectId: env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? 'n81gbqh8',
+  projectId: env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? 'yj3w3w1l',
   dataset: env.NEXT_PUBLIC_SANITY_DATASET ?? 'production',
   apiVersion: '2025-02-19',
   token: env.SANITY_API_WRITE_TOKEN,
