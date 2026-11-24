@@ -27,3 +27,15 @@ export function sectionAnchor(key: OnePagerSectionKey, locale: Locale): string {
 
 // Strona kontaktowa (dokument `page` w Sanity; slug zależy od języka)
 export const CONTACT_PATH: Record<Locale, string> = { pl: '/kontakt', en: '/contact' }
+
+// Parametr formularza kontaktowego wstępnie zaznaczający usługę (brief 5.5; obsługa w iteracji 12)
+export const SERVICE_PARAM: Record<Locale, string> = { pl: 'usluga', en: 'service' }
+export const SERVICE_VALUES = {
+  copy: { pl: 'tekst', en: 'copy' },
+  website: { pl: 'strona', en: 'website' },
+  content: { pl: 'tresci', en: 'content' },
+} as const satisfies Record<string, Record<Locale, string>>
+
+export function contactHrefFor(locale: Locale, service?: keyof typeof SERVICE_VALUES): string {
+  return service ? `${CONTACT_PATH[locale]}?${SERVICE_PARAM[locale]}=${SERVICE_VALUES[service][locale]}` : CONTACT_PATH[locale]
+}

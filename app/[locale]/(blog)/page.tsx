@@ -9,7 +9,7 @@ import { AiRole, type AiRoleCard } from '@/components/home/AiRole'
 import { Problem, type ProblemTexts } from '@/components/home/Problem'
 import { TranslationStore } from '@/components/layout/TranslationStore'
 import { seoMetadata } from '@/lib/metadata'
-import { CONTACT_PATH, ONE_PAGER_SECTIONS, sectionAnchor } from '@/lib/onePager'
+import { CONTACT_PATH, ONE_PAGER_SECTIONS, contactHrefFor, sectionAnchor } from '@/lib/onePager'
 import { SITE_NAME, SITE_URL, localeUrl } from '@/lib/site'
 import type { Metadata } from 'next'
 import type { Locale } from '@/lib/locales'
@@ -73,7 +73,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
 
       <Problem
         id={sectionAnchor('problem', locale)}
-        contactHref={CONTACT_PATH[locale]}
+        contactHref={contactHrefFor(locale, 'copy')}
         texts={{
           title: t('problemTitle'),
           lead: t('problemLead'),
