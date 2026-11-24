@@ -65,3 +65,12 @@ export const TRIGGER_START = {
   default: 'top 80%',
   editDemo: 'top 65%',
 } as const
+
+// Skreślenie redakcyjne (lib/strike.ts): „Pusta strona” i „O mnie”
+export const STRIKE = {
+  draw: 0.7, // s, DrawSVG 0% → 100%
+  retract: 0.5, // s, zwinięcie kreski przy zmianie wariantu
+  ease: 'power2.inOut',
+  lineY: 0.55, // wysokość kreski w linii tekstu (0 = góra, 1 = dół)
+  aboutStart: 'top 70%', // start skreślenia w akapicie 4 „O mnie”
+} as const

@@ -236,17 +236,55 @@
     "pricingNote": "These are examples, not an offer. I prepare an exact quote after our first conversation. The first conversation is free.",
     "pricingCta": "Ask for a quote for your project",
     "pricingDevEmpty": "No published pricing examples in Sanity — the section won't show in production (message visible in dev only).",
-    "aboutTitle": "Paweł Kuligowski",
-    "aboutCaption": "Editor, copywriter, builds websites with AI",
-    "aboutText": "I'm the editor-in-chief of the online edition of Luxury Boutique magazine. Before that, from 2009 to 2013, I translated documents at an international law firm. That's where I learned that precision in writing has consequences. I've worked as a freelancer my whole career. I built this website with AI without being a programmer, and I wrote about how I did it. So I know from practice where AI speeds things up and where it needs to be stopped.",
-    "aboutLink": "Read how I built this website",
-    "aboutFacts": [
-      "editor-in-chief of a magazine's online edition",
-      "EN–PL translator at a law firm (2009–2013)",
-      "copy in Polish and English"
+    "aboutEyebrow": "About · Paweł Kuligowski",
+    "aboutTitle": "You know your field. I know how to explain it.",
+    "aboutParagraphs": [
+      "Think of me as an editor who works on your side.",
+      "Specialists rarely lack knowledge. The trouble starts when they have to explain it to someone who doesn't have it: a patient, a law firm's client, someone coming to their first yoga class. The copy ends up too technical or too vague.",
+      "My approach is simple. I ask what clients ask you the first time they get in touch, what worries them and why they choose you. Those answers become the copy first and the website second. AI writes the code; I decide what goes on the page.",
+      "I don't write copy to fill a website. Every sentence should answer a specific question or remove a specific doubt. If it doesn't, I cut it.",
+      "My goal is a website your clients understand on the first read and AI assistants can cite as a source."
     ],
+    "aboutStrike": "fill a website",
+    "aboutFacts": "Over 10 years of experience in content creation · Editor-in-chief of an online luxury lifestyle magazine · Copy in Polish and English",
+    "aboutLink": "Read how I built this website with AI",
+    "personJobTitle": "Editor-in-chief of an online luxury lifestyle magazine",
     "aboutPostSlug": "my-ai-assisted-website",
     "faqTitle": "Frequently asked questions",
+    "faqItems": [
+      {
+        "q": "Can you build a website with AI without a developer?",
+        "a": "Yes, as far as the code goes. Tools like Claude Code or Cursor write working code from a description. The hard part is elsewhere: AI needs clear decisions about what the site should do, who it's for and what it should say. Without them, you get a website that works technically but says nothing."
+      },
+      {
+        "q": "What does AI help with when building a website, and what doesn't it help with?",
+        "a": "AI helps with the code: components, styles, animations, fixes and tests. It won't replace decisions about who you're talking to, what you promise and how you stand out. It also won't create your site structure or content plan, because it doesn't know your clients."
+      },
+      {
+        "q": "Will AI write the copy for my website?",
+        "a": "It will, but the copy will usually sound like your competitors'. AI averages what already exists online. Good copy needs specifics only you have: numbers, procedures, examples, limits. My job is to draw them out in conversation and write them down in plain language."
+      },
+      {
+        "q": "How long does it take to build a website with AI?",
+        "a": "A landing page usually takes 1–2 weeks, a company website with a blog 3–6 weeks. Decisions and copy take most of the time, not the code."
+      },
+      {
+        "q": "Will I be able to edit the content myself?",
+        "a": "Yes. I build websites on Sanity, which gives you a panel to change text, images and blog posts without touching the code."
+      },
+      {
+        "q": "Will a website built with AI show up in Google and ChatGPT?",
+        "a": "The tool used to write the code doesn't matter. What matters is the content and the technical side: clear answers to clients' questions, a correct heading structure, structured data and fast loading. I take care of that at every stage."
+      },
+      {
+        "q": "How do you charge?",
+        "a": "By the hour, at the rates shown in the pricing examples. The first conversation is free. Before we start, you get an estimate of the hours. If the scope changes, I tell you before we go over the estimate."
+      },
+      {
+        "q": "Do you also write in English?",
+        "a": "Yes. I write and edit copy in Polish and English. I can prepare both versions of your website from scratch or translate and edit the version you already have."
+      }
+    ],
     "blogTitle": "From the blog",
     "ctaTitle": "Let's start with a conversation",
     "placeholder": "Section under construction (iteration {iteration})."

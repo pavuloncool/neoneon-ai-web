@@ -12,15 +12,14 @@
 //
 // Brak CLS: warianty „po” leżą w jednej komórce siatki — wysokość = najdłuższy wariant, stała przez
 // cały czas (dlatego zamiana bez Flip: nie ma zmiany układu do animowania).
-// Kreska: SplitText dzieli „przed” na linie (autoSplit przelicza je przy zmianie szerokości), każda linia
-// dostaje własną ścieżkę SVG. Postęp kreski trzyma obiekt `strike` (start/koniec 0–1 dla całego zdania),
-// więc po ponownym podziale linii nowe ścieżki od razu dostają bieżący stan.
+// Kreska: wspólny komponent skreślenia (lib/strike.ts, ten sam co w „O mnie”) — ścieżka SVG na każdą linię
+// zdania „przed”, przeliczana przy zmianie szerokości.
 
 import { useRef } from 'react'
 import { Link } from '@/i18n/navigation'
 import { gsap, motionEnabled, markMotionReady } from '@/lib/gsap'
 import { SplitText } from '@/lib/gsap-text'
-import '@/lib/gsap-svg'
+import { createStrike } from '@/lib/strike'
 import { ScrollTrigger } from '@/lib/gsap-scroll'
 import { useSectionMotion } from '@/lib/useSectionMotion'
 import { DURATION, EASE, LOOP, STAGGER, TRIGGER_START } from '@/lib/motion'
@@ -36,9 +35,6 @@ export interface ProblemTexts {
   closing: string
   cta: string
 }
-
-const SVG_NS = 'http://www.w3.org/2000/svg'
-const STRIKE_PATHS = ['M0,5 C30,7 65,3 100,5.5', 'M0,6 C35,4 70,7 100,4.5']
 
 export function Problem({ id, texts, contactHref }: { id: string; texts: ProblemTexts; contactHref: string }) {
   const root = useRef<HTMLElement>(null)
@@ -61,41 +57,8 @@ export function Problem({ id, texts, contactHref }: { id: string; texts: Problem
     const afters = (q('[data-problem-after]') as HTMLElement[]).slice(0, desktop ? texts.after.length : 1)
     const gapItems = q('[data-problem-gap]') as HTMLElement[]
 
-    // ── Kreska skreślenia: stan dla całego zdania, rozkładany na linie po kolei
-    const strike = { start: 0, end: 0 }
-    let paths: SVGPathElement[] = []
-    const clamp = gsap.utils.clamp(0, 1)
-    const applyStrike = () => {
-      const n = paths.length
-      paths.forEach((p, i) => {
-        const s = clamp(strike.start * n - i) * 100
-        const e = clamp(strike.end * n - i) * 100
-        gsap.set(p, { drawSVG: `${s}% ${e}%` })
-      })
-    }
-
-    SplitText.create(before, {
-      type: 'lines',
-      linesClass: 'problem-line',
-      aria: 'auto',
-      autoSplit: true,
-      onSplit: (self) => {
-        paths = self.lines.map((line, i) => {
-          const svg = document.createElementNS(SVG_NS, 'svg')
-          svg.setAttribute('class', 'problem-strike')
-          svg.setAttribute('viewBox', '0 0 100 10')
-          svg.setAttribute('preserveAspectRatio', 'none')
-          svg.setAttribute('aria-hidden', 'true')
-          const path = document.createElementNS(SVG_NS, 'path')
-          path.setAttribute('d', STRIKE_PATHS[i % STRIKE_PATHS.length])
-          path.setAttribute('vector-effect', 'non-scaling-stroke')
-          svg.appendChild(path)
-          line.appendChild(svg)
-          return path
-        })
-        applyStrike()
-      },
-    })
+    // ── Kreska skreślenia (wspólny komponent)
+    const strike = createStrike(before, before.parentElement as HTMLElement)
 
     // ── Zdania „po”: słowa (każdy wariant osobno)
     const words = afters.map((a) => SplitText.create(a, { type: 'words', aria: 'auto' }).words as HTMLElement[])
@@ -107,13 +70,11 @@ export function Problem({ id, texts, contactHref }: { id: string; texts: Problem
     gsap.set(note, { opacity: 1 })
     noteTyped.textContent = ''
     gsap.set(gapItems.map((g) => g.querySelectorAll('[data-problem-gap-anim]')), { opacity: 0, x: -24 })
-    el.classList.add('problem-animated') // CSS: bez przekreślenia tekstowego, kreskę rysuje SVG
     finish()
     markMotionReady()
 
-    const drawStrike = (vars: gsap.TweenVars = {}) =>
-      gsap.fromTo(strike, { start: 0, end: 0 }, { end: 1, duration: 0.7, ease: EASE.inOut, onUpdate: applyStrike, ...vars })
-    const retractStrike = () => gsap.to(strike, { start: 1, duration: 0.5, ease: EASE.inOut, onUpdate: applyStrike })
+    const drawStrike = (vars: gsap.TweenVars = {}) => strike.draw(vars)
+    const retractStrike = () => strike.retract()
     const wordsIn = (i: number) =>
       gsap.fromTo(words[i], { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: DURATION.fast, stagger: STAGGER.words, ease: EASE.base })
     const typeNote = () => {
@@ -179,7 +140,7 @@ export function Problem({ id, texts, contactHref }: { id: string; texts: Problem
     })
 
     return () => {
-      el.classList.remove('problem-animated')
+      strike.destroy()
       noteTyped.textContent = texts.note
     }
   })
@@ -197,8 +158,8 @@ export function Problem({ id, texts, contactHref }: { id: string; texts: Problem
           {/* Kolejność w DOM: „przed” → notatka → „po” (tak czyta czytnik i tak układa się mobile);
               na desktopie notatka przechodzi na margines obok zdania „przed”. */}
           <div className="grid gap-x-10 lg:grid-cols-[1fr_11rem]">
-            <p className="text-xl md:text-2xl leading-relaxed text-muted lg:col-start-1 lg:row-start-1">
-              <del data-problem-before className="problem-del">
+            <p className="relative text-xl md:text-2xl leading-relaxed text-muted lg:col-start-1 lg:row-start-1">
+              <del data-problem-before className="edit-strike">
                 {texts.before}
               </del>
             </p>

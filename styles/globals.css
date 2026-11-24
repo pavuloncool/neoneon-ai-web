@@ -381,43 +381,36 @@
   }
 }
 
-/* ── Problem „Pusta strona” — demo redakcji (components/home/Problem.tsx) ── */
-/* Bez JS i przy ograniczonym ruchu: zwykłe przekreślenie w kolorze korekty (semantyka <del> zostaje zawsze) */
-.problem-del {
+/* ── Skreślenie redakcyjne (lib/strike.ts): „Pusta strona” i „O mnie” ── */
+/* Bez JS i przy ograniczonym ruchu: zwykłe przekreślenie w kolorze korekty (tekst zostaje czytelny) */
+.edit-strike {
   text-decoration-line: line-through;
   text-decoration-color: var(--accent-edit);
   text-decoration-thickness: 2px;
 }
-/* Z animacją kreskę rysuje SVG — po jednej ścieżce na linię tekstu */
-.problem-animated .problem-del {
+/* Z animacją kreskę rysuje SVG — po jednej ścieżce na linię fragmentu */
+.edit-strike[data-strike-live] {
   text-decoration-line: none;
 }
-.problem-line {
-  position: relative;
-  width: fit-content;
-}
-.problem-strike {
+.strike-overlay {
   position: absolute;
-  left: 0;
-  top: 50%;
-  width: 100%;
-  height: 10px;
-  margin-top: -4px;
+  inset: 0;
   overflow: visible;
   pointer-events: none;
 }
-.problem-strike path {
+.strike-overlay path {
   fill: none;
   stroke: var(--accent-edit);
   stroke-width: 2.2;
   stroke-linecap: round;
 }
 @media (prefers-reduced-motion: no-preference) {
+  /* Przed startem animacji (z JS): bez przekreślenia tekstowego — kreska narysuje się przy wejściu */
+  html.js .edit-strike {
+    text-decoration-line: none;
+  }
   html.js [data-problem]:not([data-problem-done]) :is([data-problem-after], [data-problem-note], [data-problem-gap-anim]) {
     opacity: 0;
-  }
-  html.js [data-problem]:not([data-problem-done]) .problem-del {
-    text-decoration-line: none;
   }
 }
 
@@ -498,7 +491,7 @@
   html.js [data-about]:not([data-about-done]) [data-about-photo] {
     clip-path: inset(100% 0 0 0);
   }
-  html.js [data-about]:not([data-about-done]) [data-about-text] {
+  html.js [data-about]:not([data-about-done]) [data-about-p] {
     opacity: 0;
   }
 }

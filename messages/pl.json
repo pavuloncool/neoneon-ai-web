@@ -236,17 +236,55 @@
     "pricingNote": "To przykłady, nie oferta. Dokładną wycenę przygotowuję po pierwszej rozmowie. Pierwsza rozmowa jest bezpłatna.",
     "pricingCta": "Poproś o wycenę swojego projektu",
     "pricingDevEmpty": "Brak opublikowanych przykładów wycen w Sanity — sekcja na produkcji się nie pokaże (komunikat widoczny tylko w trybie dev).",
-    "aboutTitle": "Paweł Kuligowski",
-    "aboutCaption": "Redaktor, autor tekstów, buduje strony z AI",
-    "aboutText": "Jestem redaktorem naczelnym wydania online magazynu Luxury Boutique. Wcześniej, w latach 2009–2013, tłumaczyłem dokumenty w międzynarodowej kancelarii prawnej. Tam nauczyłem się, że precyzja tekstu ma konsekwencje. Od początku kariery pracuję jako freelancer. Tę stronę zbudowałem z AI, nie będąc programistą, i opisałem, jak to zrobiłem. Wiem więc z praktyki, gdzie AI przyspiesza pracę, a gdzie trzeba je zatrzymać.",
-    "aboutLink": "Przeczytaj, jak zbudowałem tę stronę",
-    "aboutFacts": [
-      "redaktor naczelny wydania online magazynu",
-      "tłumacz EN–PL w kancelarii prawnej (2009–2013)",
-      "teksty po polsku i angielsku"
+    "aboutEyebrow": "O mnie · Paweł Kuligowski",
+    "aboutTitle": "Ty znasz swoją branżę. Ja wiem, jak ją opisać.",
+    "aboutParagraphs": [
+      "Traktuj mnie jak redaktora, który pracuje po Twojej stronie.",
+      "Specjaliści rzadko mają problem z wiedzą. Problem zaczyna się, kiedy trzeba ją wyjaśnić komuś, kto jej nie ma: pacjentowi, klientowi kancelarii, osobie, która pierwszy raz przychodzi na jogę. Tekst wychodzi wtedy za fachowy albo za ogólny.",
+      "Pracuję prosto. Pytam, o co klienci pytają Cię przy pierwszym kontakcie, czego się obawiają i dlaczego wybierają Ciebie. Z tych odpowiedzi najpierw powstaje tekst, potem strona. AI pisze kod, a ja decyduję, co na stronie ma się znaleźć.",
+      "Nie piszę tekstów po to, żeby wypełnić stronę. Każde zdanie ma odpowiadać na konkretne pytanie albo usuwać konkretną wątpliwość. Jeśli tego nie robi, skreślam je.",
+      "Chcę, żeby klient rozumiał Twoją stronę po pierwszym czytaniu, a asystenci AI mogli ją cytować jako źródło."
     ],
+    "aboutStrike": "wypełnić stronę",
+    "aboutFacts": "Ponad 10 lat doświadczenia w tworzeniu treści · Redaktor naczelny luksusowego magazynu lifestylowego online · Teksty po polsku i angielsku",
+    "aboutLink": "Przeczytaj, jak zbudowałem tę stronę z AI",
+    "personJobTitle": "Redaktor naczelny luksusowego magazynu lifestylowego online",
     "aboutPostSlug": "moja-strona-z-ai",
     "faqTitle": "Najczęściej zadawane pytania",
+    "faqItems": [
+      {
+        "q": "Czy da się zbudować stronę z AI bez programisty?",
+        "a": "Tak, jeśli chodzi o kod. Narzędzia takie jak Claude Code czy Cursor piszą działający kod na podstawie opisu. Trudność leży gdzie indziej: AI potrzebuje jasnych decyzji, czyli co strona ma robić, dla kogo i co ma na niej być napisane. Bez nich powstaje strona poprawna technicznie, ale pusta treściowo."
+      },
+      {
+        "q": "W czym AI pomaga przy budowie strony, a w czym nie?",
+        "a": "AI pomaga przy kodzie: komponentach, stylach, animacjach, poprawkach i testach. Nie zastąpi decyzji o tym, do kogo mówisz, co obiecujesz i jak się odróżniasz. Nie zrobi też za Ciebie struktury strony ani planu treści, bo nie zna Twoich klientów."
+      },
+      {
+        "q": "Czy AI napisze teksty na moją stronę?",
+        "a": "Napisze, ale zwykle będą brzmiały jak teksty konkurencji. AI uśrednia to, co już istnieje w sieci. Dobry tekst wymaga konkretów, które masz tylko Ty: liczb, procedur, przykładów, ograniczeń. Moja praca polega na wydobyciu ich w rozmowie i zapisaniu prostym językiem."
+      },
+      {
+        "q": "Ile trwa zbudowanie strony z AI?",
+        "a": "Landing page to zwykle 1–2 tygodnie, strona firmowa z blogiem 3–6 tygodni. Najwięcej czasu zajmują decyzje i teksty, nie kod."
+      },
+      {
+        "q": "Czy będę mógł sam zmieniać treści?",
+        "a": "Tak. Strony buduję na Sanity, czyli z panelem, w którym zmieniasz teksty, zdjęcia i wpisy na blogu bez dotykania kodu."
+      },
+      {
+        "q": "Czy strona zbudowana z AI będzie widoczna w Google i w ChatGPT?",
+        "a": "To, jakim narzędziem napisano kod, nie ma znaczenia. Liczą się treść i technika: jasne odpowiedzi na pytania klientów, poprawna struktura nagłówków, dane strukturalne, szybkość ładowania. O to dbam na każdym etapie."
+      },
+      {
+        "q": "Jak rozliczasz pracę?",
+        "a": "Godzinowo, według stawek podanych w przykładowych wycenach. Pierwsza rozmowa jest bezpłatna. Przed startem dostajesz szacunek liczby godzin. Jeśli zakres się zmienia, mówię o tym, zanim przekroczymy szacunek."
+      },
+      {
+        "q": "Piszesz też po angielsku?",
+        "a": "Tak. Piszę i redaguję teksty po polsku i angielsku. Mogę przygotować obie wersje strony od początku albo przetłumaczyć i zredagować wersję, którą już masz."
+      }
+    ],
     "blogTitle": "Z bloga",
     "ctaTitle": "Zacznijmy od rozmowy",
     "placeholder": "Sekcja w budowie (iteracja {iteration})."

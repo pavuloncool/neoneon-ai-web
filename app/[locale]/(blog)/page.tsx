@@ -22,6 +22,8 @@ import { SITE_NAME, SITE_URL, localeUrl } from '@/lib/site'
 import type { Metadata } from 'next'
 import type { Locale } from '@/lib/locales'
 
+const PERSON_NAME = 'Paweł Kuligowski'
+
 // Sekcje już zbudowane (mają własne komponenty powyżej listy zaślepek)
 const BUILT = new Set(['hero', 'aiRole', 'problem', 'audience', 'services', 'process', 'pricing', 'about'])
 
@@ -112,6 +114,17 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
           inLanguage: locale,
           description: t('heroLead'),
           publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+        }}
+      />
+      {/* Autor: bez worksFor i bez nazwy magazynu; sameAs — do uzupełnienia (brief 3.3) */}
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Person',
+          name: PERSON_NAME,
+          jobTitle: t('personJobTitle'),
+          url: `${localeUrl(locale)}#${sectionAnchor('about', locale)}`,
+          knowsLanguage: ['pl', 'en'],
         }}
       />
       {/* Przełącznik języka: strona główna drugiego języka */}
@@ -205,11 +218,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
         portrait={about.portrait}
         postHref={about.post ? `/${about.post.category}/${about.post.slug}` : null}
         texts={{
+          eyebrow: t('aboutEyebrow'),
           title: t('aboutTitle'),
-          caption: t('aboutCaption'),
-          text: t('aboutText'),
-          facts: t.raw('aboutFacts') as string[],
+          paragraphs: t.raw('aboutParagraphs') as string[],
+          strike: t('aboutStrike'),
+          facts: t('aboutFacts'),
           link: t('aboutLink'),
+          portraitAlt: PERSON_NAME,
         }}
       />
 

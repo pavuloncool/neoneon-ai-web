@@ -7,6 +7,7 @@ import type { Locale } from '@/lib/locales'
 import type { SitemapData } from '@/lib/queries'
 import { pagePath } from '@/lib/links'
 import { LOCALES } from '@/lib/locales'
+import { REDIRECTED_PAGE_SLUGS } from '@/lib/onePager'
 
 type Doc = { _id: string; locale: Locale; path: string; modifiedAt: string | null }
 
@@ -24,7 +25,8 @@ function newer(a: string | null, b: string | null): string | null {
 
 export function buildSitemap({ pages, articles, categories, translations }: SitemapData): MetadataRoute.Sitemap {
   const docs: Doc[] = [
-    ...pages.flatMap((p) => (p.isHome || p.slug ? [{ ...p, path: pagePath(p) }] : [])),
+    // Strony przekierowane 301 na sekcję strony głównej (next.config.ts) nie trafiają do sitemapy
+    ...pages.flatMap((p) => ((p.isHome || p.slug) && !REDIRECTED_PAGE_SLUGS.includes(p.slug ?? '') ? [{ ...p, path: pagePath(p) }] : [])),
     ...articles.map((a) => ({ ...a, path: `/${a.category}/${a.slug}` })),
   ]
   const byId = new Map(docs.map((d) => [d._id, d]))

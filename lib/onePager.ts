@@ -39,3 +39,6 @@ export const SERVICE_VALUES = {
 export function contactHrefFor(locale: Locale, service?: keyof typeof SERVICE_VALUES): string {
   return service ? `${CONTACT_PATH[locale]}?${SERVICE_PARAM[locale]}=${SERVICE_VALUES[service][locale]}` : CONTACT_PATH[locale]
 }
+
+// Strony z Sanity przekierowane 301 na sekcję strony głównej (next.config.ts) — poza sitemapą
+export const REDIRECTED_PAGE_SLUGS = ['o-mnie', 'about']
