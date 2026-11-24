@@ -18,6 +18,8 @@ const config: Config = {
         sans: ['var(--font-dm-sans)', 'system-ui', 'sans-serif'],
         // Mono — kod (klasa: font-mono)
         mono: ['var(--font-dm-mono)', 'monospace'],
+        // Odręczny — notatki redaktora na marginesie (klasa: font-hand; @font-face w styles/globals.css)
+        hand: ['Caveat', 'cursive'],
       },
       colors: {
         ink: '#0f0f0f',
