@@ -173,12 +173,12 @@ export function AiRole({ id, texts }: { id: string; texts: AiRoleTexts }) {
                       data-airole-bg
                       className="font-mono text-[11px] leading-5 text-accent-ai opacity-100 whitespace-pre px-6 pt-24 [mask-image:linear-gradient(to_bottom,transparent,black_35%,black_70%,transparent)]"
                     >
-                      <span className="block opacity-[0.08] dark:opacity-[0.12]">{[...BG_CODE, ...BG_CODE].join('\n')}</span>
+                      <span className="block opacity-[0.16] dark:opacity-[0.2]">{[...BG_CODE, ...BG_CODE].join('\n')}</span>
                     </pre>
                   </div>
                 ) : null}
                 <div data-airole-body className="relative flex flex-col flex-1">
-                  <span className="font-mono text-xs text-muted">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="font-mono text-lg leading-none text-muted">{String(i + 1).padStart(2, '0')}</span>
                   <h3 className="mt-3 font-display text-3xl">{card.title}</h3>
                   <p className="mt-3 text-[15px] leading-relaxed text-muted flex-1">{card.text}</p>
                 </div>
