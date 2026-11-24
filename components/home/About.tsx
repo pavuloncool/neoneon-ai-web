@@ -155,9 +155,7 @@ export function About({ id, texts, portrait, postHref }: { id: string; texts: Ab
                     </p>
                   </div>
                 ) : (
-                  <p data-about-p className={i === 0 ? 'font-display text-2xl md:text-[1.7rem] leading-snug' : undefined}>
-                    {text}
-                  </p>
+                  <p data-about-p>{text}</p>
                 )}
               </Fragment>
             ))}
