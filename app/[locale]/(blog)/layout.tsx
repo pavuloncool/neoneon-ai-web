@@ -1,10 +1,12 @@
 import { getTranslations } from 'next-intl/server'
-import { Nav } from '@/components/layout/Nav'
-import { Footer } from '@/components/layout/Footer'
+import { SiteBar, SiteDial } from '@/components/sygnal/SiteChrome'
+import { SiteFooter } from '@/components/sygnal/SiteFooter'
+import chrome from '@/components/sygnal/chrome.module.css'
+import { PUBLIC_CONTACT_EMAIL } from '@/lib/site'
 import { getPricing, getSiteSettings } from '@/lib/queries'
-import { resolveHref } from '@/lib/links'
+import { BLOG_PATH, resolveHref } from '@/lib/links'
 import { priceExamples } from '@/lib/pricing'
-import { sectionAnchor } from '@/lib/onePager'
+import { CONTACT_PATH, sectionAnchor } from '@/lib/onePager'
 import { LEGAL_PATHS, getLegalDoc } from '@/lib/legal'
 
 // Linki do polityk z Sanity pomijamy — stopka dodaje je sama (z kodu), żeby się nie dublowały
@@ -48,44 +50,45 @@ export default async function BlogLayout({
   // Zapasowe etykiety a11y (gdy pole w Ustawieniach strony jest puste) — w języku strony
   const fallback = await getTranslations({ locale: toLocale(locale), namespace: 'a11y' })
 
+  const lang = toLocale(locale)
+  const navLinks = toLinks(settings?.navigation, hidden)
+  // Pozycje koła = menu z Sanity; „Start” na początku, jeśli menu go nie ma
+  const dialItems = [
+    ...(navLinks.some((l) => l.href === '/') ? [] : [{ key: 'start', label: 'Start', href: '/' }]),
+    ...navLinks.filter((l) => !l.external).map((l) => ({ key: l.href, label: l.label, href: l.href })),
+    ...(navLinks.some((l) => l.href === BLOG_PATH) ? [] : [{ key: BLOG_PATH, label: 'Blog', href: BLOG_PATH }]),
+  ]
+  const logo = { src: settings?.logoDark?.url ?? '/neoneon-dark.webp', alt: settings?.logoAlt ?? 'neoneon' }
+  const langLabels = { pl: a11y.languagePl ?? fallback('languagePl'), en: a11y.languageEn ?? fallback('languageEn') }
+
   return (
-    <>
+    <div className={chrome.shell}>
       {/* SC 2.4.1 — Skip link: pierwszy element strony, ukryty wizualnie, widoczny przy fokusie */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-ink focus:text-paper focus:text-sm focus:rounded"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[#CCFF00] focus:text-black focus:text-sm focus:rounded"
       >
         {a11y.skipToContent ?? fallback('skipToContent')}
       </a>
-      <Nav
-        links={toLinks(settings?.navigation, hidden)}
-        logo={{
-          light: settings?.logoLight?.url ?? '/neoneon-light.webp',
-          dark: settings?.logoDark?.url ?? '/neoneon-dark.webp',
-          alt: settings?.logoAlt ?? 'neoneon',
-        }}
-        labels={{
-          mainNav: a11y.mainNav ?? fallback('mainNav'),
-          mobileNav: a11y.mobileNav ?? fallback('mobileNav'),
-          search: a11y.search ?? fallback('search'),
-          menu: a11y.menu ?? fallback('menu'),
-          themeToggle: a11y.themeToggle ?? fallback('themeToggle'),
-          languagePl: a11y.languagePl ?? fallback('languagePl'),
-          languageEn: a11y.languageEn ?? fallback('languageEn'),
-        }}
-      />
-      <main id="main-content" className="pt-14 min-h-screen">
+      {/* „Sygnał”: bez menu w pasku — nawigacją jest koło w prawym dolnym rogu (SiteDial) */}
+      <SiteBar locale={lang} logo={logo} contactHref={CONTACT_PATH[lang]} langLabels={langLabels} />
+      <main id="main-content" className="min-h-screen">
         {children}
       </main>
-      <Footer
+      <SiteFooter
+        locale={lang}
+        logo={logo}
         text={settings?.footerText ?? '© {year} NEONEON.'}
+        navLabel={a11y.footerNav ?? fallback('footerNav')}
         links={toLinks(settings?.footerLinks, hidden).filter((l) => !LEGAL_HREFS.includes(l.href))}
         legalLinks={(['privacy', 'cookies'] as const).map((key) => ({
-          href: LEGAL_PATHS[key][toLocale(locale)],
-          label: getLegalDoc(key, toLocale(locale)).title,
+          href: LEGAL_PATHS[key][lang],
+          label: getLegalDoc(key, lang).title,
         }))}
-        navLabel={a11y.footerNav ?? fallback('footerNav')}
+        contactHref={CONTACT_PATH[lang]}
+        email={PUBLIC_CONTACT_EMAIL}
       />
-    </>
+      <SiteDial locale={lang} items={dialItems} contactHref={CONTACT_PATH[lang]} email={PUBLIC_CONTACT_EMAIL} langLabels={langLabels} />
+    </div>
   )
 }

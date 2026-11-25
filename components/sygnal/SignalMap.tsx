@@ -1,33 +1,91 @@
 'use client'
 
 // components/sygnal/SignalMap.tsx
-// Koło otwarte: pełny ekran ze spisem strony (sekcje na obręczy), blogiem i rozmową.
-// Dialog modalny: fokus na bieżącej sekcji przy otwarciu, Esc zamyka, Tab nie wychodzi poza dialog,
-// strzałki ← → / ↑ ↓ przechodzą po sekcjach. Przełącznik „Lista” zamienia koło na zwykłe menu.
+// Koło otwarte: pełny ekran z pozycjami nawigacji na obręczy (sekcje strony, menu z Sanity albo śródtytuły
+// artykułu), lewą kolumną (np. blog, wyszukiwarka) i rozmową po prawej.
+// Dialog modalny: fokus na bieżącej pozycji przy otwarciu, Esc zamyka, Tab nie wychodzi poza dialog,
+// strzałki ← → / ↑ ↓ przechodzą po pozycjach. Przełącznik „Lista” zamienia koło na zwykłe menu.
+// Kotwice „#…” obsługuje onNavigate (przewijanie na tej stronie); ścieżki — Link z next-intl.
 
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from '@/lib/gsap'
 import { Link } from '@/i18n/navigation'
-import type { DialSection } from './SignalDial'
+import { linkHref } from '@/lib/links'
+import type { DialItem } from './SignalDial'
 import s from './dial.module.css'
 
+export interface MapLabels {
+  dialog: string // „Spis strony”
+  list: string // „☰ Lista”
+  wheel: string // „◎ Koło”
+  close: string // „Esc · Zamknij”
+  here: string // „Tu jesteś”
+  talk: string // „Rozmowa”
+  talkCta: string // „Umów rozmowę →”
+  keys: string // podpowiedź klawiszy
+}
+
 interface Props {
-  sections: DialSection[]
-  current: string
+  items: DialItem[]
+  current: string | null
   progress: number
+  labels: MapLabels
+  talkHref: string
+  email: string
+  aside?: React.ReactNode // lewa kolumna
+  language?: React.ReactNode // przełącznik języka
   onClose: () => void
-  onNavigate: (id: string) => void
+  onNavigate: (item: DialItem) => void
 }
 
 const R = 41 // promień etykiet w %
 
-export function SignalMap({ sections, current, progress, onClose, onNavigate }: Props) {
+// Jedna pozycja: kotwica na tej stronie albo link do innej strony
+function ItemLink({
+  item,
+  current,
+  onNavigate,
+  onClose,
+  style,
+  children,
+}: {
+  item: DialItem
+  current: string | null
+  onNavigate: (item: DialItem) => void
+  onClose: () => void
+  style?: React.CSSProperties
+  children: React.ReactNode
+}) {
+  const common = { 'data-sec': '', 'aria-current': item.key === current ? ('true' as const) : undefined, style }
+  if (item.href.startsWith('#')) {
+    return (
+      <a
+        {...common}
+        href={item.href}
+        onClick={(e) => {
+          e.preventDefault()
+          onNavigate(item)
+        }}
+      >
+        {children}
+      </a>
+    )
+  }
+  return (
+    <Link {...common} href={linkHref(item.href)} onClick={onClose}>
+      {children}
+    </Link>
+  )
+}
+
+export function SignalMap({ items, current, progress, labels, talkHref, email, aside, language, onClose, onNavigate }: Props) {
   const root = useRef<HTMLDivElement>(null)
   const [list, setList] = useState(false)
-  const cur = sections.find((x) => x.id === current) ?? sections[0]
-  const step = 360 / sections.length
+  const cur = items.find((x) => x.key === current)
+  const step = 360 / Math.max(items.length, 1)
+  const link = { current, onNavigate, onClose }
 
-  // Wejście: rozkwit z rogu (bez ruchu przy prefers-reduced-motion)
+  // Wejście: rozkwit (bez ruchu przy prefers-reduced-motion)
   useEffect(() => {
     const el = root.current
     if (!el) return
@@ -40,11 +98,12 @@ export function SignalMap({ sections, current, progress, onClose, onNavigate }: 
         gsap.fromTo(wheel, { scale: 0.4, rotate: -40, opacity: 0 }, { scale: 1, rotate: 0, opacity: 1, duration: 0.7, ease: 'expo.out' })
       }
     })
-    el.querySelector<HTMLElement>('[aria-current="true"]')?.focus()
+    const first = el.querySelector<HTMLElement>('[data-sec][aria-current="true"]') ?? el.querySelector<HTMLElement>('[data-sec]')
+    first?.focus()
     return () => ctx.revert()
   }, [])
 
-  // Po przełączeniu koło ↔ lista fokus wraca na bieżącą sekcję
+  // Po przełączeniu koło ↔ lista fokus wraca na bieżącą pozycję
   useEffect(() => {
     root.current?.querySelector<HTMLElement>('[data-sec][aria-current="true"]')?.focus()
   }, [list])
@@ -65,9 +124,9 @@ export function SignalMap({ sections, current, progress, onClose, onNavigate }: 
     }
     // Pułapka fokusu
     if (e.key === 'Tab') {
-      const all = Array.from(
-        root.current?.querySelectorAll<HTMLElement>('a[href], button, input') ?? [],
-      ).filter((x) => !x.hasAttribute('disabled'))
+      const all = Array.from(root.current?.querySelectorAll<HTMLElement>('a[href], button, input') ?? []).filter(
+        (x) => !x.hasAttribute('disabled'),
+      )
       if (!all.length) return
       const first = all[0]
       const last = all[all.length - 1]
@@ -81,45 +140,30 @@ export function SignalMap({ sections, current, progress, onClose, onNavigate }: 
     }
   }
 
-  function go(e: React.MouseEvent, id: string) {
-    e.preventDefault()
-    onNavigate(id)
-  }
-
   return (
-    <div ref={root} className={s.map} role="dialog" aria-modal="true" aria-label="Spis strony" onKeyDown={onKeyDown}>
+    <div ref={root} className={s.map} role="dialog" aria-modal="true" aria-label={labels.dialog} onKeyDown={onKeyDown}>
       <div className={s.mapBar}>
-        <span
-          style={{ fontSize: 22, fontWeight: 900, fontVariationSettings: "'wdth' 125", color: 'transparent', WebkitTextStroke: '1.2px #F2F2EE' }}
-        >
+        <span className={s.mapLogo} aria-hidden="true">
           NEONEON
         </span>
         <button type="button" className={s.pill} aria-pressed={list} onClick={() => setList((v) => !v)} style={{ marginLeft: 'auto' }}>
-          {list ? '◎ Koło' : '☰ Lista'}
+          {list ? labels.wheel : labels.list}
         </button>
         <button type="button" className={s.pill} onClick={onClose}>
-          Esc · Zamknij
+          {labels.close}
         </button>
       </div>
 
-      <div className={`${s.mapSide} ${s.mapLeft}`}>
-        <h2>Z bloga</h2>
-        <p style={{ margin: 0, lineHeight: 1.5 }}>
-          <Link href="/blog">Wszystkie artykuły →</Link>
-        </p>
-        <p style={{ margin: '14px 0 0', fontSize: 14, color: 'rgba(242,242,238,.66)', maxWidth: 280 }}>
-          W wersji docelowej: trzy najnowsze wpisy i wyszukiwarka.
-        </p>
-      </div>
+      <div className={`${s.mapSide} ${s.mapLeft}`}>{aside}</div>
 
       {list ? (
         <ol className={s.mapList}>
-          {sections.map((sec, i) => (
-            <li key={sec.id}>
-              <a data-sec="" href={`#${sec.id}`} aria-current={sec.id === current ? 'true' : undefined} onClick={(e) => go(e, sec.id)}>
+          {items.map((item, i) => (
+            <li key={item.key}>
+              <ItemLink item={item} {...link}>
                 <small>{String(i + 1).padStart(2, '0')}</small>
-                {sec.label}
-              </a>
+                {item.label}
+              </ItemLink>
             </li>
           ))}
         </ol>
@@ -133,52 +177,57 @@ export function SignalMap({ sections, current, progress, onClose, onNavigate }: 
             <circle cx="300" cy="300" r="290" stroke="rgba(242,242,238,.1)" />
           </svg>
           <ol>
-            {sections.map((sec, i) => {
+            {items.map((item, i) => {
               const a = ((-90 + i * step) * Math.PI) / 180
               return (
-                <li key={sec.id}>
-                  <a
-                    data-sec=""
-                    href={`#${sec.id}`}
-                    aria-current={sec.id === current ? 'true' : undefined}
-                    onClick={(e) => go(e, sec.id)}
-                    style={{ left: `${50 + R * Math.cos(a)}%`, top: `${50 + R * Math.sin(a)}%` }}
-                  >
+                <li key={item.key}>
+                  <ItemLink item={item} {...link} style={{ left: `${50 + R * Math.cos(a)}%`, top: `${50 + R * Math.sin(a)}%` }}>
                     <small>{String(i + 1).padStart(2, '0')}</small>
-                    <strong>{sec.label}</strong>
-                  </a>
+                    <strong>{item.label}</strong>
+                  </ItemLink>
                 </li>
               )
             })}
           </ol>
           <div className={s.mapCore}>
             <span className={s.coreLbl} style={{ color: '#CCFF00' }}>
-              Tu jesteś · {String(progress).padStart(2, '0')}
+              {labels.here} · {String(progress).padStart(2, '0')}
             </span>
-            <strong>{cur.label}</strong>
-            <p>{cur.summary}</p>
+            {cur ? (
+              <>
+                <strong>{cur.label}</strong>
+                {cur.summary ? <p>{cur.summary}</p> : null}
+              </>
+            ) : null}
           </div>
         </div>
       )}
 
       <div className={`${s.mapSide} ${s.mapRight}`}>
-        <h2>Rozmowa</h2>
-        <a
-          href="#rozmowa"
-          onClick={(e) => go(e, 'rozmowa')}
-          style={{ display: 'inline-flex', alignItems: 'center', minHeight: 48, padding: '0 22px', borderRadius: 26, background: '#CCFF00', color: '#0A0A0B', textDecoration: 'none', fontFamily: 'var(--font-plex-mono), monospace', fontSize: 11.5, letterSpacing: '.18em', textTransform: 'uppercase', fontWeight: 500 }}
-        >
-          Umów rozmowę →
-        </a>
+        <h2>{labels.talk}</h2>
+        {talkHref.startsWith('#') ? (
+          <a
+            href={talkHref}
+            className={s.mapCta}
+            onClick={(e) => {
+              e.preventDefault()
+              onNavigate({ key: talkHref.slice(1), label: labels.talk, href: talkHref })
+            }}
+          >
+            {labels.talkCta}
+          </a>
+        ) : (
+          <Link href={linkHref(talkHref)} onClick={onClose} className={s.mapCta}>
+            {labels.talkCta}
+          </Link>
+        )}
         <p style={{ margin: '18px 0 0' }}>
-          <a href="mailto:web@neoneon.online">web@neoneon.online</a>
+          <a href={`mailto:${email}`}>{email}</a>
         </p>
-        <p style={{ margin: '28px 0 0', fontFamily: 'var(--font-plex-mono), monospace', fontSize: 13, letterSpacing: '.2em' }}>
-          <span style={{ color: '#CCFF00' }}>PL</span> / <Link href="/" locale="en">EN</Link>
-        </p>
+        {language ? <div style={{ marginTop: 28 }}>{language}</div> : null}
       </div>
 
-      <p className={s.mapKeys}>Tab — sekcje · ← → — obrót · Enter — przejdź · Esc — zamknij</p>
+      <p className={s.mapKeys}>{labels.keys}</p>
     </div>
   )
 }

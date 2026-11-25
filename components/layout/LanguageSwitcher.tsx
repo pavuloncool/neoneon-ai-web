@@ -6,12 +6,9 @@ import { cn } from '@/lib/utils'
 import { setHeroLanguageFlag } from '@/lib/hero-language-flag'
 import type { Locale } from '@/lib/locales'
 
-export function LanguageSwitcher({
-  dark = false,
-  className,
-  labels = { pl: 'Polski', en: 'English' },
-}: { dark?: boolean; className?: string; labels?: { pl: string; en: string } }) {
-  const locale = useLocale()
+// Logika zmiany języka — wspólna dla starego menu i chrome'u „Sygnał” (components/sygnal/SiteChrome)
+export function useLocaleSwitch() {
+  const locale = useLocale() as Locale
   const pathname = usePathname()
   const router = useRouter()
 
@@ -27,6 +24,16 @@ export function LanguageSwitcher({
 
     router.push(target, { locale: targetLocale })
   }
+
+  return { locale, switchTo }
+}
+
+export function LanguageSwitcher({
+  dark = false,
+  className,
+  labels = { pl: 'Polski', en: 'English' },
+}: { dark?: boolean; className?: string; labels?: { pl: string; en: string } }) {
+  const { locale, switchTo } = useLocaleSwitch()
 
   return (
     <div className={cn('flex items-center gap-0 text-xs tracking-widest', className)}>

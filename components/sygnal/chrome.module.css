@@ -1,0 +1,147 @@
+/* Chrome podstron „Sygnał”: pasek, stopka, tło. Kolory: #0A0A0B kosmos, #CCFF00 sygnał, #F2F2EE tekst.
+   Tekst drugorzędny min. 66% bieli (kontrast ≥ 5:1). */
+
+.shell {
+  position: relative;
+  min-height: 100vh;
+  background: #0a0a0b;
+  color: #f2f2ee;
+}
+.shell::before {
+  /* siatka 12 kolumn — tylko tło */
+  content: '';
+  position: fixed;
+  inset: 0 max(20px, 2.8vw);
+  pointer-events: none;
+  z-index: 0;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: calc(100% / 12) 100%;
+  border-right: 1px solid rgba(255, 255, 255, 0.045);
+}
+/* tylko bloki w przepływie — skip link (sr-only) i koło (fixed) mają własne pozycjonowanie */
+.shell > header, .shell > main, .shell > footer { position: relative; z-index: 1; }
+
+.mono {
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+/* ── Pasek ── */
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px max(20px, 2.8vw);
+}
+.logo { display: inline-flex; align-items: center; min-height: 44px; }
+.logo:focus-visible, .search:focus-visible, .cta:focus-visible { outline: 2px solid #ccff00; outline-offset: 3px; }
+.logoImg { height: 26px; width: auto; }
+.barRight { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.search {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 24px;
+  color: rgba(242, 242, 238, 0.8);
+  text-decoration: none;
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.search:hover { color: #ccff00; }
+.lang { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid rgba(242, 242, 238, 0.25); border-radius: 22px; }
+.lang button {
+  min-height: 36px;
+  min-width: 40px;
+  padding: 0 12px;
+  border-radius: 18px;
+  border: 0;
+  background: transparent;
+  color: rgba(242, 242, 238, 0.7);
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.lang button[aria-pressed='true'] { background: #f2f2ee; color: #0a0a0b; }
+.lang button:focus-visible { outline: 2px solid #ccff00; outline-offset: 2px; }
+.cta {
+  min-height: 44px;
+  padding: 0 22px;
+  border-radius: 24px;
+  display: inline-flex;
+  align-items: center;
+  background: #ccff00;
+  color: #0a0a0b;
+  text-decoration: none;
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: box-shadow 0.3s;
+}
+.cta:hover { box-shadow: 0 0 32px rgba(204, 255, 0, 0.45); }
+@media (max-width: 767px) {
+  .search span { display: none; }
+  .search { padding: 0 12px; }
+}
+@media (max-width: 520px) {
+  .cta { display: none; }
+}
+
+/* ── Stopka ── */
+.footer {
+  margin-top: 120px;
+  border-top: 1px solid rgba(242, 242, 238, 0.16);
+  padding: 56px max(20px, 2.8vw) 140px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+  gap: 40px;
+}
+.footer h2 {
+  margin: 0 0 14px;
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #ccff00;
+}
+.footer ul { margin: 0; padding: 0; list-style: none; }
+.footer li { padding: 6px 0; }
+.footer a { color: #f2f2ee; text-decoration: none; font-size: 16px; }
+.footer a:hover { color: #ccff00; }
+.footer a:focus-visible { outline: 2px solid #ccff00; outline-offset: 3px; }
+.claim {
+  margin: 18px 0 0;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: clamp(26px, 2.6vw, 38px);
+  line-height: 0.98;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  max-width: 12em;
+}
+.claim span { color: #ccff00; }
+.copy {
+  grid-column: 1 / -1;
+  margin: 24px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid rgba(242, 242, 238, 0.12);
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(242, 242, 238, 0.66);
+}
+@media (max-width: 1023px) {
+  .footer { grid-template-columns: 1fr 1fr; }
+  .footer > :first-child { grid-column: 1 / -1; }
+}

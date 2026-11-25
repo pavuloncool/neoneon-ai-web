@@ -1,47 +1,59 @@
 'use client'
 
 // components/sygnal/SignalDial.tsx
-// Jedno koło nawigacji (prototyp „Sygnał”). Jeden element w DOM, trzy role:
-// - hero: duże zaćmienie dopasowane do .dialAnchor; etykiety sekcji na obręczy to zwykłe linki,
-// - dok: po przewinięciu hero koło maleje do prawego dolnego rogu; zostaje liczba sygnału (0–99)
-//   i łuk postępu; całe koło jest przyciskiem otwierającym mapę,
-// - mapa: SignalMap (osobny komponent, pełny ekran).
-// Położenie i skalę ustawia GSAP w SygnalPage — tu tylko struktura i odnośniki (refy).
+// Jedno koło nawigacji („Sygnał”). Jeden element w DOM, dwa warianty:
+// - hero: duże zaćmienie dopasowane do miejsca w hero (położenie i skalę ustawia GSAP w SygnalPage);
+//   pozycje (`items`) na obręczy to zwykłe linki,
+// - dock: od razu małe koło w prawym dolnym rogu (podstrony, blog) — bez obręczy, tylko liczba sygnału
+//   i łuk postępu; całe koło jest przyciskiem otwierającym mapę (SignalMap).
+// Pozycje przychodzą z zewnątrz: sekcje strony głównej, menu z Sanity albo śródtytuły artykułu.
 
 import { forwardRef } from 'react'
 import s from './dial.module.css'
 
-export interface DialSection {
-  id: string
+export interface DialItem {
+  key: string
   label: string
-  summary: string
+  href: string // „#kotwica” na tej stronie albo ścieżka bez prefiksu języka
+  summary?: string
+}
+
+export interface DialLabels {
+  nav: string // nazwa nawigacji (aria-label)
+  open: string // „Otwórz spis strony”
+  now: string // „Teraz”
 }
 
 interface Props {
-  sections: DialSection[]
-  current: string
+  items: DialItem[]
+  current: string | null
   docked: boolean
-  size: number
-  numRef: React.Ref<HTMLSpanElement>
-  arcRef: React.Ref<SVGCircleElement>
-  rimRef: React.Ref<HTMLOListElement>
+  variant?: 'hero' | 'dock'
+  size?: number
+  labels: DialLabels
+  numRef?: React.Ref<HTMLSpanElement>
+  arcRef?: React.Ref<SVGCircleElement>
+  rimRef?: React.Ref<HTMLOListElement>
   onOpen: () => void
 }
 
 const R_LABEL = 45 // promień etykiet w % średnicy koła
 
 export const SignalDial = forwardRef<HTMLElement, Props>(function SignalDial(
-  { sections, current, docked, size, numRef, arcRef, rimRef, onOpen },
+  { items, current, docked, variant = 'hero', size, labels, numRef, arcRef, rimRef, onOpen },
   ref,
 ) {
-  const step = 360 / sections.length
+  const step = 360 / Math.max(items.length, 1)
+  const isDock = variant === 'dock'
+  const currentLabel = items.find((x) => x.key === current)?.label
   return (
     <nav
       ref={ref}
-      aria-label="Spis strony"
-      className={s.dial}
-      style={{ width: size, height: size }}
+      aria-label={labels.nav}
+      className={`${s.dial} ${isDock ? s.dialDock : ''}`}
+      style={isDock ? undefined : { width: size, height: size }}
       data-docked={docked ? '' : undefined}
+      data-ready={isDock ? '' : undefined}
     >
       <svg className={s.svg} viewBox="0 0 600 600" fill="none" aria-hidden="true">
         <defs>
@@ -58,14 +70,14 @@ export const SignalDial = forwardRef<HTMLElement, Props>(function SignalDial(
         <circle cx="300" cy="300" r="250" fill="url(#sgCorona)" />
         <circle cx="300" cy="300" r="170" fill="#0A0A0B" stroke="#CCFF00" strokeWidth="1.5" />
         <circle cx="300" cy="300" r="214" stroke="rgba(242,242,238,.28)" strokeWidth="8" pathLength={120} strokeDasharray=".12 .88" />
-        {/* znaczniki sekcji */}
+        {/* znaczniki pozycji */}
         <circle
           cx="300"
           cy="300"
           r="214"
           stroke="rgba(242,242,238,.75)"
           strokeWidth="16"
-          pathLength={sections.length}
+          pathLength={Math.max(items.length, 1)}
           strokeDasharray=".035 .965"
           transform="rotate(-90.6 300 300)"
         />
@@ -76,7 +88,7 @@ export const SignalDial = forwardRef<HTMLElement, Props>(function SignalDial(
           cy="300"
           r="214"
           stroke="#CCFF00"
-          strokeWidth="3"
+          strokeWidth={isDock ? 10 : 3}
           pathLength={100}
           strokeDasharray="0 100"
           transform="rotate(-90 300 300)"
@@ -87,34 +99,42 @@ export const SignalDial = forwardRef<HTMLElement, Props>(function SignalDial(
         </g>
       </svg>
 
-      <ol ref={rimRef} className={s.rim}>
-        {sections.map((sec, i) => {
-          const a = ((-90 + i * step) * Math.PI) / 180
-          return (
-            <li key={sec.id}>
-              <a
-                href={`#${sec.id}`}
-                aria-current={sec.id === current ? 'true' : undefined}
-                tabIndex={docked ? -1 : undefined}
-                style={{ left: `${50 + R_LABEL * Math.cos(a)}%`, top: `${50 + R_LABEL * Math.sin(a)}%` }}
-              >
-                {sec.label}
-              </a>
-            </li>
-          )
-        })}
-      </ol>
+      {!isDock && (
+        <ol ref={rimRef} className={s.rim}>
+          {items.map((item, i) => {
+            const a = ((-90 + i * step) * Math.PI) / 180
+            return (
+              <li key={item.key}>
+                <a
+                  href={item.href}
+                  aria-current={item.key === current ? 'true' : undefined}
+                  tabIndex={docked ? -1 : undefined}
+                  style={{ left: `${50 + R_LABEL * Math.cos(a)}%`, top: `${50 + R_LABEL * Math.sin(a)}%` }}
+                >
+                  {item.label}
+                </a>
+              </li>
+            )
+          })}
+        </ol>
+      )}
 
       <div className={s.core}>
-        <span className={s.coreLbl} data-dial-fade="">signal</span>
+        {!isDock && (
+          <span className={s.coreLbl} data-dial-fade="">
+            signal
+          </span>
+        )}
         <span ref={numRef} className={s.num}>
           00
         </span>
-        <span className={s.coreSub} data-dial-fade="">
-          kod — ai
-          <br />
-          <b>decyzje — człowiek</b>
-        </span>
+        {!isDock && (
+          <span className={s.coreSub} data-dial-fade="">
+            kod — ai
+            <br />
+            <b>decyzje — człowiek</b>
+          </span>
+        )}
       </div>
 
       <button
@@ -122,10 +142,8 @@ export const SignalDial = forwardRef<HTMLElement, Props>(function SignalDial(
         className={s.hit}
         onClick={onOpen}
         aria-haspopup="dialog"
-        aria-label={`Otwórz spis strony. Teraz: ${sections.find((x) => x.id === current)?.label ?? ''}`}
+        aria-label={currentLabel ? `${labels.open}. ${labels.now}: ${currentLabel}` : labels.open}
       />
     </nav>
   )
 })
-
-export const dialStyles = s

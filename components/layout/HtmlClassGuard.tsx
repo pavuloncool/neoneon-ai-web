@@ -8,10 +8,12 @@
 // Ten komponent montuje się razem z layoutem i przywraca je w useLayoutEffect, czyli przed malowaniem.
 
 import { useLayoutEffect } from 'react'
+import { FORCED_THEME } from './ThemeProvider'
 
 const THEME_KEY = 'theme' // storageKey next-themes (domyślny)
 
 function resolveTheme(): 'dark' | 'light' {
+  if (FORCED_THEME) return FORCED_THEME
   let stored: string | null = null
   try { stored = localStorage.getItem(THEME_KEY) } catch {}
   if (stored === 'dark' || stored === 'light') return stored

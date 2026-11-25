@@ -13,18 +13,19 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { gsap, useGSAP } from '@/lib/gsap'
 import { Link } from '@/i18n/navigation'
 import { ScrollTrigger, refreshAfterFonts } from '@/lib/gsap-scroll'
-import { archivo, plexMono } from './fonts'
-import { SignalDial, type DialSection } from './SignalDial'
+import { SignalDial, type DialItem } from './SignalDial'
 import { SignalMap } from './SignalMap'
+import { DIAL_LABELS, MAP_LABELS } from './labels'
+import { PUBLIC_CONTACT_EMAIL } from '@/lib/site'
 import s from './sygnal.module.css'
 import d from './dial.module.css'
 
-const SECTIONS: DialSection[] = [
-  { id: 'start', label: 'Start', summary: 'Wiesz, co oferujesz. Teraz to sprzedaj.' },
-  { id: 'rola-ai', label: 'Rola AI', summary: 'AI pisze kod. Decyzje zostają po stronie ludzi.' },
-  { id: 'proces', label: 'Proces', summary: 'Pięć etapów. Jedna droga od mgły do strony.' },
-  { id: 'uslugi', label: 'Usługi', summary: 'Trzy sposoby współpracy.' },
-  { id: 'rozmowa', label: 'Rozmowa', summary: 'Rozmowa, po której wiesz, co dalej.' },
+const SECTIONS: (DialItem & { id: string })[] = [
+  { id: 'start', key: 'start', href: '#start', label: 'Start', summary: 'Wiesz, co oferujesz. Teraz to sprzedaj.' },
+  { id: 'rola-ai', key: 'rola-ai', href: '#rola-ai', label: 'Rola AI', summary: 'AI pisze kod. Decyzje zostają po stronie ludzi.' },
+  { id: 'proces', key: 'proces', href: '#proces', label: 'Proces', summary: 'Pięć etapów. Jedna droga od mgły do strony.' },
+  { id: 'uslugi', key: 'uslugi', href: '#uslugi', label: 'Usługi', summary: 'Trzy sposoby współpracy.' },
+  { id: 'rozmowa', key: 'rozmowa', href: '#rozmowa', label: 'Rozmowa', summary: 'Rozmowa, po której wiesz, co dalej.' },
 ]
 
 const STAGES = [
@@ -263,7 +264,7 @@ export function SygnalPage() {
   const curLabel = SECTIONS.find((x) => x.id === current)?.label ?? ''
 
   return (
-    <div ref={page} className={`${s.page} ${archivo.variable} ${plexMono.variable}`} onClick={onPageClick}>
+    <div ref={page} className={s.page} onClick={onPageClick}>
       <div className={s.grid} aria-hidden="true">
         {Array.from({ length: 12 }, (_, i) => (
           <span key={i} />
@@ -519,10 +520,11 @@ export function SygnalPage() {
 
       <SignalDial
         ref={dial}
-        sections={SECTIONS}
+        items={SECTIONS}
         current={current}
         docked={docked}
         size={size}
+        labels={DIAL_LABELS.pl}
         numRef={num}
         arcRef={arc}
         rimRef={rim}
@@ -533,7 +535,26 @@ export function SygnalPage() {
         <span>spis strony</span>
       </p>
 
-      {open && <SignalMap sections={SECTIONS} current={current} progress={progress} onClose={closeMap} onNavigate={navigate} />}
+      {open && (
+        <SignalMap
+          items={SECTIONS}
+          current={current}
+          progress={progress}
+          labels={MAP_LABELS.pl}
+          talkHref="#rozmowa"
+          email={PUBLIC_CONTACT_EMAIL}
+          aside={
+            <>
+              <h2>Blog</h2>
+              <p style={{ margin: 0 }}>
+                <Link href="/blog">Wszystkie artykuły →</Link>
+              </p>
+            </>
+          }
+          onClose={closeMap}
+          onNavigate={(item) => navigate(item.key)}
+        />
+      )}
     </div>
   )
 }
