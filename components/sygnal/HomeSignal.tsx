@@ -211,7 +211,25 @@ export function HomeSignal({
             heroEl.setAttribute('data-floating', '')
             heroEl.style.setProperty('--lr', `${Math.round(size * 0.62)}px`)
 
-            // Środek koła = kursor, w pasie między górą hero a przyciskami (koło nie zasłania CTA)
+            // Koło stoi, gdy dogoni cel albo gdy kursor jest nad jego pozycją/rdzeniem — inaczej obręcz z etykietami
+            // odjeżdżała spod kursora i nie dało się ich kliknąć (koło goniło kursor w kierunku jego ruchu)
+            const stopGlide = () => {
+              qx.tween.pause()
+              qy.tween.pause()
+            }
+            const dialGeom = () => {
+              const b = dialEl.getBoundingClientRect()
+              const R = b.width / 2
+              return { R, cx: b.left + R, cy: b.top + R }
+            }
+            const arrived = (x: number, y: number, R: number) =>
+              Math.hypot(Number(gsap.getProperty(dialEl, 'x')) - x, Number(gsap.getProperty(dialEl, 'y')) - y) < R * 0.3
+            const overDial = (e: PointerEvent) => e.target instanceof Node && dialEl.contains(e.target)
+
+            // Faza 1 (góra strony): środek koła płynie do kursora, w pasie między górą hero a przyciskami (koło nie
+            // zasłania CTA). Gdy dopłynie — spoczywa: kursor może dojść do etykiet na obręczy; koło rusza dopiero,
+            // gdy kursor wyjdzie poza koło.
+            let heroRest = false
             const follow = (e: PointerEvent) => {
               if (!atTop) return
               const r = size / 2
@@ -221,7 +239,18 @@ export function HomeSignal({
               const maxY = Math.max(minY, footTop - r - 12)
               const cx = gsap.utils.clamp(r * 0.6, window.innerWidth - r * 0.6, e.clientX)
               const cy = gsap.utils.clamp(minY, maxY, e.clientY)
-              glide(cx - (window.innerWidth - DOCK.margin - size / 2), cy - (window.innerHeight - DOCK.margin - size / 2))
+              const tx = cx - (window.innerWidth - DOCK.margin - size / 2)
+              const ty = cy - (window.innerHeight - DOCK.margin - size / 2)
+              const g = dialGeom()
+              const d = Math.hypot(e.clientX - g.cx, e.clientY - g.cy)
+              if (heroRest) {
+                if (d < g.R * 1.12) return
+                heroRest = false
+              } else if (arrived(tx, ty, g.R)) {
+                heroRest = true
+                return
+              }
+              glide(tx, ty)
             }
             // Światło spod koła: środek maski mgły i poświaty = środek koła (co klatkę)
             let lightReady = false
@@ -271,21 +300,14 @@ export function HomeSignal({
               const n = natural()
               return { x: cx - n.x, y: cy - n.y }
             }
-            // Kursor zbliża się do koła → koło staje (żeby nie uciekało); rusza, gdy kursor wyraźnie odejdzie
-            let frozen = false
-            const holdStill = () => {
-              const b = dialEl.getBoundingClientRect()
-              const R = b.width / 2
-              const d = Math.hypot(pointer.x - (b.left + R), pointer.y - (b.top + R))
-              if (frozen) frozen = d < R * 1.9
-              else frozen = d < R * 1.2
-              return frozen
-            }
+            // Towarzysz: koło dojeżdża obok kursora i tam spoczywa. Gdy kursor idzie w stronę koła — koło stoi
+            // (etykiety na obręczy i rdzeń są klikalne); rusza dopiero, gdy kursor odejdzie dalej niż na „smycz”.
+            let midRest = false
             // Faza 4: kursor dotarł do koła w rogu → koło rośnie w rogu (kursor zostaje na kole, więc stoi)
             const pickUp = () => {
               if (openRef.current) return
               floatingMid = true
-              frozen = true
+              midRest = true
               setDocked(false)
               dockTween?.kill()
               const R = MID / 2
@@ -313,12 +335,36 @@ export function HomeSignal({
               pointer.x = e.clientX
               pointer.y = e.clientY
               pointer.known = true
+              // Kursor nad etykietą albo rdzeniem koła — koło staje w miejscu (w każdym stanie)
+              if (overDial(e)) {
+                if (atTop || floatingMid) {
+                  stopGlide()
+                  heroRest = true
+                  midRest = true
+                }
+                return
+              }
               if (!floatingMid) {
                 if (atDock()) pickUp()
                 return
               }
-              if (holdStill()) return
+              const g = dialGeom()
+              const d = Math.hypot(pointer.x - g.cx, pointer.y - g.cy)
+              if (midRest) {
+                if (d < g.R * 2.4) return
+                midRest = false
+              }
+              // Kursor sięga po koło — stop, zanim koło odjedzie
+              if (d < g.R * 1.25) {
+                stopGlide()
+                midRest = true
+                return
+              }
               const t = companion()
+              if (arrived(t.x, t.y, g.R * 0.5)) {
+                midRest = true
+                return
+              }
               glide(t.x, t.y)
             }
 
