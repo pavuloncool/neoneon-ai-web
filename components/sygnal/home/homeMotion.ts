@@ -16,10 +16,35 @@
 // - rozmowa: nagłówek zapala się jak neon (litery w losowej kolejności, 1–2 błyski na literę).
 
 import { gsap } from '@/lib/gsap'
+import { ScrollTrigger } from '@/lib/gsap-scroll'
 import { SplitText } from '@/lib/gsap-text'
 import { IN, accordion, isLite, move, revealBlur, scramble, scrambleIn, sel, splitHeading, staggerIn } from '../motionKit'
 import s from '../sygnal.module.css'
 import lists from '../lists.module.css'
+
+// Sekwencja „sticky”: blok zatrzymuje się na ekranie, a przewijanie odtwarza animację do ostatniego
+// tekstu (scrub). Przypinamy całą sekcję, jeśli mieści się w oknie, inaczej jej kluczowy blok.
+// Tryb lite (bez pinu i scrubu): ta sama sekwencja odtwarza się sama przy wejściu.
+const fits = (el: HTMLElement) => el.offsetHeight <= window.innerHeight * 0.9
+function stage(candidates: (HTMLElement | null)[], tl: gsap.core.Timeline, distance: number) {
+  const list = candidates.filter((c): c is HTMLElement => Boolean(c))
+  if (!list.length) return
+  const block = list.find(fits) ?? list[list.length - 1]
+  if (isLite()) {
+    ScrollTrigger.create({ trigger: block, start: IN, once: true, onEnter: () => void tl.play() })
+    return
+  }
+  ScrollTrigger.create({
+    trigger: block,
+    start: () => (fits(block) ? 'center center' : 'top top'),
+    end: () => `+=${distance}`,
+    pin: true,
+    scrub: 0.6,
+    animation: tl,
+    anticipatePin: 1,
+    invalidateOnRefresh: true,
+  })
+}
 
 export function heroIntro(root: HTMLElement) {
   const hero = root.querySelector<HTMLElement>(sel(s.hero))
@@ -39,7 +64,7 @@ export function heroIntro(root: HTMLElement) {
   hero.setAttribute('data-m-done', '')
 }
 
-export function sectionsMotion(root: HTMLElement, { wide }: { wide: boolean }) {
+export function sectionsMotion(root: HTMLElement) {
   const cleanups: (() => void)[] = []
 
   // ── Wspólne: etykiety, nagłówki, leady ──
@@ -47,33 +72,32 @@ export function sectionsMotion(root: HTMLElement, { wide }: { wide: boolean }) {
   root.querySelectorAll<HTMLElement>(`section ${sel(s.h2)}`).forEach((el) => splitHeading(el))
   root.querySelectorAll<HTMLElement>(`section ${sel(s.sub)}, section ${sel(s.closing)}`).forEach((el) => revealBlur(el, el, { delay: 0.15 }))
 
-  // ── Rola AI: kreski kart po kolei, potem treść; „{ kod }” pisany ──
+  // ── Rola AI: kreski kart po kolei, potem treść; „{ kod }” w scramble — sekcja stoi, aż skończy ──
   const roles = gsap.utils.toArray<HTMLElement>(sel(s.role), root)
   if (roles.length) {
-    const tl = gsap.timeline({ scrollTrigger: { trigger: roles[0], start: IN, once: true } })
-    tl.fromTo(roles, { '--draw': 0 }, { '--draw': 1, duration: 0.7, stagger: 0.18, ease: 'power2.inOut' }, 0)
-    tl.fromTo(roles.map((r) => Array.from(r.children)), { opacity: 0, y: move(16), filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.6, stagger: 0.05, clearProps: 'filter,transform' }, 0.25)
+    const tl = gsap.timeline({ paused: true })
+    tl.fromTo(roles, { '--draw': 0 }, { '--draw': 1, duration: 0.7, stagger: 0.25, ease: 'power2.inOut' }, 0)
+    tl.fromTo(roles.map((r) => Array.from(r.children)), { opacity: 0, y: move(16), filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.6, stagger: 0.08 }, 0.25)
     const code = root.querySelector<HTMLElement>(`${sel(s.roleAi)} h3`)
-    if (code) tl.add(scramble(code, 1), '>-0.2')
+    if (code) tl.add(scramble(code, 1), '>-0.1')
+    const section = roles[0].closest('section')
+    stage([section, roles[0].parentElement], tl, 800)
   }
 
-  // ── Pusta strona: skreślenie na żywo ──
+  // ── Pusta strona: skreślenie na żywo — karta stoi, aż wejdzie ostatnia konkretna wersja ──
   const edit = root.querySelector<HTMLElement>(sel(s.edit))
   if (edit) {
     const del = edit.querySelector('del')
     const note = edit.querySelector<HTMLElement>(sel(s.editNote))
     const after = edit.querySelectorAll(`${sel(s.editAfter)} li`)
     const caption = edit.querySelector(sel(s.editCaption))
-    gsap.set(edit, { '--strike': 0 })
-    if (note) gsap.set(note, { opacity: 0 })
-    gsap.set(after, { opacity: 0, y: move(20), filter: 'blur(10px)' })
-    if (caption) gsap.set(caption, { opacity: 0 })
-    const tl = gsap.timeline({ scrollTrigger: { trigger: edit, start: 'top 70%', once: true } })
-    tl.fromTo(edit, { opacity: 0, y: move(30) }, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' })
-    if (del) tl.to(edit, { '--strike': 1, duration: 0.9, ease: 'power2.inOut' }, '+=0.5').to(del, { color: 'rgba(242,242,238,.45)', duration: 0.4 }, '<0.4')
-    if (note) tl.set(note, { opacity: 1 }).add(scramble(note, 0.7))
-    tl.to(after, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.7, stagger: 0.35, ease: 'power3.out', clearProps: 'filter,transform' }, '+=0.1')
-    if (caption) tl.to(caption, { opacity: 1, duration: 0.4 })
+    const tl = gsap.timeline({ paused: true })
+    tl.fromTo(edit, { opacity: 0.3, filter: 'blur(6px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.5 })
+    if (del) tl.fromTo(edit, { '--strike': 0 }, { '--strike': 1, duration: 1, ease: 'power2.inOut' }, '+=0.2').to(del, { color: 'rgba(242,242,238,.45)', duration: 0.4 }, '<0.5')
+    if (note) tl.fromTo(note, { opacity: 0 }, { opacity: 1, duration: 0.05 }).add(scramble(note, 0.7))
+    tl.fromTo(after, { opacity: 0, y: move(20), filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.7, stagger: 0.5, ease: 'power3.out' }, '+=0.1')
+    if (caption) tl.fromTo(caption, { opacity: 0 }, { opacity: 1, duration: 0.3 })
+    stage([edit.closest('section'), edit], tl, 1500)
   }
   const gaps = gsap.utils.toArray<HTMLElement>(sel(s.gap), root)
   if (gaps.length) {
@@ -81,31 +105,34 @@ export function sectionsMotion(root: HTMLElement, { wide }: { wide: boolean }) {
     revealBlur(gaps.map((g) => Array.from(g.children)).flat(), gaps[0], { stagger: 0.06, delay: 0.2 })
   }
 
-  // ── Dla kogo: branże zapalają się po kolei, potem dwa przebiegi sygnału ──
+  // ── Dla kogo: branże zapalają się po kolei, na końcu przebieg sygnału — zdanie stoi, aż zapłonie ostatnia ──
   const pills = gsap.utils.toArray<HTMLElement>(sel(s.pill), root)
   if (pills.length) {
-    gsap.set(pills, { opacity: 0.18, filter: 'blur(4px)' })
-    const tl = gsap.timeline({ scrollTrigger: { trigger: pills[0], start: 'top 75%', once: true } })
-    tl.to(pills, {
-      keyframes: [
-        { opacity: 1, filter: 'blur(0px)', boxShadow: '0 0 22px rgba(204,255,0,.75)', duration: 0.18, ease: 'power2.out' },
-        { boxShadow: '0 0 0px rgba(204,255,0,0)', duration: 0.5, ease: 'power1.out' },
-      ],
-      stagger: 0.14,
-    })
-    // Dwa przebiegi, potem cisza (bez ruchu dłuższego niż 5 s — SC 2.2.2)
+    const tl = gsap.timeline({ paused: true })
+    tl.fromTo(
+      pills,
+      { opacity: 0.18, filter: 'blur(4px)', boxShadow: '0 0 0px rgba(204,255,0,0)' },
+      {
+        keyframes: [
+          { opacity: 1, filter: 'blur(0px)', boxShadow: '0 0 22px rgba(204,255,0,.75)', duration: 0.2, ease: 'power2.out' },
+          { boxShadow: '0 0 0px rgba(204,255,0,0)', duration: 0.5, ease: 'power1.out' },
+        ],
+        stagger: 0.3,
+      },
+    )
     tl.to(
       pills,
       {
         keyframes: [
-          { backgroundColor: 'rgba(204,255,0,.95)', color: '#0a0a0b', duration: 0.14 },
+          { backgroundColor: 'rgba(204,255,0,.95)', color: '#0a0a0b', duration: 0.15 },
           { backgroundColor: 'rgba(204,255,0,0)', color: '#ccff00', duration: 0.4 },
         ],
-        stagger: { each: 0.12, repeat: 1, repeatDelay: pills.length * 0.12 },
-        clearProps: 'backgroundColor,color,boxShadow',
+        stagger: 0.12,
       },
-      '+=0.4',
+      '+=0.3',
     )
+    const sentence = pills[0].closest('p')
+    stage([sentence?.closest('section') ?? null, sentence], tl, 1100)
   }
 
   // ── Usługi, FAQ: wiersze po kolei; otwarcie — treść z rozmycia ──
@@ -117,10 +144,11 @@ export function sectionsMotion(root: HTMLElement, { wide }: { wide: boolean }) {
     })
   })
 
-  // ── Proces bez pinu (węższe ekrany): etapy z rozmycia, numer etapu scramble ──
-  if (!wide) {
+  // ── Proces: przy pełnym ruchu przypięty w HomeSignal (desktop i telefon); w trybie lite — lista,
+  //    etapy wyostrzają się przy przewijaniu ──
+  if (isLite()) {
     root.querySelectorAll<HTMLElement>('[data-stage]').forEach((st) => {
-      gsap.fromTo(st, { opacity: 0.15, filter: 'blur(14px)', y: move(40) }, { opacity: 1, filter: 'blur(0px)', y: 0, ease: 'none', scrollTrigger: { trigger: st, start: 'top 92%', end: 'top 55%', scrub: 0.5 } })
+      gsap.fromTo(st, { opacity: 0.15, filter: 'blur(14px)' }, { opacity: 1, filter: 'blur(0px)', ease: 'none', scrollTrigger: { trigger: st, start: 'top 92%', end: 'top 55%', scrub: 0.5 } })
     })
   }
 
@@ -154,33 +182,35 @@ export function sectionsMotion(root: HTMLElement, { wide }: { wide: boolean }) {
   // ── Z bloga (wiersze listy) ──
   root.querySelectorAll<HTMLElement>(`section ${sel(lists.rows)}`).forEach((list) => staggerIn(Array.from(list.children), list))
 
-  // ── Rozmowa: neonowy zapłon nagłówka ──
+  // ── Rozmowa: nagłówek pisze się litera po literze, a migający kursor jest pchany za ostatnią literą.
+  //    Sekcja stoi, aż nagłówek się dopisze i pojawią się tekst i przyciski. ──
   const talk = root.querySelector<HTMLElement>(sel(s.talkTitle))
   if (talk) {
-    SplitText.create(talk, {
-      // słowa + litery: słowo nie łamie się w środku przy podziale na litery
-      type: 'words,chars',
-      autoSplit: true,
-      onSplit(self) {
-        const tl = gsap.timeline({ scrollTrigger: { trigger: talk, start: 'top 75%', once: true } })
-        tl.fromTo(
-          self.chars,
-          { opacity: 0.08 },
-          {
-            keyframes: [
-              { opacity: 1, duration: 0.08 },
-              { opacity: 0.3, duration: 0.08 },
-              { opacity: 1, duration: 0.2 },
-            ],
-            stagger: { each: 0.035, from: 'random' },
-          },
-        )
-        tl.fromTo(talk, { textShadow: '0 0 0px rgba(204,255,0,0)' }, { textShadow: '0 0 28px rgba(204,255,0,.45)', duration: 0.8 }, '-=0.2')
-        return tl
-      },
-    })
+    gsap.set(talk, { minHeight: talk.offsetHeight }) // wysokość docelowa — bez skoków układu przy pisaniu
+    // słowa + litery: słowo przechodzi do nowej linii w całości, jak przy pisaniu
+    const split = SplitText.create(talk, { type: 'words,chars' })
+    const chars = split.chars as HTMLElement[]
+    const cursor = document.createElement('span')
+    cursor.className = s.cursor
+    cursor.setAttribute('aria-hidden', 'true')
+    const render = (n: number) => {
+      chars.forEach((c, i) => (c.style.display = i < n ? 'inline-block' : 'none'))
+      if (n > 0) chars[n - 1].after(cursor)
+      else chars[0]?.before(cursor)
+      cursor.toggleAttribute('data-typing', n > 0 && n < chars.length)
+    }
+    render(0)
+    const typed = { n: 0 }
+    const tl = gsap.timeline({ paused: true })
+    tl.to(typed, { n: chars.length, duration: chars.length * 0.07, ease: 'none', onUpdate: () => render(Math.round(typed.n)) })
+    tl.fromTo(talk, { textShadow: '0 0 0px rgba(204,255,0,0)' }, { textShadow: '0 0 28px rgba(204,255,0,.4)', duration: 0.6 })
     const foot = root.querySelector<HTMLElement>(sel(s.talkFoot))
-    if (foot) revealBlur(foot, talk, { delay: 0.8 })
+    if (foot) tl.fromTo(foot, { opacity: 0, y: move(24), filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.8 }, '-=0.2')
+    cleanups.push(() => {
+      cursor.remove()
+      split.revert()
+    })
+    stage([talk.closest('section'), talk.parentElement], tl, chars.length * 45 + 500)
   }
 
   return () => cleanups.forEach((fn) => fn())

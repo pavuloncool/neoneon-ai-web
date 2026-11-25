@@ -357,3 +357,27 @@
 /* Znak + / − w kółku obraca się przy rozwijaniu */
 .plus { transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s, color 0.25s; }
 .service[open] .plus { transform: rotate(180deg); }
+
+/* Kursor pisanego nagłówka rozmowy: pchany przez litery; mruga po skończeniu (5 razy, potem stoi) */
+.cursor {
+  display: inline-block;
+  width: 0.09em;
+  height: 0.78em;
+  margin-left: 0.05em;
+  vertical-align: baseline;
+  background: var(--lime);
+  box-shadow: 0 0 14px rgba(204, 255, 0, 0.8);
+  animation: blink 1.05s steps(1) 5;
+}
+.cursor[data-typing] { animation: none; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* Proces przypięty także na telefonie: mniejsze etapy, bez dużego numeru, znaczniki bez podpisów */
+@media (max-width: 767px) {
+  .pinned .stages { height: 44vh; margin-top: 24px; }
+  .pinned .stage h3 { font-size: clamp(30px, 9vw, 44px); }
+  .pinned .bigNo { display: none; }
+  .pinned .track { gap: 6px; }
+  .pinned .track li { font-size: 0; }
+  .pinned .track i { margin-bottom: 0; }
+}

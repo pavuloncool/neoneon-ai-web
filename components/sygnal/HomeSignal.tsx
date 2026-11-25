@@ -4,7 +4,7 @@
 // Strona główna „Sygnał”: hero (mgła z logo rozjaśniana kursorem, nagłówek) i jedno koło jako nawigacja.
 // Koło startuje duże w hero (.dialAnchor) i zjeżdża do prawego dolnego rogu (scrub); łuk i liczba =
 // postęp czytania; kliknięcie — mapa z pełną listą sekcji. Sekcje strony (serwerowe) przychodzą jako children.
-// Proces (desktop, pełny ruch): sekcja [data-process] przypięta, etapy przechodzą z rozmycia w ostrość.
+// Proces (pełny ruch): sekcja [data-process] przypięta, etapy przechodzą z rozmycia w ostrość.
 // Reduce: koło przeskakuje do rogu bez animacji, proces to zwykła lista. Na tej stronie nie ma koła
 // z layoutu (SiteDial zwraca null dla „/”).
 
@@ -152,7 +152,8 @@ export function HomeSignal({
 
       const mm = gsap.matchMedia()
       mm.add({ motion: '(prefers-reduced-motion: no-preference)', desktop: '(min-width: 1024px)' }, (ctx) => {
-        const { motion, desktop } = ctx.conditions as { motion: boolean; desktop: boolean }
+        // desktop w warunkach: przy zmianie progu układ (i pin procesu) budujemy od nowa
+        const { motion } = ctx.conditions as { motion: boolean; desktop: boolean }
         const fades = [rim.current, ...Array.from(dialEl.querySelectorAll('[data-dial-fade]'))].filter(Boolean)
 
         if (motion) {
@@ -204,9 +205,9 @@ export function HomeSignal({
         }
         dialEl.setAttribute('data-ready', '')
 
-        // Proces: przypięta scena z rozmyciem (desktop, pełny ruch)
+        // Proces: przypięta scena z rozmyciem (desktop i telefon, pełny ruch)
         const procEl = page.current?.querySelector<HTMLElement>('[data-process]')
-        if (motion && desktop && procEl) {
+        if (motion && procEl) {
           procEl.classList.add(s.pinned)
           const stages = gsap.utils.toArray<HTMLElement>('[data-stage]', procEl)
           const marks = gsap.utils.toArray<HTMLElement>('[data-mark]', procEl)
@@ -222,20 +223,25 @@ export function HomeSignal({
               trigger: procEl,
               pin: true,
               start: 'top top',
-              end: () => `+=${window.innerHeight * (stages.length - 1) * 0.9}`,
+              end: () => `+=${window.innerHeight * (stages.length - 1) * 1.1}`,
               scrub: 0.6,
               invalidateOnRefresh: true,
-              onUpdate: (self) => mark(Math.round(self.progress * (stages.length - 1))),
+              onUpdate: (self) => mark(Math.min(stages.length - 1, Math.floor(self.progress * stages.length))),
             },
           })
+          // Każdy etap chwilę stoi ostry (postój), dopiero potem przechodzi w następny
+          tl.to({}, { duration: 0.6 })
           stages.forEach((st, i) => {
             if (i === 0) return
+            if (i > 1) tl.to({}, { duration: 0.6 })
             tl.to(stages[i - 1], { opacity: 0, filter: 'blur(14px)', y: -50, duration: 1 }).to(
               st,
               { opacity: 1, filter: 'blur(0px)', y: 0, duration: 1 },
               '<0.25',
             )
           })
+          // Ostatni etap też stoi ostry, zanim sekcja puści
+          tl.to({}, { duration: 0.8 })
           return () => {
             procEl.classList.remove(s.pinned)
           }
@@ -263,12 +269,12 @@ export function HomeSignal({
       }
       const mm = gsap.matchMedia()
       mm.add({ motion: FULL_MOTION, wide: '(min-width: 1024px)' }, (ctx) => {
-        const { motion, wide } = ctx.conditions as { motion: boolean; wide: boolean }
+        const { motion } = ctx.conditions as { motion: boolean; wide: boolean }
         markMotionReady()
         // „Ogranicz ruch”: bez przesunięć i wjazdów, przejścia i rozwijanie zostają (motionKit, tryb lite)
         setLite(!motion)
         heroIntro(root)
-        const cleanup = sectionsMotion(root, { wide })
+        const cleanup = sectionsMotion(root)
         ScrollTrigger.sort()
         return cleanup
       })
