@@ -2,7 +2,7 @@
 // Strona główna „Sygnał”: rola AI — cztery etapy budowy; trzy po stronie ludzi (limonka),
 // kod z AI (chłodny mono, linia przerywana).
 
-import type { AiRoleCard } from '@/components/home/AiRole'
+import type { AiRoleCard } from './types'
 import s from '../sygnal.module.css'
 
 // Druga część tytułu (po pierwszym zdaniu) limonką: „AI to narzędzie do kodowania. / Nie do decyzji.”

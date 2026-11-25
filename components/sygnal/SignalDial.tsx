@@ -2,7 +2,7 @@
 
 // components/sygnal/SignalDial.tsx
 // Jedno koło nawigacji („Sygnał”). Jeden element w DOM, dwa warianty:
-// - hero: duże zaćmienie dopasowane do miejsca w hero (położenie i skalę ustawia GSAP w SygnalPage);
+// - hero: duże zaćmienie dopasowane do miejsca w hero (położenie i skalę ustawia GSAP w HomeSignal);
 //   pozycje (`items`) na obręczy to zwykłe linki,
 // - dock: od razu małe koło w prawym dolnym rogu (podstrony, blog) — bez obręczy, tylko liczba sygnału
 //   i łuk postępu; całe koło jest przyciskiem otwierającym mapę (SignalMap).

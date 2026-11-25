@@ -3,7 +3,7 @@
 // Druga usługa (strona) otwarta na starcie. CTA prowadzi do formularza z zaznaczoną usługą.
 
 import { Link } from '@/i18n/navigation'
-import type { ServiceItem } from '@/components/home/Services'
+import type { ServiceItem } from './types'
 import s from '../sygnal.module.css'
 
 export function ServicesSection({ id, label, title, items }: { id: string; label: string; title: string; items: ServiceItem[] }) {

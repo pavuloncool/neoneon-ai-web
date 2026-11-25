@@ -3,7 +3,7 @@
 // na desktopie HomeSignal przypina sekcję [data-process] i przeprowadza etapy z rozmycia w ostrość
 // (duży numer [data-big-no], znaczniki [data-mark]). Etap z AI — chłodny mono.
 
-import type { ProcessStep } from '@/components/home/Process'
+import type { ProcessStep } from './types'
 import s from '../sygnal.module.css'
 
 export function ProcessSection({

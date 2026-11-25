@@ -1,19 +1,5 @@
-/* Prototyp „Sygnał” — kosmiczny neon. Kolory: #0A0A0B kosmos, #CCFF00 sygnał, #F2F2EE tekst, #DADAD5 warstwa AI.
+/* Strona główna „Sygnał” — kosmiczny neon. Kolory: #0A0A0B kosmos, #CCFF00 sygnał, #F2F2EE tekst, #DADAD5 warstwa AI.
    Tekst drugorzędny min. 66% bieli (kontrast ≥ 5:1). */
-
-.page {
-  --ink: #0a0a0b;
-  --lime: #ccff00;
-  --paper: #f2f2ee;
-  --muted: rgba(242, 242, 238, 0.66);
-  --line: rgba(242, 242, 238, 0.16);
-  position: relative;
-  min-height: 100vh;
-  background: var(--ink);
-  color: var(--paper);
-  font-family: var(--font-archivo), system-ui, sans-serif;
-  overflow-x: clip;
-}
 
 .mono {
   font-family: var(--font-plex-mono), ui-monospace, monospace;
@@ -21,17 +7,7 @@
   letter-spacing: 0.2em;
 }
 
-/* Siatka 12 kolumn i pył gwiazd — tło całej strony */
-.grid {
-  position: fixed;
-  inset: 0 max(20px, 2.8vw);
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  pointer-events: none;
-  z-index: 0;
-}
-.grid span { border-left: 1px solid rgba(255, 255, 255, 0.045); }
-.grid span:last-child { border-right: 1px solid rgba(255, 255, 255, 0.045); }
+/* Pył gwiazd — tło strony głównej */
 .dust {
   position: fixed;
   inset: 0;
@@ -49,44 +25,6 @@
   z-index: 1;
   padding-inline: max(20px, 2.8vw);
 }
-
-/* ── Pasek: logo, język, rozmowa ── */
-.bar {
-  position: absolute;
-  top: 24px;
-  left: max(20px, 2.8vw);
-  right: max(20px, 2.8vw);
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  z-index: 30;
-}
-.logo {
-  font-size: 22px;
-  font-weight: 900;
-  font-variation-settings: 'wdth' 125;
-  letter-spacing: 0.02em;
-  color: transparent;
-  -webkit-text-stroke: 1.2px var(--paper);
-  text-decoration: none;
-}
-.lang {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-  padding: 3px;
-  border: 1px solid rgba(242, 242, 238, 0.25);
-  border-radius: 22px;
-}
-.lang a, .lang span {
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  padding: 8px 13px;
-  border-radius: 18px;
-  text-decoration: none;
-  color: var(--muted);
-}
-.lang [aria-current] { background: var(--paper); color: var(--ink); }
 
 .btn {
   min-height: 48px;
@@ -108,7 +46,7 @@
 .btnLime:hover { box-shadow: 0 0 32px rgba(204, 255, 0, 0.45); }
 .btnGhost { border: 1px solid rgba(242, 242, 238, 0.45); color: var(--paper); }
 .btnGhost:hover { border-color: var(--lime); color: var(--lime); }
-.btn:focus-visible, .lang a:focus-visible, .logo:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
+.btn:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
 
 /* ── Hero ── */
 .hero {
@@ -189,13 +127,7 @@
 }
 .lead { margin: 0; font-size: 16.5px; line-height: 1.55; color: rgba(242, 242, 238, 0.8); }
 .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
-.facts { margin: 14px 0 0; font-size: 11px; color: var(--muted); }
-.facts b { color: var(--lime); font-weight: 400; }
 
-@media (max-width: 640px) {
-  /* Na telefonie rozmowa jest w hero i w kole — w pasku zostaje logo i język */
-  .bar .btn { display: none; }
-}
 @media (max-width: 1023px) {
   .hero { padding-top: 96px; }
   .dialAnchor { position: relative; right: auto; top: auto; width: min(78vw, 360px); margin: 8px auto 0; }
@@ -293,17 +225,6 @@
   .serviceBody { grid-template-columns: 1fr; }
 }
 
-/* Rozmowa */
-.talk { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 60px; align-items: end; }
-.promises { margin: 0; padding: 0; list-style: none; }
-.promises li { display: flex; gap: 20px; padding: 15px 0; border-top: 1px solid var(--line); font-size: 16.5px; }
-.promises li:last-child { border-bottom: 1px solid var(--line); }
-.promises span { font-size: 11px; color: var(--lime); padding-top: 3px; }
-@media (max-width: 1023px) { .talk { grid-template-columns: 1fr; } }
-
-.foot { position: relative; z-index: 1; padding: 40px max(20px, 2.8vw) 140px; display: flex; gap: 24px; flex-wrap: wrap; font-size: 11px; color: var(--muted); border-top: 1px solid var(--line); }
-.foot a { color: var(--muted); }
-
 /* ── Strona główna (HomeSignal): pasek strony (SiteBar) jest nad hero, w normalnym przepływie ── */
 .home {
   --ink: #0a0a0b;
@@ -326,3 +247,94 @@
   .home .hero { padding-top: 8px; }
   .home .dialAnchor { top: auto; }
 }
+
+/* ── H2: pusta strona — redakcja na żywo (bez animacji) ── */
+.edit {
+  margin-top: 56px;
+  padding: 36px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: radial-gradient(90% 120% at 0% 0%, rgba(204, 255, 0, 0.05), transparent 60%);
+  max-width: 980px;
+}
+.editBefore { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 24px; font-size: clamp(19px, 1.8vw, 24px); line-height: 1.4; color: rgba(242, 242, 238, 0.55); }
+.editBefore del { text-decoration-color: var(--lime); text-decoration-thickness: 2px; }
+.editNote { font-size: 11px; color: var(--lime); white-space: nowrap; }
+.editAfter { list-style: none; margin: 28px 0 0; padding: 0; }
+.editAfter li { display: flex; gap: 18px; padding: 14px 0; border-top: 1px solid var(--line); font-size: clamp(18px, 1.6vw, 22px); line-height: 1.4; }
+.editAfter li > span { font-size: 11px; color: var(--lime); padding-top: 6px; }
+.editAfter ins { text-decoration: none; color: var(--paper); }
+.editCaption { margin: 18px 0 0; font-size: 10.5px; color: var(--muted); }
+.gaps { margin-top: 48px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; max-width: 980px; }
+.gap { padding-top: 16px; border-top: 2px solid var(--lime); }
+.gap h3 { margin: 10px 0 0; font-size: 24px; font-weight: 700; text-transform: uppercase; }
+.gap p { margin: 8px 0 0; font-size: 15.5px; line-height: 1.5; color: rgba(242, 242, 238, 0.8); }
+.gapNo { margin: 0 !important; font-size: 11px !important; color: var(--muted) !important; }
+.closing { margin: 48px 0 0; max-width: 30em; font-size: clamp(20px, 2vw, 28px); line-height: 1.35; font-weight: 600; }
+@media (max-width: 767px) { .gaps { grid-template-columns: 1fr; } .edit { padding: 24px; } }
+
+/* ── Dla kogo ── */
+.audience { margin: 40px 0 0; max-width: 980px; font-size: clamp(22px, 2.4vw, 34px); line-height: 1.6; font-weight: 600; }
+.pill {
+  display: inline-block;
+  padding: 0 0.55em;
+  border: 1px solid rgba(204, 255, 0, 0.55);
+  border-radius: 999px;
+  color: var(--lime);
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+/* ── Cennik ── */
+.rates { margin: 20px 0 0; font-size: 11px; color: var(--paper); line-height: 1.8; }
+.priceGrid { list-style: none; margin: 48px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px; }
+.priceCard { display: flex; flex-direction: column; padding: 28px; border: 1px solid var(--line); border-radius: 20px; background: rgba(242, 242, 238, 0.02); }
+.priceCard h3 { margin: 0; font-size: clamp(22px, 2vw, 28px); line-height: 1.05; font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; }
+.priceSummary { margin: 12px 0 0; font-size: 15.5px; line-height: 1.5; color: rgba(242, 242, 238, 0.75); }
+.priceItems { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 16px; flex: 1; align-content: start; }
+.priceRow { display: flex; justify-content: space-between; gap: 16px; font-size: 15px; line-height: 1.35; }
+.priceRow .mono { flex: none; font-size: 10.5px; letter-spacing: 0.12em; color: var(--muted); padding-top: 2px; }
+.bar { position: relative; margin-top: 8px; height: 4px; border-radius: 2px; background: rgba(242, 242, 238, 0.1); }
+.barMax, .barMin { position: absolute; inset: 0 auto 0 0; border-radius: 2px; }
+.barMax { background: rgba(204, 255, 0, 0.3); }
+.barMin { background: var(--lime); box-shadow: 0 0 8px rgba(204, 255, 0, 0.5); }
+.priceTotal { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--line); }
+.priceAmount { margin: 0; font-size: clamp(24px, 2.4vw, 34px); font-weight: 800; letter-spacing: -0.015em; font-variant-numeric: tabular-nums; color: var(--lime); }
+.priceHours { margin: 6px 0 0; font-size: 11px; color: var(--muted); }
+
+/* ── O mnie ── */
+.about { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 64px; align-items: start; }
+.portrait { max-width: 420px; border-radius: 20px; overflow: hidden; box-shadow: 0 0 0 1px rgba(242, 242, 238, 0.12), 0 0 80px -24px rgba(204, 255, 0, 0.4); }
+.portrait img { display: block; width: 100%; height: auto; filter: grayscale(0.15) contrast(1.05); }
+.aboutLead { margin: 28px 0 0; max-width: 26em; font-size: clamp(20px, 2vw, 26px); line-height: 1.35; font-weight: 600; }
+.strike { text-decoration-color: var(--lime); text-decoration-thickness: 2px; color: rgba(242, 242, 238, 0.6); }
+.facts2 { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 0; font-size: 11px; color: var(--paper); }
+.facts2 li { display: flex; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); line-height: 1.6; }
+.facts2 li:last-child { border-bottom: 1px solid var(--line); }
+.facts2 li::before { content: '●'; color: var(--lime); }
+@media (max-width: 1023px) { .about { grid-template-columns: 1fr; gap: 40px; } .portrait { max-width: 360px; } }
+
+/* ── FAQ: wiersze jak usługi, pytanie mniejszym krojem ── */
+.faqRow h3 { font-size: clamp(19px, 1.7vw, 24px); line-height: 1.25; text-transform: none; font-weight: 700; letter-spacing: -0.005em; }
+.faqRow summary { grid-template-columns: 64px minmax(0, 1fr) 0 52px; }
+@media (max-width: 767px) { .faqRow summary { grid-template-columns: 40px minmax(0, 1fr) 52px; } .faqRow summary > span:nth-child(3) { display: none; } }
+
+/* ── Z bloga ── */
+.blogHead { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px; }
+
+/* ── Rozmowa ── */
+.talkSection { overflow: hidden; padding-bottom: 160px; }
+.talkSection .glow { top: 0; right: -30vw; height: 70vh; }
+.talkTitle {
+  position: relative;
+  margin: 0;
+  font-size: clamp(36px, 9vw, 150px);
+  line-height: 0.88;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  max-width: 10em;
+}
+.talkFoot { position: relative; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--line); display: grid; grid-template-columns: minmax(0, 560px) 1fr; gap: 24px 60px; align-items: start; }
+@media (max-width: 1023px) { .talkFoot { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { .talkFoot .btnGhost { white-space: normal; } }

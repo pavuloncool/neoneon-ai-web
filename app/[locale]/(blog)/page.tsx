@@ -3,18 +3,10 @@
 // Lista bloga (dawna strona główna z page buildera) jest pod /{locale}/blog.
 import { getTranslations } from 'next-intl/server'
 import { JsonLd } from '@/components/seo/JsonLd'
-// Sekcje poniżej pierwszego ekranu — osobne pliki JS (components/home/lazy.tsx)
-import { About, Audience, Faq, FinalCta, FromBlog, Pricing, Problem } from '@/components/home/lazy'
-import type { AiRoleCard } from '@/components/home/AiRole'
-import type { ProblemTexts } from '@/components/home/Problem'
-import type { ServiceItem } from '@/components/home/Services'
-import type { ProcessStep } from '@/components/home/Process'
-import type { PricingCard, PricingTexts } from '@/components/home/Pricing'
+// Sekcje „Sygnał”: components/sygnal/home (serwerowe), hero i koło — components/sygnal/HomeSignal.tsx
 import { getAboutData, getArticles, getHomeFaq, getPricing } from '@/lib/queries'
 import { BLOG_PATH } from '@/lib/links'
-import { formatDate } from '@/lib/utils'
-import { DATE_LOCALE, type Locale } from '@/lib/locales'
-import type { FaqItemView } from '@/components/home/Faq'
+import type { Locale } from '@/lib/locales'
 import { FaqJsonLd } from '@/components/seo/FaqJsonLd'
 import { formatNumber, priceExamples, rateLine } from '@/lib/pricing'
 import { TranslationStore } from '@/components/layout/TranslationStore'
@@ -25,6 +17,14 @@ import { HomeSignal, type HomeDialItem } from '@/components/sygnal/HomeSignal'
 import { AiRoleSection } from '@/components/sygnal/home/AiRoleSection'
 import { ServicesSection } from '@/components/sygnal/home/ServicesSection'
 import { ProcessSection } from '@/components/sygnal/home/ProcessSection'
+import { ProblemSection } from '@/components/sygnal/home/ProblemSection'
+import { AudienceSection } from '@/components/sygnal/home/AudienceSection'
+import { PricingSection } from '@/components/sygnal/home/PricingSection'
+import { AboutSection } from '@/components/sygnal/home/AboutSection'
+import { FaqSection } from '@/components/sygnal/home/FaqSection'
+import { FromBlogSection } from '@/components/sygnal/home/FromBlogSection'
+import { TalkSection } from '@/components/sygnal/home/TalkSection'
+import type { AiRoleCard, FaqItemView, PricingCard, PricingTexts, ProblemTexts, ProcessStep, ServiceItem } from '@/components/sygnal/home/types'
 import { HOME_LABELS } from '@/components/sygnal/labels'
 import { PUBLIC_CONTACT_EMAIL, SITE_NAME, SITE_URL, localeUrl } from '@/lib/site'
 import type { Metadata } from 'next'
@@ -101,7 +101,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
 export default async function HomePage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'onePager' })
-  const tHome = await getTranslations({ locale, namespace: 'home' })
   const pricing = await loadPricing(locale, t)
   const personId = `${localeUrl(locale)}#person`
   // Błąd Sanity: sekcja „O mnie” bez portretu i linku do wpisu (tekst zostaje)
@@ -124,7 +123,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   const L = HOME_LABELS[locale]
   const tA11y = await getTranslations({ locale, namespace: 'a11y' })
   const anchor = (key: OnePagerSectionKey) => sectionAnchor(key, locale)
-  const visible = ONE_PAGER_SECTIONS.filter((sec) => sec.key !== 'pricing' || pricing)
+  // Wyceny bez opublikowanych przykładów: na produkcji sekcji nie ma (w dev — komunikat), więc i pozycji w kole
+  const showPricing = Boolean(pricing && (pricing.cards.length > 0 || process.env.NODE_ENV === 'development'))
+  const visible = ONE_PAGER_SECTIONS.filter((sec) => sec.key !== 'pricing' || showPricing)
   const sectionLabel = (key: OnePagerSectionKey) =>
     `${String(visible.findIndex((sec) => sec.key === key) + 1).padStart(2, '0')} · ${L.sections[key]}`
   const summary: Partial<Record<OnePagerSectionKey, string>> = {
@@ -154,7 +155,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
     group('audience', L.group.audience, ['problem', 'audience'], 'problem'),
     group('services', L.sections.services, ['services'], 'services'),
     group('process', L.sections.process, ['process'], 'process'),
-    ...(pricing ? [group('pricing', L.sections.pricing, ['pricing'], 'pricing')] : []),
+    ...(showPricing ? [group('pricing', L.sections.pricing, ['pricing'], 'pricing')] : []),
     group('talk', L.group.talk, ['about', 'faq', 'blog', 'cta'], 'cta'),
   ]
 
@@ -243,8 +244,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
           whoLabel={L.who}
         />
 
-        <Problem
-          id={sectionAnchor('problem', locale)}
+        <ProblemSection
+          id={anchor('problem')}
+          label={sectionLabel('problem')}
           contactHref={contactHrefFor(locale, 'copy')}
           texts={{
             title: t('problemTitle'),
@@ -259,16 +261,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
           }}
         />
 
-        <Audience
-          id={sectionAnchor('audience', locale)}
+        <AudienceSection
+          id={anchor('audience')}
+          label={sectionLabel('audience')}
           texts={{
             title: t('audienceTitle'),
             lead: t('audienceLead'),
             industries: t.raw('audienceIndustries') as string[],
             rest: t('audienceRest'),
             text: t('audienceText'),
-            pause: tHome('rotatingPause'),
-            resume: tHome('rotatingResume'),
           }}
         />
 
@@ -289,8 +290,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
         />
 
         {pricing ? (
-          <Pricing
-            id={sectionAnchor('pricing', locale)}
+          <PricingSection
+            id={anchor('pricing')}
+            label={sectionLabel('pricing')}
             locale={locale}
             ctaHref={CONTACT_PATH[locale]}
             texts={pricing.texts}
@@ -298,8 +300,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
           />
         ) : null}
 
-        <About
-          id={sectionAnchor('about', locale)}
+        <AboutSection
+          id={anchor('about')}
+          label={sectionLabel('about')}
           portrait={about.portrait}
           postHref={about.post ? `/${about.post.category}/${about.post.slug}` : null}
           texts={{
@@ -313,34 +316,29 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
           }}
         />
 
-        <Faq id={sectionAnchor('faq', locale)} title={t('faqTitle')} items={faq} />
+        <FaqSection id={anchor('faq')} label={sectionLabel('faq')} title={t('faqTitle')} items={faq} />
         {/* FAQPage z tych samych danych co widok */}
         <FaqJsonLd faq={faq} />
 
-        <FromBlog
-          id={sectionAnchor('blog', locale)}
+        <FromBlogSection
+          id={anchor('blog')}
+          label={sectionLabel('blog')}
+          locale={locale}
           title={t('blogTitle')}
           lead={t('blogLead')}
           cta={t('blogCta')}
           ctaHref={BLOG_PATH}
-          posts={recentPosts.map((a) => ({
-            id: a.id,
-            href: `/${a.category}/${a.slug}`,
-            title: a.title,
-            excerpt: a.excerpt ?? null,
-            date: a.published_at ? formatDate(a.published_at, DATE_LOCALE[locale]) : null,
-            dateTime: a.published_at ?? null,
-            category: a.category_title ?? null,
-            image: a.cover_image_url ? { url: a.cover_image_url, focalX: a.cover_focal_x ?? null, focalY: a.cover_focal_y ?? null } : null,
-          }))}
+          posts={recentPosts}
         />
 
-        <FinalCta
-          id={sectionAnchor('cta', locale)}
+        <TalkSection
+          id={anchor('cta')}
+          label={sectionLabel('cta')}
           title={t('ctaTitle')}
           text={t('ctaText')}
           button={t('ctaButton')}
           href={CONTACT_PATH[locale]}
+          email={PUBLIC_CONTACT_EMAIL}
         />
       </HomeSignal>
     </>
