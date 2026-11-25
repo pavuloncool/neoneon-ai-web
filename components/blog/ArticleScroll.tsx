@@ -50,15 +50,7 @@ export function ArticleScroll() {
         const LOWER = SCRAMBLE_LOWER, UPPER = SCRAMBLE_UPPER, DIGITS = '0123456789'
         const pool = (c: string) =>
           /\d/.test(c) ? DIGITS : c !== c.toLowerCase() ? UPPER : c !== c.toUpperCase() ? LOWER : null
-        // Draft mode (Presentation Tool): tekst niesie niewidoczne znaki stega (tysiące na nagłówek).
-        // SplitText zrobiłby z każdego osobny span → zawieszenie karty; dzielenie zepsułoby też
-        // klikalną edycję. Takie nagłówki pokazujemy od razu, bez efektu.
-        const STEGA = /[\u200B-\u200D\u2060-\u2064\uFEFF]/
-        const reveal = (h: HTMLElement) => {
-          if (STEGA.test(h.textContent ?? '')) {
-            gsap.set(h, { clearProps: 'opacity' })
-            return
-          }
+        const reveal = (h: HTMLElement) =>
           ctx.add(() => {
             h.setAttribute('aria-label', h.textContent ?? '')
             SplitText.create(h, {
@@ -99,7 +91,6 @@ export function ArticleScroll() {
               },
             })
           })
-        }
 
         // Tylko nagłówki w całości poniżej ekranu (nikt ich jeszcze nie widział — ukrycie nie miga)
         const below = Array.from(body.querySelectorAll<HTMLElement>('h2[data-reveal]')).filter(
