@@ -83,7 +83,7 @@ const PRIVACY: Record<Locale, LegalDoc> = {
             'Resend (USA): wysyłka powiadomień e-mail z formularzy. Podmiot odpowiedzialny: Plus Five Five, Inc., 2261 Market Street, Suite 5039, San Francisco, CA 94114, USA.',
             ...(COMMENTS_ENABLED ? ['Cloudflare, Inc. (USA): Turnstile, ochrona formularza komentarzy przed spamem.'] : []),
           ] },
-          { type: 'p', text: 'Część tych firm ma siedzibę albo serwery poza Europejskim Obszarem Gospodarczym. Dane trafiają tam na podstawie decyzji Komisji Europejskiej w sprawie ram ochrony danych UE–USA (EU-US Data Privacy Framework) albo standardowych klauzul umownych zatwierdzonych przez Komisję. [ZWERYFIKUJ: podstawa dla każdego dostawcy]' },
+          { type: 'p', text: 'Vercel i Resend mają siedzibę w USA. Obie firmy są certyfikowane w ramach EU-US Data Privacy Framework (decyzja Komisji Europejskiej z 10 lipca 2023 r. stwierdzająca odpowiedni stopień ochrony), a ich umowy powierzenia danych zawierają dodatkowo standardowe klauzule umowne zatwierdzone przez Komisję. Sanity ma siedzibę w Norwegii, czyli w Europejskim Obszarze Gospodarczym; jeśli dane trafiają do jego podwykonawców poza EOG, podstawą są standardowe klauzule umowne.' },
         ],
       },
       {
@@ -92,7 +92,7 @@ const PRIVACY: Record<Locale, LegalDoc> = {
           { type: 'list', items: [
             'Korespondencję: 12 miesięcy od ostatniego kontaktu. Jeśli podejmiemy współpracę, przez czas trwania umowy i okres wynikający z przepisów podatkowych.',
             ...(COMMENTS_ENABLED ? ['Komentarze: do czasu ich usunięcia przez Ciebie albo przeze mnie. [ZWERYFIKUJ]'] : []),
-            'Logi serwera: przez okres przechowywania ustalony przez Vercel. [ZWERYFIKUJ]',
+            'Logi serwera: krótko, przez okres ustalony przez Vercel (zależnie od planu od 1 godziny do kilku dni), po czym są usuwane automatycznie.',
           ] },
         ],
       },
@@ -159,7 +159,7 @@ const PRIVACY: Record<Locale, LegalDoc> = {
             'Resend (USA): email notifications from the forms. Responsible entity: Plus Five Five, Inc., 2261 Market Street, Suite 5039, San Francisco, CA 94114, USA.',
             ...(COMMENTS_ENABLED ? ['Cloudflare, Inc. (USA): Turnstile, spam protection for the comment form.'] : []),
           ] },
-          { type: 'p', text: 'Some of these companies are based or keep servers outside the European Economic Area. Data is transferred there on the basis of the European Commission decision on the EU-US Data Privacy Framework or standard contractual clauses approved by the Commission. [TO BE VERIFIED: basis for each provider]' },
+          { type: 'p', text: 'Vercel and Resend are based in the USA. Both are certified under the EU-US Data Privacy Framework (European Commission adequacy decision of 10 July 2023), and their data processing agreements also include standard contractual clauses approved by the Commission. Sanity is based in Norway, within the European Economic Area; if data reaches its sub-processors outside the EEA, the transfer is based on standard contractual clauses.' },
         ],
       },
       {
@@ -168,7 +168,7 @@ const PRIVACY: Record<Locale, LegalDoc> = {
           { type: 'list', items: [
             'Correspondence: 12 months from our last contact. If we start working together, for the duration of the contract and the period required by tax law.',
             ...(COMMENTS_ENABLED ? ['Comments: until you or I delete them. [TO BE VERIFIED]'] : []),
-            'Server logs: for the retention period set by Vercel. [TO BE VERIFIED]',
+            'Server logs: briefly, for the period set by Vercel (from 1 hour to a few days depending on the plan), after which they are deleted automatically.',
           ] },
         ],
       },
