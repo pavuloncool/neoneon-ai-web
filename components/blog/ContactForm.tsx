@@ -74,7 +74,12 @@ export function ContactForm({ children }: { children?: React.ReactNode }) {
   // Sukces: Flip ze stanu sprzed zamiany formularza na komunikat, potem rysowanie ✓
   useLayoutEffect(() => {
     if (status !== 'success' || !wrap.current) return
-    const check = wrap.current.querySelector<SVGPathElement>('[data-contact-check]')
+    // Formularz zwija się do krótkiego komunikatu — strona robi się niższa i komunikat lądował nad górną
+    // krawędzią okna. Przewijamy do niego (środek ekranu).
+    const box = wrap.current
+    const top = box.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.3
+    window.scrollTo({ top: Math.max(0, top), behavior: reduceMotion() ? 'auto' : 'smooth' })
+    const check = box.querySelector<SVGPathElement>('[data-contact-check]')
     if (reduceMotion() || !flipState.current) return
     Flip.from(flipState.current, { duration: 0.6, ease: 'power3.inOut' })
     if (check) gsap.fromTo(check, { drawSVG: '0%' }, { drawSVG: '100%', duration: 0.6, ease: 'power2.out', delay: 0.35 })
