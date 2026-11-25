@@ -1,40 +1,33 @@
 // components/sections/Hero.tsx
-// Sekcja „Nagłówek strony”. Wariant `large` = strona główna (HeroNeon — zapłon neonu),
-// `page` = podstrona („O mnie”, „Kontakt”).
+// Sekcja „Nagłówek strony” w stylu „Sygnał”: wariant `large` (strona bloga) — duży tytuł wersalikami,
+// druga linia limonką; `page` — podstrona („O mnie”, „Kontakt”). Bez animacji (dawny HeroNeon usunięty).
 
-import type { ComponentType } from 'react'
-import { getLocale, getTranslations } from 'next-intl/server'
-import type { HeroNeonProps } from './HeroNeon'
+import styles from '@/components/sygnal/lists.module.css'
 import type { HeroSection } from '@/types'
 
-// HeroNeon przekazywany z zewnątrz: strona główna — import statyczny (element LCP, kod w paczce trasy),
-// trasa [...segments] — wersja ładowana osobno (components/sections/lazy.tsx), bo kategorie i podstrony
-// go nie używają, a statyczny import dokładałby GSAP SplitText/ScrambleText do ich JS.
-export async function Hero({ section, HeroNeon }: { section: HeroSection; HeroNeon: ComponentType<HeroNeonProps> }) {
-  const { variant, eyebrow, heading, headingEmphasis, _key } = section
+export function Hero({ section }: { section: HeroSection }) {
+  const { variant, eyebrow, heading, headingEmphasis, rotatingPrefix, rotatingWords, _key } = section
+  const words = (rotatingWords ?? []).map((w) => w.trim()).filter(Boolean)
 
   if (variant === 'large') {
-    const locale = await getLocale()
-    const t = await getTranslations('home')
-    const { rotatingPrefix, rotatingWords } = section
     return (
-      // key={locale}: przy zmianie języka nowy montaż (sekwencja scramble), a nie tylko podmiana propsów
-      <HeroNeon
-        key={locale}
-        id={`hero-${_key}`}
-        heading={heading}
-        headingEmphasis={headingEmphasis}
-        rotatingPrefix={rotatingPrefix}
-        rotatingWords={rotatingWords}
-        labels={{ pause: t('rotatingPause'), resume: t('rotatingResume') }}
-      />
+      <header aria-labelledby={`hero-${_key}`} className={styles.head}>
+        {eyebrow && <p className={styles.eyebrow}>{eyebrow}</p>}
+        <h1 id={`hero-${_key}`} className={styles.title}>
+          {heading}
+          {headingEmphasis && <span className={styles.emph}>{headingEmphasis}</span>}
+        </h1>
+        {rotatingPrefix && words.length > 0 && (
+          <p className={styles.lead}>{rotatingPrefix} {words.join(' · ')}</p>
+        )}
+      </header>
     )
   }
 
   return (
-    <header className="mb-16">
-      {eyebrow && <p className="text-xs tracking-widest text-muted uppercase mb-4">{eyebrow}</p>}
-      <h1 className="font-display text-6xl md:text-7xl font-light leading-none">{heading}</h1>
+    <header className={styles.head} style={{ marginBottom: 48 }}>
+      {eyebrow && <p className={styles.eyebrow}>{eyebrow}</p>}
+      <h1 className={`${styles.title} ${styles.titleSmall}`}>{heading}</h1>
     </header>
   )
 }

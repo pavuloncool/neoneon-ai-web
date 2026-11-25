@@ -16,5 +16,5 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: L
   const { locale } = await params
   const page = await getHomePage(locale)
   if (!page) notFound()
-  return <PageSections page={page} locale={locale} />
+  return <PageSections page={page} locale={locale} wide />
 }

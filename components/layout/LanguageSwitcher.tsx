@@ -3,7 +3,6 @@
 import { useLocale } from 'next-intl'
 import { usePathname, useRouter } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
-import { setHeroLanguageFlag } from '@/lib/hero-language-flag'
 import type { Locale } from '@/lib/locales'
 
 // Logika zmiany języka — wspólna dla starego menu i chrome'u „Sygnał” (components/sygnal/SiteChrome)
@@ -18,9 +17,6 @@ export function useLocaleSwitch() {
     // Odpowiednik strony w drugim języku (artykuł albo strona z page buildera) — patrz TranslationStore
     const translationPath = sessionStorage.getItem('neoneon_translation_path')
     const target = translationPath || pathname
-
-    // Strona z hero: w nowym języku tytuł zrobi scramble zamiast skokowej podmiany (HeroNeon)
-    if (document.querySelector('[data-hero]')) setHeroLanguageFlag(targetLocale, target)
 
     router.push(target, { locale: targetLocale })
   }

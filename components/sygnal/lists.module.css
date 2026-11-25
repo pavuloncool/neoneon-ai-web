@@ -1,0 +1,262 @@
+/* Listy bloga „Sygnał”: strona bloga (/blog), kategorie, wyszukiwarka.
+   Wiersze jak lista usług w S07 — numer, tytuł wersalikami, metadane mono, strzałka w kółku.
+   Neon tylko jako reakcja na najechanie i stan aktywny. */
+
+.page {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 72px max(20px, 2.8vw) 0;
+}
+.narrow { max-width: 860px; }
+
+/* ── Nagłówek listy / strony ── */
+.head { padding-bottom: 48px; border-bottom: 1px solid rgba(242, 242, 238, 0.16); }
+.eyebrow {
+  margin: 0 0 20px;
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(242, 242, 238, 0.7);
+}
+.eyebrow b { font-weight: 500; color: #ccff00; }
+.title {
+  margin: 0;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: clamp(44px, 7.4vw, 120px);
+  line-height: 0.9;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.titleSmall { font-size: clamp(40px, 5.6vw, 84px); }
+.emph { display: block; color: #ccff00; }
+.lead {
+  margin: 28px 0 0;
+  max-width: 38em;
+  font-size: 19px;
+  line-height: 1.55;
+  color: rgba(242, 242, 238, 0.82);
+}
+
+/* ── Sekcja z nagłówkiem mono ── */
+.section { margin-top: 72px; }
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 8px;
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(242, 242, 238, 0.7);
+}
+
+/* ── Kafelki kategorii ── */
+.tiles {
+  margin-top: 48px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  gap: 16px;
+}
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 48px;
+  min-height: 240px;
+  padding: 28px 28px 24px;
+  border: 1px solid rgba(242, 242, 238, 0.16);
+  border-radius: 20px;
+  color: #f2f2ee;
+  text-decoration: none;
+  background: radial-gradient(120% 90% at 100% 0%, rgba(204, 255, 0, 0.06), transparent 60%);
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.tile:hover { border-color: rgba(204, 255, 0, 0.6); box-shadow: 0 0 60px -24px rgba(204, 255, 0, 0.45); }
+.tile:focus-visible { outline: 2px solid #ccff00; outline-offset: 4px; }
+.tileTop { display: flex; justify-content: space-between; gap: 16px; }
+.tileNo { font-family: var(--font-plex-mono), monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(242, 242, 238, 0.7); }
+.tileTitle {
+  margin: 0;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: clamp(32px, 3.6vw, 52px);
+  line-height: 0.95;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  transition: color 0.25s;
+}
+.tile:hover .tileTitle { color: #ccff00; }
+
+/* ── Strzałka w kółku (wspólna dla kafelków i wierszy) ── */
+.arrow {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(242, 242, 238, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.25s, border-color 0.25s, color 0.25s, transform 0.25s;
+}
+.arrow svg { width: 16px; height: 16px; }
+.tile:hover .arrow,
+.row:hover .arrow { background: #ccff00; border-color: #ccff00; color: #0a0a0b; transform: rotate(-45deg); }
+
+/* ── Wiersze artykułów ── */
+.rows { margin: 0; padding: 0; list-style: none; border-bottom: 1px solid rgba(242, 242, 238, 0.16); }
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto 44px;
+  align-items: center;
+  gap: 28px;
+  padding: 28px 0;
+  border-top: 1px solid rgba(242, 242, 238, 0.16);
+}
+.rowNo { align-self: start; padding-top: 4px; font-family: var(--font-plex-mono), monospace; font-size: 11px; letter-spacing: 0.2em; color: rgba(242, 242, 238, 0.7); }
+.rowMeta {
+  margin: 0 0 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(242, 242, 238, 0.7);
+}
+.rowCat { color: #ccff00; }
+.rowTitle {
+  margin: 0;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: clamp(22px, 2.3vw, 32px);
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  transition: color 0.25s;
+}
+/* Cały wiersz klikalny: link na tytule rozciągnięty pseudo-elementem */
+.rowLink { color: inherit; text-decoration: none; }
+.rowLink::after { content: ''; position: absolute; inset: 0; }
+.rowLink:focus-visible { outline: none; }
+.row:has(.rowLink:focus-visible) { outline: 2px solid #ccff00; outline-offset: 4px; border-radius: 4px; }
+.row:hover .rowTitle { color: #ccff00; }
+.rowExcerpt {
+  margin: 12px 0 0;
+  max-width: 46em;
+  font-size: 16px;
+  line-height: 1.55;
+  color: rgba(242, 242, 238, 0.75);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.thumb {
+  position: relative;
+  width: 168px;
+  aspect-ratio: 4 / 3;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(242, 242, 238, 0.12);
+}
+.thumb img { transition: transform 0.6s, filter 0.4s; filter: saturate(0.85); }
+.row:hover .thumb img { transform: scale(1.04); filter: saturate(1); }
+.noThumb { width: 0; }
+
+@media (max-width: 767px) {
+  .row { grid-template-columns: 32px minmax(0, 1fr) 44px; gap: 14px; padding: 22px 0; }
+  .thumb, .noThumb { display: none; }
+  .rowExcerpt { font-size: 15px; }
+}
+
+/* ── Filtry tagów ── */
+.filters { margin-top: 40px; }
+.filterLabel {
+  margin: 0 0 14px;
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(242, 242, 238, 0.7);
+}
+.tagList { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 16px;
+  border: 1px solid rgba(242, 242, 238, 0.3);
+  border-radius: 18px;
+  color: rgba(242, 242, 238, 0.82);
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s, background-color 0.2s;
+}
+.tag:hover { border-color: #ccff00; color: #ccff00; }
+.tag:focus-visible { outline: 2px solid #ccff00; outline-offset: 3px; }
+.tagActive, .tagActive:hover { background: #ccff00; border-color: #ccff00; color: #0a0a0b; }
+
+/* ── Wyszukiwarka ── */
+.searchForm { margin-top: 36px; display: flex; gap: 12px; max-width: 720px; align-items: stretch; }
+.searchInput {
+  flex: 1;
+  min-width: 0;
+  min-height: 56px;
+  padding: 0 4px;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(242, 242, 238, 0.4);
+  border-radius: 0;
+  color: #f2f2ee;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: 22px;
+}
+.searchInput::placeholder { color: rgba(242, 242, 238, 0.5); }
+.searchInput:focus { outline: none; border-bottom-color: #ccff00; }
+.searchButton {
+  flex: none;
+  min-height: 56px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: 28px;
+  background: #ccff00;
+  color: #0a0a0b;
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.searchButton:hover { background: #d9ff4d; }
+.searchButton:focus-visible { outline: 2px solid #ccff00; outline-offset: 3px; }
+.status {
+  margin: 48px 0 0;
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(242, 242, 238, 0.7);
+}
+.status b { font-weight: 500; color: #f2f2ee; }
+.empty { margin: 32px 0 0; font-size: 17px; color: rgba(242, 242, 238, 0.75); }
+
+@media (prefers-reduced-motion: reduce) {
+  .tile, .arrow, .rowTitle, .thumb img { transition: none; }
+  .tile:hover .arrow, .row:hover .arrow { transform: none; }
+  .row:hover .thumb img { transform: none; }
+}

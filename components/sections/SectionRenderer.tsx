@@ -1,7 +1,5 @@
 // components/sections/SectionRenderer.tsx
-// Sekcje page buildera dla strony głównej: HeroNeon importowany statycznie (element LCP — kod w paczce trasy).
+// Sekcje page buildera (strona bloga). Dawny podział na wersję ze statycznym i leniwym HeroNeon
+// zniknął razem z HeroNeon — oba moduły eksportują tę samą funkcję.
 
-import { createPageSections } from './PageSectionsBase'
-import { HeroNeon } from './HeroNeon'
-
-export const PageSections = createPageSections(HeroNeon)
+export { PageSections } from './PageSectionsBase'

@@ -1,10 +1,7 @@
 // components/sections/PageSectionsBase.tsx
 // Renderuje sekcje strony z page buildera (dokument `page` w Sanity) w zadanej kolejności.
-// Bez importu HeroNeon: komponent przekazuje createPageSections(HeroNeon). Strona główna używa
-// SectionRenderer.tsx (statyczny HeroNeon — element LCP), trasa [...segments] — SectionRendererLazy.tsx
-// (HeroNeon ładowany osobno, więc kategorie, artykuły i podstrony nie pobierają jego kodu).
 
-import { Fragment, type ComponentType } from 'react'
+import { Fragment } from 'react'
 import { ContactForm } from '@/components/blog/lazy'
 import { PortableTextRenderer } from '@/components/blog/PortableTextRenderer'
 import { TranslationStore } from '@/components/layout/TranslationStore'
@@ -13,18 +10,16 @@ import { pagePath } from '@/lib/links'
 import { CategoryTiles } from './CategoryTiles'
 import { FeatureGrid } from './FeatureGrid'
 import { Hero } from './Hero'
-import type { HeroNeonProps } from './HeroNeon'
 import { RecentArticles } from './RecentArticles'
 import { TextImage } from './TextImage'
+import lists from '@/components/sygnal/lists.module.css'
 import type { Page, Section } from '@/types'
 import { otherLocale, type Locale } from '@/lib/locales'
 
-type HeroNeonComponent = ComponentType<HeroNeonProps>
-
-function renderSection(section: Section, locale: Locale, heroNeon: HeroNeonComponent) {
+function renderSection(section: Section, locale: Locale) {
   switch (section._type) {
     case 'hero':
-      return <Hero section={section} HeroNeon={heroNeon} />
+      return <Hero section={section} />
     case 'categoryTiles':
       return <CategoryTiles section={section} />
     case 'recentArticles':
@@ -48,20 +43,19 @@ function renderSection(section: Section, locale: Locale, heroNeon: HeroNeonCompo
   }
 }
 
-export function createPageSections(heroNeon: HeroNeonComponent) {
-  return async function PageSections({ page, locale }: { page: Page; locale: Locale }) {
-    // Odpowiednik strony w drugim języku dla przełącznika języka (adresy mogą się różnić,
-    // np. /pl/o-mnie ↔ /en/about). Bez tłumaczenia — strona główna drugiego języka.
-    const translation = await getPageTranslation(page.id, otherLocale(locale))
-    const translationPath = translation ? pagePath(translation) : '/'
+// wide: kolumna „Sygnał” (strona bloga — listy); pozostałe podstrony jak dotąd (B4)
+export async function PageSections({ page, locale, wide = false }: { page: Page; locale: Locale; wide?: boolean }) {
+  // Odpowiednik strony w drugim języku dla przełącznika języka (adresy mogą się różnić,
+  // np. /pl/o-mnie ↔ /en/about). Bez tłumaczenia — strona główna drugiego języka.
+  const translation = await getPageTranslation(page.id, otherLocale(locale))
+  const translationPath = translation ? pagePath(translation) : '/'
 
-    return (
-      <div className={page.width === 'wide' ? 'max-w-5xl mx-auto px-6 py-16' : 'max-w-3xl mx-auto px-6 py-16'}>
-        <TranslationStore path={translationPath} />
-        {(page.sections ?? []).map((section) => (
-          <Fragment key={section._key}>{renderSection(section, locale, heroNeon)}</Fragment>
-        ))}
-      </div>
-    )
-  }
+  return (
+    <div className={wide ? lists.page : page.width === 'wide' ? 'max-w-5xl mx-auto px-6 py-16' : 'max-w-3xl mx-auto px-6 py-16'}>
+      <TranslationStore path={translationPath} />
+      {(page.sections ?? []).map((section) => (
+        <Fragment key={section._key}>{renderSection(section, locale)}</Fragment>
+      ))}
+    </div>
+  )
 }
