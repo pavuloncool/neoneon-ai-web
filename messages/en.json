@@ -336,5 +336,13 @@
       "privacy": "Confirm that you have read the privacy policy."
     },
     "preferEmail": "Prefer email?"
+  },
+  "notFound": {
+    "eyebrow": "Error 404",
+    "title": "This page isn't here.",
+    "lead": "The address may have changed or the post has moved. Try the article list or search.",
+    "blog": "All articles",
+    "search": "Search",
+    "home": "Home"
   }
 }

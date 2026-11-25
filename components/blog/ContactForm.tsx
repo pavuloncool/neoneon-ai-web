@@ -138,9 +138,12 @@ export function ContactForm({ children }: { children?: React.ReactNode }) {
   }
 
   const err = (f: ContactField) => (errors[f] ? t(`errors.${f}`) : null)
+  // Styl „Sygnał”: pola z podkreśleniem, etykiety mono wersalikami, limonka przy fokusie i zaznaczeniu
   const inputClass =
-    'w-full bg-transparent border-0 border-b border-border dark:border-white/30 px-0 py-2.5 text-base text-ink dark:text-white placeholder:text-muted focus:outline-none'
-  const labelClass = 'text-xs tracking-[0.14em] uppercase text-muted'
+    'w-full bg-transparent border-0 border-b border-white/35 rounded-none px-0 py-3 text-[17px] text-[#f2f2ee] placeholder:text-white/50 focus:outline-none'
+  const labelClass = '[font-family:var(--font-plex-mono)] text-[11px] tracking-[0.2em] uppercase text-white/70'
+  const checkClass = 'h-[18px] w-[18px] accent-[#ccff00] cursor-pointer'
+  const errorClass = 'text-sm text-[#ff8a65]'
   const required = <span aria-hidden="true">*</span>
 
   // Pole tekstowe z podkreśleniem rysowanym przy fokusie (.contact-field w globals.css)
@@ -178,10 +181,10 @@ export function ContactForm({ children }: { children?: React.ReactNode }) {
               className={inputClass}
             />
           )}
-          <span aria-hidden="true" className="contact-field-line" />
+          <span aria-hidden="true" className="contact-field-line text-[#ccff00]" />
         </div>
         {error ? (
-          <p id={`${id}-error`} className="text-sm text-accent-edit">
+          <p id={`${id}-error`} className={errorClass}>
             {error}
           </p>
         ) : null}
@@ -201,29 +204,29 @@ export function ContactForm({ children }: { children?: React.ReactNode }) {
           onChange={(e) => setForm({ ...form, [name]: e.target.value })}
           className={cn(inputClass, 'appearance-none cursor-pointer pr-6')}
         >
-          <option value="">—</option>
+          <option value="" className="bg-[#0a0a0b]">—</option>
           {options.map((o) => (
-            <option key={o} value={o}>
+            <option key={o} value={o} className="bg-[#0a0a0b]">
               {t(`${optionKey}.${o}`)}
             </option>
           ))}
         </select>
-        <span aria-hidden="true" className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-muted">
+        <span aria-hidden="true" className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-white/70">
           ↓
         </span>
-        <span aria-hidden="true" className="contact-field-line" />
+        <span aria-hidden="true" className="contact-field-line text-[#ccff00]" />
       </div>
     </div>
   )
 
   return (
-    <div className="grid md:grid-cols-[1fr_2fr] gap-12">
-      <div className="flex flex-col gap-6 text-[15px] text-muted dark:text-white/70 leading-relaxed">
-        <p className="text-lg text-ink dark:text-white leading-relaxed">{t('lead')}</p>
+    <div className="grid md:grid-cols-[1fr_2fr] gap-12 md:gap-20 pt-12">
+      <div className="flex flex-col gap-6 text-[16px] text-white/75 leading-relaxed">
+        <p className="text-[20px] text-[#f2f2ee] leading-[1.5]">{t('lead')}</p>
         {children}
         <p>
           {t('preferEmail')}{' '}
-          <a href={`mailto:${PUBLIC_CONTACT_EMAIL}`} className="underline underline-offset-4 text-ink dark:text-white">
+          <a href={`mailto:${PUBLIC_CONTACT_EMAIL}`} className="underline underline-offset-4 text-[#ccff00] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ccff00] focus-visible:outline-offset-4">
             {PUBLIC_CONTACT_EMAIL}
           </a>
         </p>
@@ -231,20 +234,20 @@ export function ContactForm({ children }: { children?: React.ReactNode }) {
 
       <div ref={wrap} data-contact-wrap className="relative">
         {status === 'success' ? (
-          <div role="status" className="flex items-start gap-5 border-t border-b border-border dark:border-white/15 py-8">
+          <div role="status" className="flex items-start gap-5 border-t border-b border-white/15 py-8">
             {/* Znak ✓ w stylu korektorskim (dekoracja) */}
             <svg aria-hidden="true" viewBox="0 0 48 40" className="h-10 w-12 shrink-0 overflow-visible">
               <path
                 data-contact-check
                 d="M3,22 C9,26 13,31 17,36 C24,22 33,11 45,3"
                 fill="none"
-                stroke="var(--accent-edit)"
+                stroke="#ccff00"
                 strokeWidth={3}
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
             </svg>
-            <p data-contact-success-text className="font-display text-2xl md:text-3xl leading-snug">
+            <p data-contact-success-text className="text-2xl md:text-3xl font-extrabold uppercase leading-[1.05] tracking-[-0.015em]">
               {t('success', { email: sentTo })}
             </p>
           </div>
@@ -265,18 +268,18 @@ export function ContactForm({ children }: { children?: React.ReactNode }) {
                 {required}
               </legend>
               {NEEDS.map((need) => (
-                <label key={need} className="flex items-center gap-3 text-base cursor-pointer">
+                <label key={need} className="flex items-center gap-3 min-h-[32px] text-[17px] text-[#f2f2ee] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={needs.includes(need)}
                     onChange={(e) => setNeeds(e.target.checked ? [...needs, need] : needs.filter((n) => n !== need))}
-                    className="h-4 w-4 accent-[var(--accent-edit)]"
+                    className={checkClass}
                   />
                   {t(`needs.${need}`)}
                 </label>
               ))}
               {err('needs') ? (
-                <p id="contact-needs-error" className="text-sm text-accent-edit">
+                <p id="contact-needs-error" className={errorClass}>
                   {err('needs')}
                 </p>
               ) : null}
@@ -303,18 +306,18 @@ export function ContactForm({ children }: { children?: React.ReactNode }) {
             </div>
 
             <div data-field="privacy" className="flex flex-col gap-1.5">
-              <label className="flex items-start gap-3 text-base cursor-pointer">
+              <label className="flex items-start gap-3 text-[16px] text-white/85 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={privacy}
                   onChange={(e) => setPrivacy(e.target.checked)}
                   aria-invalid={errors.privacy ? true : undefined}
                   aria-describedby={errors.privacy ? 'contact-privacy-error' : undefined}
-                  className="mt-1 h-4 w-4 accent-[var(--accent-edit)]"
+                  className={cn(checkClass, 'mt-1 shrink-0')}
                 />
                 <span>
                   {t('privacyBefore')}
-                  <Link href={PRIVACY_PATH[locale]} className="underline underline-offset-4">
+                  <Link href={PRIVACY_PATH[locale]} className="underline underline-offset-4 text-[#ccff00]">
                     {t('privacyLink')}
                   </Link>
                   {t('privacyAfter')}
@@ -322,14 +325,14 @@ export function ContactForm({ children }: { children?: React.ReactNode }) {
                 </span>
               </label>
               {err('privacy') ? (
-                <p id="contact-privacy-error" className="text-sm text-accent-edit">
+                <p id="contact-privacy-error" className={errorClass}>
                   {err('privacy')}
                 </p>
               ) : null}
             </div>
 
             {status === 'error' ? (
-              <p role="alert" className="text-sm text-accent-edit">
+              <p role="alert" className={errorClass}>
                 {t('serverError', { email: PUBLIC_CONTACT_EMAIL })}
               </p>
             ) : null}
@@ -338,7 +341,7 @@ export function ContactForm({ children }: { children?: React.ReactNode }) {
               type="submit"
               disabled={status === 'sending'}
               aria-busy={status === 'sending'}
-              className="self-start inline-flex items-center gap-2 rounded-full bg-ink text-paper dark:bg-paper dark:text-ink px-7 py-3.5 text-sm font-medium disabled:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"
+              className="self-start inline-flex items-center gap-2 min-h-[52px] rounded-full bg-[#ccff00] text-[#0a0a0b] hover:bg-[#d9ff4d] px-8 [font-family:var(--font-plex-mono)] text-[12px] font-medium tracking-[0.18em] uppercase transition-colors disabled:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ccff00] focus-visible:outline-offset-4"
             >
               <span ref={buttonLabel}>{t('submit')}</span>
             </button>

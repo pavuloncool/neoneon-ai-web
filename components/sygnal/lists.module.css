@@ -260,3 +260,22 @@
   .tile:hover .arrow, .row:hover .arrow { transform: none; }
   .row:hover .thumb img { transform: none; }
 }
+
+/* Podstrony z page buildera (np. Kontakt) — węższa kolumna niż listy */
+.mid { max-width: 1120px; }
+
+/* ── Sekcje page buildera: siatka obszarów, tekst ze zdjęciem ── */
+.features { margin-top: 72px; }
+.featureGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px; }
+.feature { padding: 28px; border: 1px solid rgba(242, 242, 238, 0.16); border-radius: 20px; }
+.featureTitle { margin: 0 0 10px; font-size: 22px; font-weight: 800; line-height: 1.1; text-transform: uppercase; letter-spacing: -0.01em; }
+.featureText { margin: 0; font-size: 16px; line-height: 1.55; color: rgba(242, 242, 238, 0.75); }
+.textImage { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 56px; margin-top: 56px; }
+.textImagePhoto { position: relative; aspect-ratio: 3 / 4; max-width: 320px; border-radius: 20px; overflow: hidden; box-shadow: 0 0 0 1px rgba(242, 242, 238, 0.12), 0 0 60px -20px rgba(204, 255, 0, 0.35); }
+.textImageBody { display: flex; flex-direction: column; gap: 20px; font-size: 18px; line-height: 1.65; color: rgba(242, 242, 238, 0.88); }
+.textImageBody a { color: #ccff00; text-underline-offset: 4px; }
+.textLink { align-self: flex-start; display: inline-flex; align-items: center; gap: 14px; color: #f2f2ee !important; text-decoration: none; font-family: var(--font-plex-mono), monospace; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; }
+.textLink:hover { color: #ccff00 !important; }
+.textLink:hover .arrow { background: #ccff00; border-color: #ccff00; color: #0a0a0b; }
+.textLink:focus-visible { outline: 2px solid #ccff00; outline-offset: 4px; }
+@media (max-width: 767px) { .textImage { grid-template-columns: 1fr; gap: 32px; } }

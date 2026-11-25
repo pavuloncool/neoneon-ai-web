@@ -25,7 +25,7 @@ export function Hero({ section }: { section: HeroSection }) {
   }
 
   return (
-    <header className={styles.head} style={{ marginBottom: 48 }}>
+    <header className={styles.head}>
       {eyebrow && <p className={styles.eyebrow}>{eyebrow}</p>}
       <h1 className={`${styles.title} ${styles.titleSmall}`}>{heading}</h1>
     </header>

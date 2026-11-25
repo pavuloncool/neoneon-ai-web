@@ -34,7 +34,7 @@ function renderSection(section: Section, locale: Locale) {
       return <ContactForm />
     case 'richText':
       return section.body?.length ? (
-        <div className="mb-16">
+        <div className="mt-12 max-w-[44rem]">
           <PortableTextRenderer content={section.body} />
         </div>
       ) : null
@@ -43,7 +43,7 @@ function renderSection(section: Section, locale: Locale) {
   }
 }
 
-// wide: kolumna „Sygnał” (strona bloga — listy); pozostałe podstrony jak dotąd (B4)
+// Kolumna „Sygnał”: szeroka (strona bloga, strony `wide`) albo średnia (np. Kontakt)
 export async function PageSections({ page, locale, wide = false }: { page: Page; locale: Locale; wide?: boolean }) {
   // Odpowiednik strony w drugim języku dla przełącznika języka (adresy mogą się różnić,
   // np. /pl/o-mnie ↔ /en/about). Bez tłumaczenia — strona główna drugiego języka.
@@ -51,7 +51,7 @@ export async function PageSections({ page, locale, wide = false }: { page: Page;
   const translationPath = translation ? pagePath(translation) : '/'
 
   return (
-    <div className={wide ? lists.page : page.width === 'wide' ? 'max-w-5xl mx-auto px-6 py-16' : 'max-w-3xl mx-auto px-6 py-16'}>
+    <div className={wide || page.width === 'wide' ? lists.page : `${lists.page} ${lists.mid}`}>
       <TranslationStore path={translationPath} />
       {(page.sections ?? []).map((section) => (
         <Fragment key={section._key}>{renderSection(section, locale)}</Fragment>

@@ -336,5 +336,13 @@
       "privacy": "Zaznacz, że znasz politykę prywatności."
     },
     "preferEmail": "Wolisz e-mail?"
+  },
+  "notFound": {
+    "eyebrow": "Błąd 404",
+    "title": "Tej strony tu nie ma.",
+    "lead": "Adres mógł się zmienić albo wpis został przeniesiony. Spróbuj od listy artykułów albo wyszukiwarki.",
+    "blog": "Wszystkie artykuły",
+    "search": "Szukaj",
+    "home": "Strona główna"
   }
 }
