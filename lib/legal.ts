@@ -4,7 +4,7 @@
 // Dane administratora i miejsca oznaczone [DO UZUPEŁNIENIA] / [ZWERYFIKUJ] uzupełnia właściciel strony.
 //
 // Polityka prywatności i polityka cookies (PL/EN). Struktura według briefu (8.1, 8.2); lista cookies według
-// audytu z 24.11.2026 (kod + przeglądarka): NEXT_LOCALE (next-intl), theme (localStorage, next-themes),
+// audytu z 24.11.2026 (kod + przeglądarka): NEXT_LOCALE (next-intl) — motyw jest stały (ciemny), next-themes nic nie zapisuje (sprawdzone 25.11),
 // neoneon_translation_path (sessionStorage), cookies Studio Sanity i trybu podglądu (tylko redaktorzy),
 // Cloudflare Turnstile w formularzu komentarzy, Vercel Web Analytics i Speed Insights (bez cookies).
 // Przy zmianie integracji (np. włączenie Umami) zaktualizuj tę treść i datę.
@@ -211,7 +211,6 @@ const COOKIES: Record<Locale, LegalDoc> = {
         blocks: [
           { type: 'table', head: ['Nazwa', 'Rodzaj', 'Jak długo', 'Po co'], rows: [
             ['NEXT_LOCALE', 'cookie', 'do zamknięcia przeglądarki', 'zapamiętuje wybrany język strony'],
-            ['theme', 'localStorage', 'do usunięcia w przeglądarce', 'zapamiętuje jasny albo ciemny motyw'],
             ['neoneon_translation_path', 'sessionStorage', 'do zamknięcia karty', 'pozwala przełączyć język na tej samej stronie'],
           ] },
           { type: 'p', text: 'Osoby zalogowane do panelu redakcyjnego (Sanity Studio) dostają dodatkowo cookies logowania i podglądu szkiców. Nie dotyczy to czytelników strony.' },
@@ -227,13 +226,13 @@ const COOKIES: Record<Locale, LegalDoc> = {
       {
         title: '4. Podstawa prawna',
         blocks: [
-          { type: 'p', text: 'Opisane wyżej cookies i zapisy w przeglądarce są niezbędne do działania funkcji, o które prosisz (język, motyw), więc nie wymagają zgody. Dlatego strona nie wyświetla bannera cookies. Jeśli dodam cookies analityczne albo marketingowe, poproszę o zgodę w bannerze z dwoma równorzędnymi przyciskami: „Akceptuję” i „Odrzucam”.' },
+          { type: 'p', text: 'Opisane wyżej cookies i zapisy w przeglądarce są niezbędne do działania funkcji, o które prosisz (język), więc nie wymagają zgody. Dlatego strona nie wyświetla bannera cookies. Jeśli dodam cookies analityczne albo marketingowe, poproszę o zgodę w bannerze z dwoma równorzędnymi przyciskami: „Akceptuję” i „Odrzucam”.' },
         ],
       },
       {
         title: '5. Jak zarządzać cookies',
         blocks: [
-          { type: 'p', text: 'Cookies i dane stron możesz w każdej chwili usunąć albo zablokować w ustawieniach przeglądarki (zwykle w sekcji „Prywatność” albo „Dane witryn”). Po zablokowaniu strona nie zapamięta wybranego języka ani motywu.' },
+          { type: 'p', text: 'Cookies i dane stron możesz w każdej chwili usunąć albo zablokować w ustawieniach przeglądarki (zwykle w sekcji „Prywatność” albo „Dane witryn”). Po zablokowaniu strona nie zapamięta wybranego języka.' },
         ],
       },
       {
@@ -258,7 +257,6 @@ const COOKIES: Record<Locale, LegalDoc> = {
         blocks: [
           { type: 'table', head: ['Name', 'Type', 'How long', 'Purpose'], rows: [
             ['NEXT_LOCALE', 'cookie', 'until you close the browser', 'remembers the language you chose'],
-            ['theme', 'localStorage', 'until you clear it in the browser', 'remembers the light or dark theme'],
             ['neoneon_translation_path', 'sessionStorage', 'until you close the tab', 'lets you switch language on the same page'],
           ] },
           { type: 'p', text: 'People logged in to the editorial panel (Sanity Studio) also get login and draft preview cookies. This does not apply to readers.' },
@@ -274,13 +272,13 @@ const COOKIES: Record<Locale, LegalDoc> = {
       {
         title: '4. Legal basis',
         blocks: [
-          { type: 'p', text: 'The cookies and browser storage described above are needed for features you ask for (language, theme), so they do not require consent. That is why the website shows no cookie banner. If I add analytics or marketing cookies, I will ask for consent in a banner with two equal buttons: "Accept" and "Reject".' },
+          { type: 'p', text: 'The cookies and browser storage described above are needed for features you ask for (language), so they do not require consent. That is why the website shows no cookie banner. If I add analytics or marketing cookies, I will ask for consent in a banner with two equal buttons: "Accept" and "Reject".' },
         ],
       },
       {
         title: '5. How to manage cookies',
         blocks: [
-          { type: 'p', text: 'You can delete or block cookies and site data at any time in your browser settings (usually under "Privacy" or "Site data"). If you block them, the website will not remember your language or theme.' },
+          { type: 'p', text: 'You can delete or block cookies and site data at any time in your browser settings (usually under "Privacy" or "Site data"). If you block them, the website will not remember your language.' },
         ],
       },
       {

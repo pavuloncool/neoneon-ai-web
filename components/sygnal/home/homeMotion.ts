@@ -57,7 +57,13 @@ export function heroIntro(root: HTMLElement) {
     // Opacity zostaje 1 (element LCP) — tylko rozmycie i przesunięcie
     tl.fromTo(h1, { filter: 'blur(16px)', y: 30, opacity: 1 }, { filter: 'blur(0px)', y: 0, duration: 1.3, clearProps: 'filter,transform' }, 0)
   }
-  if (eyebrow) tl.fromTo(eyebrow, { opacity: 0 }, { opacity: 1, duration: 0.2 }, 0.1).add(scramble(eyebrow, 1.2), 0.1)
+  if (eyebrow) {
+    // Wysokość bloku zablokowana na czas scramble (losowe znaki łamałyby linie inaczej — CLS)
+    gsap.set(eyebrow, { height: eyebrow.offsetHeight, overflow: 'hidden' })
+    tl.fromTo(eyebrow, { opacity: 0 }, { opacity: 1, duration: 0.2 }, 0.1)
+    Array.from(eyebrow.children).forEach((line, i) => tl.add(scramble(line as HTMLElement, 1.2), 0.1 + i * 0.15))
+    tl.set(eyebrow, { clearProps: 'height,overflow' })
+  }
   if (foot) {
     tl.fromTo(foot, { opacity: 0, y: move(20), filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.9, clearProps: 'filter,transform' }, 0.55)
   }
@@ -111,10 +117,11 @@ export function sectionsMotion(root: HTMLElement) {
     const tl = gsap.timeline({ paused: true })
     tl.fromTo(
       pills,
-      { opacity: 0.18, filter: 'blur(4px)', boxShadow: '0 0 0px rgba(204,255,0,0)' },
+      // Start przygaszony, ale czytelny: opacity 0.6 = kontrast ok. 6:1 (WCAG AA 4,5:1 także przed sekwencją)
+      { opacity: 0.6, boxShadow: '0 0 0px rgba(204,255,0,0)' },
       {
         keyframes: [
-          { opacity: 1, filter: 'blur(0px)', boxShadow: '0 0 22px rgba(204,255,0,.75)', duration: 0.2, ease: 'power2.out' },
+          { opacity: 1, boxShadow: '0 0 22px rgba(204,255,0,.75)', duration: 0.2, ease: 'power2.out' },
           { boxShadow: '0 0 0px rgba(204,255,0,0)', duration: 0.5, ease: 'power1.out' },
         ],
         stagger: 0.3,
@@ -215,3 +222,6 @@ export function sectionsMotion(root: HTMLElement) {
 
   return () => cleanups.forEach((fn) => fn())
 }
+
+// Przełącznik trybu lite — eksportowany stąd, żeby HomeSignal ładował cały ruch jedną dynamiczną paczką
+export { setLite } from '../motionKit'

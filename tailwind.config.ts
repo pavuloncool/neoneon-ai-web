@@ -12,12 +12,10 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        // Nagłówki — szeryfowa, elegancka (klasa: font-display)
-        display: ['var(--font-cormorant)', 'Georgia', 'serif'],
-        // Body — bezszeryfowa, czytelna (klasa: font-sans)
-        sans: ['var(--font-dm-sans)', 'system-ui', 'sans-serif'],
-        // Mono — kod (klasa: font-mono)
-        mono: ['var(--font-dm-mono)', 'monospace'],
+        // „Sygnał”: Archivo (nagłówki i tekst) i IBM Plex Mono (etykiety, kod) — @font-face w globals.css
+        display: ['var(--font-archivo)', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-archivo)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-plex-mono)', 'monospace'],
         // Odręczny — notatki redaktora na marginesie (klasa: font-hand; @font-face w styles/globals.css)
         hand: ['Caveat', 'cursive'],
       },
@@ -35,9 +33,9 @@ const config: Config = {
         DEFAULT: {
           css: {
             color: '#0f0f0f',
-            fontFamily: 'var(--font-dm-sans)',
+            fontFamily: 'var(--font-archivo)',
             'h1, h2, h3, h4': {
-              fontFamily: 'var(--font-cormorant)',
+              fontFamily: 'var(--font-archivo)',
               fontWeight: '600',
             },
             a: {
@@ -51,7 +49,7 @@ const config: Config = {
             blockquote: {
               borderLeftColor: '#c8a96e',
               fontStyle: 'italic',
-              fontFamily: 'var(--font-cormorant)',
+              fontFamily: 'var(--font-archivo)',
               fontSize: '1.25rem',
             },
           },

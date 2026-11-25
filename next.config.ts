@@ -41,8 +41,10 @@ const nextConfig: NextConfig = {
   },
   // Poza produkcją (podglądy Vercel, wersja robocza SITE_STAGING=1, lokalne buildy) — noindex na każdej odpowiedzi
   async headers() {
-    if (process.env.VERCEL_ENV === 'production' && !IS_STAGING) return []
-    return [{ source: '/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] }]
+    // Kroje w public/fonts (preload w layoucie) — pliki niezmienne, długi cache
+    const fonts = { source: '/fonts/:file*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }] }
+    if (process.env.VERCEL_ENV === 'production' && !IS_STAGING) return [fonts]
+    return [fonts, { source: '/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] }]
   },
   images: {
     remotePatterns: [

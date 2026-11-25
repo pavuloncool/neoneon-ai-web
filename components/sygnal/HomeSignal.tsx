@@ -15,8 +15,6 @@ import { ScrollTrigger, refreshAfterFonts } from '@/lib/gsap-scroll'
 import { SignalDial, type DialItem } from './SignalDial'
 import { SignalMap } from './SignalMap'
 import { MapAside, SignalLanguage } from './SiteChrome'
-import { heroIntro, sectionsMotion } from './home/homeMotion'
-import { setLite } from './motionKit'
 import { CHROME_LABELS, DIAL_LABELS, MAP_LABELS } from './labels'
 import type { Locale } from '@/lib/locales'
 import s from './sygnal.module.css'
@@ -72,6 +70,8 @@ export function HomeSignal({
   const progressRef = useRef(0)
 
   const [size, setSize] = useState(480)
+  // Koło pokazujemy dopiero po zmierzeniu miejsca w hero — inaczej mignęłoby w domyślnym rozmiarze (CLS)
+  const [measured, setMeasured] = useState(false)
   const [docked, setDocked] = useState(false)
   const [section, setSection] = useState(heroId) // bieżąca sekcja (id kotwicy)
   const [open, setOpen] = useState(false)
@@ -95,7 +95,10 @@ export function HomeSignal({
   useEffect(() => {
     const el = anchor.current
     if (!el) return
-    const ro = new ResizeObserver(() => setSize(Math.round(el.getBoundingClientRect().width)))
+    const ro = new ResizeObserver(() => {
+      setSize(Math.round(el.getBoundingClientRect().width))
+      setMeasured(true)
+    })
     ro.observe(el)
     return () => ro.disconnect()
   }, [])
@@ -221,7 +224,12 @@ export function HomeSignal({
               glide(cx - (window.innerWidth - DOCK.margin - size / 2), cy - (window.innerHeight - DOCK.margin - size / 2))
             }
             // Światło spod koła: środek maski mgły i poświaty = środek koła (co klatkę)
+            let lightReady = false
             const light = () => {
+              // Pomiary tylko wtedy, gdy koło płynie na górze strony (bez odczytów układu w każdej klatce)
+              const moving = qx.tween.isActive() || qy.tween.isActive()
+              if (!atTop || (lightReady && !moving)) return
+              lightReady = true
               const b = dialEl.getBoundingClientRect()
               const h = heroEl.getBoundingClientRect()
               const cx = b.left + b.width / 2
@@ -363,7 +371,7 @@ export function HomeSignal({
             onRefresh: (self) => (self.progress > 0 ? toDock() : toHero()),
           })
         }
-        dialEl.setAttribute('data-ready', '')
+        if (measured) dialEl.setAttribute('data-ready', '')
 
         // Proces: przypięta scena z rozmyciem (desktop i telefon, pełny ruch)
         const procEl = page.current?.querySelector<HTMLElement>('[data-process]')
@@ -407,14 +415,13 @@ export function HomeSignal({
           }
         }
       })
-      // Triggery ruchu sekcji (drugi useGSAP) mogły powstać przed pinem procesu — kolejność wg pozycji
-      ScrollTrigger.sort()
-      ScrollTrigger.refresh()
+      // Kolejność triggerów i przeliczenie pozycji — po konfiguracji ruchu sekcji (drugi useGSAP, w czasie
+      // bezczynności przeglądarki); tu tylko po załadowaniu fontów
       refreshAfterFonts()
       return () => mm.revert()
     },
     // revertOnUpdate: przy zmianie rozmiaru koła stare triggery (w tym pin procesu) muszą zniknąć przed nowymi
-    { scope: page, dependencies: [size], revertOnUpdate: true },
+    { scope: page, dependencies: [size, measured], revertOnUpdate: true },
   )
 
   // Ruch wejścia: hero i sekcje (homeMotion), także przy „Ogranicz ruch” (lżejszy). Osobno od koła —
@@ -427,18 +434,40 @@ export function HomeSignal({
         heroRef.current?.setAttribute('data-m-done', '')
         return
       }
-      const mm = gsap.matchMedia()
-      mm.add({ motion: FULL_MOTION, wide: '(min-width: 1024px)' }, (ctx) => {
-        const { motion } = ctx.conditions as { motion: boolean; wide: boolean }
-        markMotionReady()
-        // „Ogranicz ruch”: bez przesunięć i wjazdów, przejścia i rozwijanie zostają (motionKit, tryb lite)
-        setLite(!motion)
-        heroIntro(root)
-        const cleanup = sectionsMotion(root)
-        ScrollTrigger.sort()
-        return cleanup
+      // Moduł ruchu (pluginy SplitText/ScrambleText + sekcje) w osobnej paczce, doładowanej po starcie —
+      // nie obciąża głównego JS strony. Do tego czasu hero czeka w stanie startowym z CSS (html.js).
+      let mm: gsap.MatchMedia | null = null
+      let dead = false
+      import('./home/homeMotion').then(({ heroIntro, sectionsMotion, setLite }) => {
+        if (dead) return
+        mm = gsap.matchMedia()
+        mm.add({ motion: FULL_MOTION, wide: '(min-width: 1024px)' }, (ctx) => {
+          const { motion } = ctx.conditions as { motion: boolean; wide: boolean }
+          markMotionReady()
+          // „Ogranicz ruch”: bez przesunięć i wjazdów, przejścia i rozwijanie zostają (motionKit, tryb lite)
+          setLite(!motion)
+          heroIntro(root)
+          // Ruch sekcji poniżej pierwszego ekranu — po pierwszym malowaniu, w czasie bezczynności
+          // (setup wielu triggerów i pinów blokował start strony — TBT). ctx.add: sprzątanie przy revert.
+          let cleanup: (() => void) | undefined
+          const setup = () =>
+            ctx.add(() => {
+              cleanup = sectionsMotion(root)
+              ScrollTrigger.sort()
+              ScrollTrigger.refresh()
+            })
+          const idle = window.requestIdleCallback ? window.requestIdleCallback(setup, { timeout: 900 }) : window.setTimeout(setup, 200)
+          return () => {
+            if (window.cancelIdleCallback) window.cancelIdleCallback(idle)
+            else window.clearTimeout(idle)
+            cleanup?.()
+          }
+        })
       })
-      return () => mm.revert()
+      return () => {
+        dead = true
+        mm?.revert()
+      }
     },
     { scope: page },
   )
@@ -486,9 +515,9 @@ export function HomeSignal({
         <div className={s.glow} aria-hidden="true" />
         <div className={s.dialLight} aria-hidden="true" />
         <p className={`${s.mono} ${s.eyebrow}`}>
-          {texts.eyebrow}
-          <br />
-          {texts.subtitle}
+          {/* Dwie linie jako osobne bloki — scramble każdej osobno nie gubi przełamania */}
+          <span className={s.eyebrowLine}>{texts.eyebrow}</span>
+          <span className={s.eyebrowLine}>{texts.subtitle}</span>
         </p>
 
         <div className={s.fog} aria-hidden="true" data-fog="">

@@ -22,9 +22,16 @@ export const isLite = () => LITE
 // Przesunięcie w px — w trybie lite zero
 export const move = (px: number) => (LITE ? 0 : px)
 
+// Wysokość zablokowana na czas scramble — losowe znaki mają inną szerokość i łamałyby linie (CLS)
 export function scramble(el: HTMLElement, duration = 0.9) {
   const text = el.textContent ?? ''
-  return gsap.to(el, { duration, ease: 'none', scrambleText: { text, chars: scrambleChars(text.toUpperCase()), revealDelay: 0.15, speed: 0.6 } })
+  return gsap.to(el, {
+    duration,
+    ease: 'none',
+    scrambleText: { text, chars: scrambleChars(text.toUpperCase()), revealDelay: 0.15, speed: 0.6 },
+    onStart: () => void (el.style.minHeight = `${el.offsetHeight}px`),
+    onComplete: () => void (el.style.minHeight = ''),
+  })
 }
 
 // Napis mono: ukryty do wejścia, potem scramble
@@ -71,20 +78,26 @@ export function staggerIn(items: Element[], trigger: Element, axis: 'x' | 'y' = 
 
 // Nagłówek: linie wyjeżdżają z maski i wyostrzają się (lite: tylko rozmycie). Animacja w onSplit —
 // przy ponownym podziale (fonty, zmiana szerokości) GSAP przenosi postęp.
+// Nagłówek: linie wyjeżdżają z maski i wyostrzają się (lite: tylko rozmycie). Podział na linie dopiero
+// przy wejściu nagłówka na ekran (SplitText mierzy układ — robiony dla wszystkich naraz blokował start
+// strony), a po animacji cofnięty: zostaje zwykły tekst.
 export function splitHeading(el: HTMLElement, trigger: Element = el) {
   if (LITE) return revealBlur(el, trigger)
-  return SplitText.create(el, {
-    type: 'lines',
-    mask: 'lines',
-    autoSplit: true,
-    onSplit(self) {
-      return gsap.from(self.lines, {
+  gsap.set(el, { opacity: 0 })
+  return ScrollTrigger.create({
+    trigger,
+    start: IN,
+    once: true,
+    onEnter: () => {
+      const split = SplitText.create(el, { type: 'lines', mask: 'lines' })
+      gsap.set(el, { opacity: 1 })
+      gsap.from(split.lines, {
         yPercent: 105,
         filter: 'blur(8px)',
         duration: 1,
         stagger: 0.09,
         ease: 'power4.out',
-        scrollTrigger: { trigger, start: IN, once: true },
+        onComplete: () => split.revert(),
       })
     },
   })

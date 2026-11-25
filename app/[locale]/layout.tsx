@@ -4,7 +4,6 @@ import { notFound } from 'next/navigation'
 import { draftMode } from 'next/headers'
 import Script from 'next/script'
 import { ThemeProvider } from '@/components/layout/ThemeProvider'
-import { cormorant, dmSans, dmMono } from '@/app/fonts'
 import { DraftTools } from '@/components/layout/DraftTools'
 import { HtmlClassGuard } from '@/components/layout/HtmlClassGuard'
 import { BootScript } from '@/components/layout/BootScript'
@@ -60,12 +59,15 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       suppressHydrationWarning
-      className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable}`}
     >
       <head>
         {/* Znacznik JS przed hydracją — CSS ustawia stany startowe animacji tylko pod html.js.
             Siatka bezpieczeństwa: jeśli GSAP nie wystartował w 3 s, zdejmujemy znacznik i treść jest widoczna. */}
         <BootScript code={MOTION_BOOTSTRAP} />
+        {/* Kroje „Sygnał” od razu (bez późnej podmiany i przesunięć układu): Archivo — nagłówki i tekst,
+            Plex Mono — etykiety. Tylko zakres latin; latin-ext (polskie znaki) dociąga unicode-range. */}
+        <link rel="preload" href="/fonts/archivo-var-latin.woff2" as="font" type="font/woff2" crossOrigin="" />
+        <link rel="preload" href="/fonts/ibm-plex-mono-400-latin.woff2" as="font" type="font/woff2" crossOrigin="" />
       </head>
       <body className="bg-paper text-ink antialiased transition-colors duration-300">
         {/* Przywraca klasy js / dark|light na <html> po zmianie języka (przed malowaniem) */}

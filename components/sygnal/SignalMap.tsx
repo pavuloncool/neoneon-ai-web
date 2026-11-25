@@ -104,6 +104,17 @@ export function SignalMap({ items, current, progress, labels, talkHref, email, a
     return () => ctx.revert()
   }, [])
 
+  // Przycisk „wstecz” / „dalej” przeglądarki zamyka mapę (inaczej zostawała otwarta na poprzedniej stronie)
+  const closeRef = useRef(onClose)
+  useEffect(() => {
+    closeRef.current = onClose
+  }, [onClose])
+  useEffect(() => {
+    const onPop = () => closeRef.current()
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
+
   // Po przełączeniu koło ↔ lista fokus wraca na bieżącą pozycję
   useEffect(() => {
     root.current?.querySelector<HTMLElement>('[data-sec][aria-current="true"]')?.focus()

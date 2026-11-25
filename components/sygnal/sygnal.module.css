@@ -71,6 +71,7 @@
   pointer-events: none;
 }
 .eyebrow { font-size: 11px; line-height: 2; color: var(--muted); margin: 0; }
+.eyebrowLine { display: block; }
 
 .fog {
   position: relative;
