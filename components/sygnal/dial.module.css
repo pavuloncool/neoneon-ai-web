@@ -8,7 +8,10 @@
   transform-origin: 50% 50%;
   container-type: size;
   will-change: transform;
+  /* Kliknięcia łapią tylko rdzeń (.hit) i etykiety obręczy — poświata i pierścienie nie zasłaniają treści */
+  pointer-events: none;
 }
+.hit, .rim a { pointer-events: auto; }
 .dial:not([data-ready]) { visibility: hidden; }
 :global(:root) { --dock: 104px; }
 @media (max-width: 1023px) { :global(:root) { --dock: 72px; } }

@@ -35,6 +35,10 @@
   gap: 16px;
   padding: 24px max(20px, 2.8vw);
 }
+/* Pasek nad kołem (z-index koła: 40, mapy: 60): koło przepływa POD paskiem, a wyszukiwarka, język,
+   CTA i logo zostają klikalne. Puste miejsca paska przepuszczają kursor do koła pod spodem. */
+.shell > .bar { z-index: 45; pointer-events: none; }
+.bar a, .bar button { pointer-events: auto; }
 .logo { display: inline-flex; align-items: center; min-height: 44px; }
 .logo:focus-visible, .search:focus-visible, .cta:focus-visible { outline: 2px solid #ccff00; outline-offset: 3px; }
 .logoImg { height: 26px; width: auto; }

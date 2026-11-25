@@ -487,7 +487,10 @@ export function HomeSignal({
     if (!el) return
     // Przypięta sekcja siedzi w .pin-spacer — przewijamy do niego, nie do elementu (ten bywa position: fixed)
     const target = el.parentElement?.classList.contains('pin-spacer') ? el.parentElement : el
-    window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY, behavior: reduced() ? 'auto' : 'smooth' })
+    // „Start” (hero) = sam początek strony: hero leży pod paskiem, a przewinięcie do jego krawędzi chowało
+    // pasek i zostawiało scrollY > 0 — koło nie wracało wtedy do pływania (działa tylko przy scrollY ≈ 0)
+    const top = id === heroId ? 0 : target.getBoundingClientRect().top + window.scrollY
+    window.scrollTo({ top, behavior: reduced() ? 'auto' : 'smooth' })
     if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1')
     el.focus({ preventScroll: true })
   }
