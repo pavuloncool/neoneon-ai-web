@@ -68,9 +68,9 @@ export function PricingSection({
               {card.total ? (
                 <p className={s.priceAmount}>
                   {card.total.before}
-                  {formatNumber(card.total.min, locale)}
+                  <span data-count={card.total.min}>{formatNumber(card.total.min, locale)}</span>
                   {card.total.between}
-                  {formatNumber(card.total.max, locale)}
+                  <span data-count={card.total.max}>{formatNumber(card.total.max, locale)}</span>
                   {card.total.after}
                 </p>
               ) : null}

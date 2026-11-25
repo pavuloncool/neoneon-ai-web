@@ -9,12 +9,13 @@
 // z layoutu (SiteDial zwraca null dla „/”).
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { gsap, useGSAP } from '@/lib/gsap'
+import { gsap, useGSAP, motionEnabled, markMotionReady, FULL_MOTION } from '@/lib/gsap'
 import { Link } from '@/i18n/navigation'
 import { ScrollTrigger, refreshAfterFonts } from '@/lib/gsap-scroll'
 import { SignalDial, type DialItem } from './SignalDial'
 import { SignalMap } from './SignalMap'
 import { MapAside, SignalLanguage } from './SiteChrome'
+import { heroIntro, sectionsMotion } from './home/homeMotion'
 import { CHROME_LABELS, DIAL_LABELS, MAP_LABELS } from './labels'
 import type { Locale } from '@/lib/locales'
 import s from './sygnal.module.css'
@@ -239,11 +240,41 @@ export function HomeSignal({
           }
         }
       })
+      // Triggery ruchu sekcji (drugi useGSAP) mogły powstać przed pinem procesu — kolejność wg pozycji
+      ScrollTrigger.sort()
+      ScrollTrigger.refresh()
       refreshAfterFonts()
       return () => mm.revert()
     },
     // revertOnUpdate: przy zmianie rozmiaru koła stare triggery (w tym pin procesu) muszą zniknąć przed nowymi
     { scope: page, dependencies: [size], revertOnUpdate: true },
+  )
+
+  // Ruch wejścia: hero i sekcje (homeMotion). Osobno od koła — zmiana rozmiaru koła nie powtarza intro.
+  useGSAP(
+    () => {
+      const root = page.current
+      if (!root) return
+      if (!motionEnabled()) {
+        heroRef.current?.setAttribute('data-m-done', '')
+        return
+      }
+      const mm = gsap.matchMedia()
+      mm.add({ motion: FULL_MOTION, wide: '(min-width: 1024px)' }, (ctx) => {
+        const { motion, wide } = ctx.conditions as { motion: boolean; wide: boolean }
+        markMotionReady()
+        if (!motion) {
+          heroRef.current?.setAttribute('data-m-done', '')
+          return
+        }
+        heroIntro(root)
+        const cleanup = sectionsMotion(root, { wide })
+        ScrollTrigger.sort()
+        return cleanup
+      })
+      return () => mm.revert()
+    },
+    { scope: page },
   )
 
   const openMap = () => {
