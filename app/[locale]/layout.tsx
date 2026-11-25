@@ -58,6 +58,10 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
+      // globals.css ustawia scroll-behavior: smooth — ten atrybut każe Next.js wyłączyć je na czas zmiany
+      // strony. Bez niego przewinięcie na górę animowało się i urywało, gdy nowa strona była niższa
+      // (np. przejście do /kontakt lądowało przy stopce).
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <head>
