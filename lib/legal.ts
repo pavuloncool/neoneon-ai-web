@@ -6,11 +6,11 @@
 // Polityka prywatności i polityka cookies (PL/EN). Struktura według briefu (8.1, 8.2); lista cookies według
 // audytu z 24.11.2026 (kod + przeglądarka): NEXT_LOCALE (next-intl) — motyw jest stały (ciemny), next-themes nic nie zapisuje (sprawdzone 25.11),
 // neoneon_translation_path (sessionStorage), cookies Studio Sanity i trybu podglądu (tylko redaktorzy),
-// Cloudflare Turnstile w formularzu komentarzy, Vercel Web Analytics i Speed Insights (bez cookies).
+// Cloudflare Turnstile w formularzu komentarzy (tylko gdy COMMENTS_ENABLED), Vercel Web Analytics i Speed Insights (bez cookies).
 // Przy zmianie integracji (np. włączenie Umami) zaktualizuj tę treść i datę.
 
 import type { Locale } from '@/lib/locales'
-import { PUBLIC_CONTACT_EMAIL } from '@/lib/site'
+import { PUBLIC_CONTACT_EMAIL, COMMENTS_ENABLED } from '@/lib/site'
 
 export type LegalBlock =
   | { type: 'p'; text: string }
@@ -56,7 +56,7 @@ const PRIVACY: Record<Locale, LegalDoc> = {
         blocks: [
           { type: 'list', items: [
             'Dane z formularza kontaktowego: imię i nazwisko, adres e-mail, nazwa firmy lub adres strony (jeśli je podasz), odpowiedzi z pól wyboru (czego potrzebujesz, kiedy chcesz zacząć, orientacyjny budżet) i treść wiadomości.',
-            'Dane z formularza komentarzy pod artykułami: imię, adres e-mail i treść komentarza. Imię i komentarz są widoczne publicznie po zatwierdzeniu, adres e-mail nie.',
+            ...(COMMENTS_ENABLED ? ['Dane z formularza komentarzy pod artykułami: imię, adres e-mail i treść komentarza. Imię i komentarz są widoczne publicznie po zatwierdzeniu, adres e-mail nie.'] : []),
             'Dane techniczne w logach serwera: adres IP, rodzaj przeglądarki, adres odwiedzonej strony i czas wizyty.',
             'Zbiorcze statystyki odwiedzin (Vercel Web Analytics): odwiedzona podstrona, źródło wejścia, przybliżona lokalizacja (kraj, region, miasto), system operacyjny, przeglądarka i rodzaj urządzenia. Odwiedzającego rozpoznaje tylko skrót (hash) tworzony z żądania, usuwany po 24 godzinach; dane nie są powiązane z Tobą ani z Twoim adresem IP.',
             'Zbiorcze pomiary szybkości ładowania strony (Vercel Speed Insights). Nie identyfikują Cię i nie używają cookies.',
@@ -68,7 +68,7 @@ const PRIVACY: Record<Locale, LegalDoc> = {
         blocks: [
           { type: 'list', items: [
             'Odpowiedź na wiadomość i przygotowanie oferty: art. 6 ust. 1 lit. b RODO (działania przed zawarciem umowy na Twoje żądanie) oraz art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes: odpowiedź na korespondencję).',
-            'Publikacja i moderacja komentarzy: art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes: prowadzenie dyskusji pod artykułami). [ZWERYFIKUJ]',
+            ...(COMMENTS_ENABLED ? ['Publikacja i moderacja komentarzy: art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes: prowadzenie dyskusji pod artykułami). [ZWERYFIKUJ]'] : []),
             'Bezpieczeństwo strony, ochrona przed spamem, statystyki odwiedzin i wydajności: art. 6 ust. 1 lit. f RODO.',
           ] },
         ],
@@ -79,9 +79,9 @@ const PRIVACY: Record<Locale, LegalDoc> = {
           { type: 'p', text: 'Dane przetwarzają w moim imieniu dostawcy usług, z których korzysta strona:' },
           { type: 'list', items: [
             'Vercel Inc. (USA): hosting strony, logi serwera, Vercel Web Analytics i Vercel Speed Insights.',
-            'Sanity AS (Norwegia): system zarządzania treścią, w którym zapisywane są wiadomości z formularza i komentarze. [ZWERYFIKUJ: lokalizacja serwerów projektu]',
+            `Sanity AS (Norwegia): system zarządzania treścią, w którym zapisywane są wiadomości z formularza${COMMENTS_ENABLED ? ' i komentarze' : ''}. [ZWERYFIKUJ: lokalizacja serwerów projektu]`,
             'Resend (USA): wysyłka powiadomień e-mail z formularzy. [ZWERYFIKUJ: pełna nazwa i adres dostawcy]',
-            'Cloudflare, Inc. (USA): Turnstile, ochrona formularza komentarzy przed spamem.',
+            ...(COMMENTS_ENABLED ? ['Cloudflare, Inc. (USA): Turnstile, ochrona formularza komentarzy przed spamem.'] : []),
           ] },
           { type: 'p', text: 'Część tych firm ma siedzibę albo serwery poza Europejskim Obszarem Gospodarczym. Dane trafiają tam na podstawie decyzji Komisji Europejskiej w sprawie ram ochrony danych UE–USA (EU-US Data Privacy Framework) albo standardowych klauzul umownych zatwierdzonych przez Komisję. [ZWERYFIKUJ: podstawa dla każdego dostawcy]' },
         ],
@@ -91,7 +91,7 @@ const PRIVACY: Record<Locale, LegalDoc> = {
         blocks: [
           { type: 'list', items: [
             'Korespondencję: 12 miesięcy od ostatniego kontaktu. Jeśli podejmiemy współpracę, przez czas trwania umowy i okres wynikający z przepisów podatkowych.',
-            'Komentarze: do czasu ich usunięcia przez Ciebie albo przeze mnie. [ZWERYFIKUJ]',
+            ...(COMMENTS_ENABLED ? ['Komentarze: do czasu ich usunięcia przez Ciebie albo przeze mnie. [ZWERYFIKUJ]'] : []),
             'Logi serwera: przez okres przechowywania ustalony przez Vercel. [ZWERYFIKUJ]',
           ] },
         ],
@@ -132,7 +132,7 @@ const PRIVACY: Record<Locale, LegalDoc> = {
         blocks: [
           { type: 'list', items: [
             'Contact form data: full name, email address, company name or website (if you provide them), your answers in the choice fields (what you need, when you want to start, approximate budget) and your message.',
-            'Comment form data under articles: name, email address and comment. Your name and comment become public once approved; your email address does not.',
+            ...(COMMENTS_ENABLED ? ['Comment form data under articles: name, email address and comment. Your name and comment become public once approved; your email address does not.'] : []),
             'Technical data in server logs: IP address, browser type, the page you visited and the time of the visit.',
             'Aggregated visit statistics (Vercel Web Analytics): the page visited, referrer, approximate location (country, region, city), operating system, browser and device type. A visitor is recognised only by a hash created from the request, discarded after 24 hours; the data is not tied to you or your IP address.',
             'Aggregated page speed measurements (Vercel Speed Insights). They do not identify you and do not use cookies.',
@@ -144,7 +144,7 @@ const PRIVACY: Record<Locale, LegalDoc> = {
         blocks: [
           { type: 'list', items: [
             'Replying to your message and preparing a quote: Article 6(1)(b) GDPR (steps taken at your request before entering into a contract) and Article 6(1)(f) GDPR (legitimate interest: replying to correspondence).',
-            'Publishing and moderating comments: Article 6(1)(f) GDPR (legitimate interest: hosting discussion under articles). [TO BE VERIFIED]',
+            ...(COMMENTS_ENABLED ? ['Publishing and moderating comments: Article 6(1)(f) GDPR (legitimate interest: hosting discussion under articles). [TO BE VERIFIED]'] : []),
             'Website security, spam protection, visit and performance statistics: Article 6(1)(f) GDPR.',
           ] },
         ],
@@ -155,9 +155,9 @@ const PRIVACY: Record<Locale, LegalDoc> = {
           { type: 'p', text: 'Your data is processed on my behalf by the service providers the website uses:' },
           { type: 'list', items: [
             'Vercel Inc. (USA): website hosting, server logs, Vercel Web Analytics and Vercel Speed Insights.',
-            'Sanity AS (Norway): the content management system where form messages and comments are stored. [TO BE VERIFIED: project server location]',
+            `Sanity AS (Norway): the content management system where form messages${COMMENTS_ENABLED ? ' and comments' : ''} are stored. [TO BE VERIFIED: project server location]`,
             'Resend (USA): email notifications from the forms. [TO BE VERIFIED: provider legal name and address]',
-            'Cloudflare, Inc. (USA): Turnstile, spam protection for the comment form.',
+            ...(COMMENTS_ENABLED ? ['Cloudflare, Inc. (USA): Turnstile, spam protection for the comment form.'] : []),
           ] },
           { type: 'p', text: 'Some of these companies are based or keep servers outside the European Economic Area. Data is transferred there on the basis of the European Commission decision on the EU-US Data Privacy Framework or standard contractual clauses approved by the Commission. [TO BE VERIFIED: basis for each provider]' },
         ],
@@ -167,7 +167,7 @@ const PRIVACY: Record<Locale, LegalDoc> = {
         blocks: [
           { type: 'list', items: [
             'Correspondence: 12 months from our last contact. If we start working together, for the duration of the contract and the period required by tax law.',
-            'Comments: until you or I delete them. [TO BE VERIFIED]',
+            ...(COMMENTS_ENABLED ? ['Comments: until you or I delete them. [TO BE VERIFIED]'] : []),
             'Server logs: for the retention period set by Vercel. [TO BE VERIFIED]',
           ] },
         ],
@@ -214,7 +214,9 @@ const COOKIES: Record<Locale, LegalDoc> = {
             ['neoneon_translation_path', 'sessionStorage', 'do zamknięcia karty', 'pozwala przełączyć język na tej samej stronie'],
           ] },
           { type: 'p', text: 'Osoby zalogowane do panelu redakcyjnego (Sanity Studio) dostają dodatkowo cookies logowania i podglądu szkiców. Nie dotyczy to czytelników strony.' },
-          { type: 'p', text: 'Formularz komentarzy pod artykułami chroni przed spamem Cloudflare Turnstile. Działa w osobnej ramce dostawcy i nie zapisuje cookies w domenie neoneon.online. [ZWERYFIKUJ: dane przetwarzane przez Cloudflare]' },
+          ...(COMMENTS_ENABLED
+            ? [{ type: 'p' as const, text: 'Formularz komentarzy pod artykułami chroni przed spamem Cloudflare Turnstile. Działa w osobnej ramce dostawcy i nie zapisuje cookies w domenie neoneon.online. [ZWERYFIKUJ: dane przetwarzane przez Cloudflare]' }]
+            : []),
         ],
       },
       {
@@ -260,7 +262,9 @@ const COOKIES: Record<Locale, LegalDoc> = {
             ['neoneon_translation_path', 'sessionStorage', 'until you close the tab', 'lets you switch language on the same page'],
           ] },
           { type: 'p', text: 'People logged in to the editorial panel (Sanity Studio) also get login and draft preview cookies. This does not apply to readers.' },
-          { type: 'p', text: 'The comment form under articles is protected from spam by Cloudflare Turnstile. It runs in a separate provider frame and does not store cookies on the neoneon.online domain. [TO BE VERIFIED: data processed by Cloudflare]' },
+          ...(COMMENTS_ENABLED
+            ? [{ type: 'p' as const, text: 'The comment form under articles is protected from spam by Cloudflare Turnstile. It runs in a separate provider frame and does not store cookies on the neoneon.online domain. [TO BE VERIFIED: data processed by Cloudflare]' }]
+            : []),
         ],
       },
       {
