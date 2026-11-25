@@ -353,3 +353,7 @@
   :global(html.js) .home .hero:not([data-m-done]) .heroFoot { opacity: 0; }
   :global(html.js) .home .hero:not([data-m-done]) .h1 { filter: blur(16px); }
 }
+
+/* Znak + / − w kółku obraca się przy rozwijaniu */
+.plus { transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s, color 0.25s; }
+.service[open] .plus { transform: rotate(180deg); }

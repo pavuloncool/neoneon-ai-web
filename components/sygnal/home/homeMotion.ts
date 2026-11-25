@@ -1,7 +1,7 @@
 'use client'
 
 // components/sygnal/home/homeMotion.ts
-// Ruch strony głównej „Sygnał” (tylko pełny ruch; wywołanie w HomeSignal, w gsap.matchMedia).
+// Ruch strony głównej „Sygnał” (wywołanie w HomeSignal; przy „Ogranicz ruch” — tryb lite z motionKit).
 // Język ruchu: sygnał wyłania się z szumu — rozmycie → ostrość, scramble w napisach mono, limonkowe
 // kreski rysowane od lewej, neonowy zapłon. Sekcje są serwerowe; tu wybieramy elementy po klasach modułu.
 //
@@ -16,55 +16,10 @@
 // - rozmowa: nagłówek zapala się jak neon (litery w losowej kolejności, 1–2 błyski na literę).
 
 import { gsap } from '@/lib/gsap'
-import { ScrollTrigger } from '@/lib/gsap-scroll'
-import { SplitText, scrambleChars } from '@/lib/gsap-text'
+import { SplitText } from '@/lib/gsap-text'
+import { IN, accordion, isLite, move, revealBlur, scramble, scrambleIn, sel, splitHeading, staggerIn } from '../motionKit'
 import s from '../sygnal.module.css'
 import lists from '../lists.module.css'
-
-const IN = 'top 82%'
-const sel = (cls: string) => `.${cls}`
-
-function scramble(el: HTMLElement, duration = 0.9) {
-  const text = el.textContent ?? ''
-  return gsap.to(el, { duration, ease: 'none', scrambleText: { text, chars: scrambleChars(text.toUpperCase()), revealDelay: 0.15, speed: 0.6 } })
-}
-
-function revealBlur(targets: gsap.TweenTarget, trigger: Element, extra: gsap.TweenVars = {}) {
-  return gsap.fromTo(
-    targets,
-    { opacity: 0, y: 28, filter: 'blur(12px)' },
-    {
-      opacity: 1,
-      y: 0,
-      filter: 'blur(0px)',
-      duration: 0.9,
-      ease: 'power3.out',
-      clearProps: 'filter,transform',
-      scrollTrigger: { trigger, start: IN, once: true },
-      ...extra,
-    },
-  )
-}
-
-// Nagłówek: linie wyjeżdżają z maski i wyostrzają się. Animacja w onSplit — przy ponownym podziale
-// (fonty, zmiana szerokości) GSAP przenosi postęp.
-function splitHeading(el: HTMLElement, trigger: Element = el) {
-  return SplitText.create(el, {
-    type: 'lines',
-    mask: 'lines',
-    autoSplit: true,
-    onSplit(self) {
-      return gsap.from(self.lines, {
-        yPercent: 105,
-        filter: 'blur(8px)',
-        duration: 1,
-        stagger: 0.09,
-        ease: 'power4.out',
-        scrollTrigger: { trigger, start: IN, once: true },
-      })
-    },
-  })
-}
 
 export function heroIntro(root: HTMLElement) {
   const hero = root.querySelector<HTMLElement>(sel(s.hero))
@@ -73,13 +28,13 @@ export function heroIntro(root: HTMLElement) {
   const h1 = hero.querySelector<HTMLElement>(sel(s.h1))
   const foot = hero.querySelector<HTMLElement>(sel(s.heroFoot))
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
-  if (h1) {
+  if (h1 && !isLite()) {
     // Opacity zostaje 1 (element LCP) — tylko rozmycie i przesunięcie
     tl.fromTo(h1, { filter: 'blur(16px)', y: 30, opacity: 1 }, { filter: 'blur(0px)', y: 0, duration: 1.3, clearProps: 'filter,transform' }, 0)
   }
   if (eyebrow) tl.fromTo(eyebrow, { opacity: 0 }, { opacity: 1, duration: 0.2 }, 0.1).add(scramble(eyebrow, 1.2), 0.1)
   if (foot) {
-    tl.fromTo(foot, { opacity: 0, y: 20, filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.9, clearProps: 'filter,transform' }, 0.55)
+    tl.fromTo(foot, { opacity: 0, y: move(20), filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.9, clearProps: 'filter,transform' }, 0.55)
   }
   hero.setAttribute('data-m-done', '')
 }
@@ -88,18 +43,7 @@ export function sectionsMotion(root: HTMLElement, { wide }: { wide: boolean }) {
   const cleanups: (() => void)[] = []
 
   // ── Wspólne: etykiety, nagłówki, leady ──
-  root.querySelectorAll<HTMLElement>(`section ${sel(s.label)}`).forEach((el) => {
-    gsap.set(el, { opacity: 0 })
-    ScrollTrigger.create({
-      trigger: el,
-      start: IN,
-      once: true,
-      onEnter: () => {
-        gsap.set(el, { opacity: 1 })
-        scramble(el, 0.8)
-      },
-    })
-  })
+  root.querySelectorAll<HTMLElement>(`section ${sel(s.label)}`).forEach((el) => scrambleIn(el))
   root.querySelectorAll<HTMLElement>(`section ${sel(s.h2)}`).forEach((el) => splitHeading(el))
   root.querySelectorAll<HTMLElement>(`section ${sel(s.sub)}, section ${sel(s.closing)}`).forEach((el) => revealBlur(el, el, { delay: 0.15 }))
 
@@ -108,7 +52,7 @@ export function sectionsMotion(root: HTMLElement, { wide }: { wide: boolean }) {
   if (roles.length) {
     const tl = gsap.timeline({ scrollTrigger: { trigger: roles[0], start: IN, once: true } })
     tl.fromTo(roles, { '--draw': 0 }, { '--draw': 1, duration: 0.7, stagger: 0.18, ease: 'power2.inOut' }, 0)
-    tl.fromTo(roles.map((r) => Array.from(r.children)), { opacity: 0, y: 16, filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.6, stagger: 0.05, clearProps: 'filter,transform' }, 0.25)
+    tl.fromTo(roles.map((r) => Array.from(r.children)), { opacity: 0, y: move(16), filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.6, stagger: 0.05, clearProps: 'filter,transform' }, 0.25)
     const code = root.querySelector<HTMLElement>(`${sel(s.roleAi)} h3`)
     if (code) tl.add(scramble(code, 1), '>-0.2')
   }
@@ -122,10 +66,10 @@ export function sectionsMotion(root: HTMLElement, { wide }: { wide: boolean }) {
     const caption = edit.querySelector(sel(s.editCaption))
     gsap.set(edit, { '--strike': 0 })
     if (note) gsap.set(note, { opacity: 0 })
-    gsap.set(after, { opacity: 0, y: 20, filter: 'blur(10px)' })
+    gsap.set(after, { opacity: 0, y: move(20), filter: 'blur(10px)' })
     if (caption) gsap.set(caption, { opacity: 0 })
     const tl = gsap.timeline({ scrollTrigger: { trigger: edit, start: 'top 70%', once: true } })
-    tl.fromTo(edit, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' })
+    tl.fromTo(edit, { opacity: 0, y: move(30) }, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' })
     if (del) tl.to(edit, { '--strike': 1, duration: 0.9, ease: 'power2.inOut' }, '+=0.5').to(del, { color: 'rgba(242,242,238,.45)', duration: 0.4 }, '<0.4')
     if (note) tl.set(note, { opacity: 1 }).add(scramble(note, 0.7))
     tl.to(after, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.7, stagger: 0.35, ease: 'power3.out', clearProps: 'filter,transform' }, '+=0.1')
@@ -167,30 +111,23 @@ export function sectionsMotion(root: HTMLElement, { wide }: { wide: boolean }) {
   // ── Usługi, FAQ: wiersze po kolei; otwarcie — treść z rozmycia ──
   root.querySelectorAll<HTMLElement>(sel(s.services)).forEach((list) => {
     const rows = Array.from(list.children) as HTMLElement[]
-    gsap.fromTo(rows, { opacity: 0, x: -24, filter: 'blur(8px)' }, { opacity: 1, x: 0, filter: 'blur(0px)', duration: 0.7, stagger: 0.1, ease: 'power3.out', clearProps: 'filter,transform', scrollTrigger: { trigger: list, start: IN, once: true } })
+    staggerIn(rows, list, 'x')
     rows.forEach((row) => {
-      if (!(row instanceof HTMLDetailsElement)) return
-      const onToggle = () => {
-        if (!row.open) return
-        const body = row.querySelector(sel(s.serviceBody))
-        if (body) gsap.fromTo(Array.from(body.children), { opacity: 0, y: 14, filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.55, stagger: 0.08, ease: 'power3.out', clearProps: 'filter,transform' })
-      }
-      row.addEventListener('toggle', onToggle)
-      cleanups.push(() => row.removeEventListener('toggle', onToggle))
+      if (row instanceof HTMLDetailsElement) cleanups.push(accordion(row, () => row.querySelector<HTMLElement>(sel(s.serviceBody))))
     })
   })
 
   // ── Proces bez pinu (węższe ekrany): etapy z rozmycia, numer etapu scramble ──
   if (!wide) {
     root.querySelectorAll<HTMLElement>('[data-stage]').forEach((st) => {
-      gsap.fromTo(st, { opacity: 0.15, filter: 'blur(14px)', y: 40 }, { opacity: 1, filter: 'blur(0px)', y: 0, ease: 'none', scrollTrigger: { trigger: st, start: 'top 92%', end: 'top 55%', scrub: 0.5 } })
+      gsap.fromTo(st, { opacity: 0.15, filter: 'blur(14px)', y: move(40) }, { opacity: 1, filter: 'blur(0px)', y: 0, ease: 'none', scrollTrigger: { trigger: st, start: 'top 92%', end: 'top 55%', scrub: 0.5 } })
     })
   }
 
   // ── Wyceny: paski i liczniki ──
   root.querySelectorAll<HTMLElement>(sel(s.priceCard)).forEach((card, i) => {
     const tl = gsap.timeline({ scrollTrigger: { trigger: card, start: IN, once: true }, delay: i * 0.1 })
-    tl.fromTo(card, { opacity: 0, y: 30, filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.7, ease: 'power3.out', clearProps: 'filter,transform' })
+    tl.fromTo(card, { opacity: 0, y: move(30), filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.7, ease: 'power3.out', clearProps: 'filter,transform' })
     tl.fromTo(card.querySelectorAll(`${sel(s.barMax)}, ${sel(s.barMin)}`), { scaleX: 0 }, { scaleX: 1, transformOrigin: 'left center', duration: 0.8, stagger: 0.05, ease: 'power3.out' }, '-=0.3')
     card.querySelectorAll<HTMLElement>('[data-count]').forEach((n) => {
       const end = Number(n.dataset.count)
@@ -212,15 +149,10 @@ export function sectionsMotion(root: HTMLElement, { wide }: { wide: boolean }) {
     gsap.set(p, { '--strike': 0 })
     gsap.to(p, { '--strike': 1, duration: 0.8, ease: 'power2.inOut', scrollTrigger: { trigger: p, start: 'top 65%', once: true }, delay: 0.6 })
   })
-  root.querySelectorAll<HTMLElement>(`${sel(s.facts2)} li`).forEach((li, i) => {
-    gsap.set(li, { opacity: 0 })
-    ScrollTrigger.create({ trigger: li, start: IN, once: true, onEnter: () => gsap.delayedCall(i * 0.15, () => { gsap.set(li, { opacity: 1 }); scramble(li, 0.9) }) })
-  })
+  root.querySelectorAll<HTMLElement>(`${sel(s.facts2)} li`).forEach((li, i) => scrambleIn(li, i * 0.15))
 
   // ── Z bloga (wiersze listy) ──
-  root.querySelectorAll<HTMLElement>(`section ${sel(lists.rows)}`).forEach((list) => {
-    gsap.fromTo(Array.from(list.children), { opacity: 0, y: 30, filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.8, stagger: 0.12, ease: 'power3.out', clearProps: 'filter,transform', scrollTrigger: { trigger: list, start: IN, once: true } })
-  })
+  root.querySelectorAll<HTMLElement>(`section ${sel(lists.rows)}`).forEach((list) => staggerIn(Array.from(list.children), list))
 
   // ── Rozmowa: neonowy zapłon nagłówka ──
   const talk = root.querySelector<HTMLElement>(sel(s.talkTitle))

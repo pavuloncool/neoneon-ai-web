@@ -16,6 +16,7 @@ import { SignalDial, type DialItem } from './SignalDial'
 import { SignalMap } from './SignalMap'
 import { MapAside, SignalLanguage } from './SiteChrome'
 import { heroIntro, sectionsMotion } from './home/homeMotion'
+import { setLite } from './motionKit'
 import { CHROME_LABELS, DIAL_LABELS, MAP_LABELS } from './labels'
 import type { Locale } from '@/lib/locales'
 import s from './sygnal.module.css'
@@ -250,7 +251,8 @@ export function HomeSignal({
     { scope: page, dependencies: [size], revertOnUpdate: true },
   )
 
-  // Ruch wejścia: hero i sekcje (homeMotion). Osobno od koła — zmiana rozmiaru koła nie powtarza intro.
+  // Ruch wejścia: hero i sekcje (homeMotion), także przy „Ogranicz ruch” (lżejszy). Osobno od koła —
+  // zmiana rozmiaru koła nie powtarza intro.
   useGSAP(
     () => {
       const root = page.current
@@ -263,10 +265,8 @@ export function HomeSignal({
       mm.add({ motion: FULL_MOTION, wide: '(min-width: 1024px)' }, (ctx) => {
         const { motion, wide } = ctx.conditions as { motion: boolean; wide: boolean }
         markMotionReady()
-        if (!motion) {
-          heroRef.current?.setAttribute('data-m-done', '')
-          return
-        }
+        // „Ogranicz ruch”: bez przesunięć i wjazdów, przejścia i rozwijanie zostają (motionKit, tryb lite)
+        setLite(!motion)
         heroIntro(root)
         const cleanup = sectionsMotion(root, { wide })
         ScrollTrigger.sort()

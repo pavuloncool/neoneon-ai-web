@@ -147,3 +147,5 @@
 .faqItem[open] .faqSign { border-color: #ccff00; color: #ccff00; }
 .faqItem[open] .faqSign::after { content: '−'; }
 .faqItem p { margin: 0 0 22px; max-width: 38em; white-space: pre-line; font-size: 17px; line-height: 1.6; color: rgba(242, 242, 238, 0.82); }
+.faqSign { transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s, color 0.25s; }
+.faqItem[open] .faqSign { transform: rotate(180deg); }

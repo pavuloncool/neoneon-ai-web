@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 import { SiteBar, SiteDial } from '@/components/sygnal/SiteChrome'
 import { SiteFooter } from '@/components/sygnal/SiteFooter'
+import { SiteMotion } from '@/components/sygnal/SiteMotion'
 import chrome from '@/components/sygnal/chrome.module.css'
 import { PUBLIC_CONTACT_EMAIL } from '@/lib/site'
 import { getPricing, getSiteSettings } from '@/lib/queries'
@@ -88,6 +89,7 @@ export default async function BlogLayout({
         contactHref={CONTACT_PATH[lang]}
         email={PUBLIC_CONTACT_EMAIL}
       />
+      <SiteMotion />
       <SiteDial locale={lang} items={dialItems} contactHref={CONTACT_PATH[lang]} email={PUBLIC_CONTACT_EMAIL} langLabels={langLabels} />
     </div>
   )
