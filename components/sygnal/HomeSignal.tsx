@@ -241,16 +241,16 @@ export function HomeSignal({
                 fly.invalidate()
               }
             }
-            // ── Scenariusz powrotny (poniżej hero): gdy przewijanie stanie, koło wraca z rogu do kursora
-            //    (mniejsze, z etykietami sekcji na obręczy) i towarzyszy mu obok — nie pod nim, żeby nie
-            //    zasłaniało klikanego tekstu. Gdy kursor zbliży się do koła, koło staje (można wybrać
-            //    sekcję z obręczy albo otworzyć mapę). Kolejne przewinięcie — koło wraca do rogu.
+            // ── Poniżej hero — cztery fazy:
+            //    1) na górze koło płynie za kursorem (wyżej), 2) przewijanie → koło ucieka do rogu,
+            //    3) przewijanie stoi (czytanie, rozwijanie FAQ) → koło ZOSTAJE w rogu,
+            //    4) kursor sam podjeżdża do koła w rogu (potwierdzona intencja) → koło rośnie w rogu wokół
+            //       kursora (etykiety sekcji na obręczy) i towarzyszy mu obok, nie pod nim. Koło staje, gdy
+            //       kursor się do niego zbliży (można kliknąć); kolejne przewinięcie — koło wraca do rogu.
             const MID = Math.min(size, 380)
             const midScale = MID / size
             const pointer = { x: 0, y: 0, known: false }
             let floatingMid = false
-            let still = false // przewijanie stoi (po 450 ms bez zdarzeń scroll)
-            let idle = 0
             const natural = () => ({ x: window.innerWidth - DOCK.margin - size / 2, y: window.innerHeight - DOCK.margin - size / 2 })
             const companion = () => {
               const R = MID / 2
@@ -273,17 +273,26 @@ export function HomeSignal({
               else frozen = d < R * 1.2
               return frozen
             }
-            const enterMid = () => {
-              frozen = false
-              if (openRef.current || !pointer.known || !fly.scrollTrigger || fly.scrollTrigger.progress < 1) return
+            // Faza 4: kursor dotarł do koła w rogu → koło rośnie w rogu (kursor zostaje na kole, więc stoi)
+            const pickUp = () => {
+              if (openRef.current) return
               floatingMid = true
+              frozen = true
               setDocked(false)
-              const t = companion()
-              // Start z rogu (albo z miejsca, w którym przerwano powrót do rogu)
               dockTween?.kill()
-              gsap.to(dialEl, { scale: midScale, duration: 1.1, ease: 'power3.out' })
-              glide(t.x, t.y)
-              gsap.to(fades, { opacity: 1, duration: 0.5, delay: 0.3 })
+              const R = MID / 2
+              const n = natural()
+              glide(window.innerWidth - R - 16 - n.x, window.innerHeight - R - 16 - n.y)
+              gsap.to(dialEl, { scale: midScale, duration: 0.8, ease: 'power3.out' })
+              gsap.to(fades, { opacity: 1, duration: 0.4, delay: 0.25 })
+            }
+            // Czy kursor jest przy kole zadokowanym w rogu
+            const atDock = () => {
+              if (floatingMid || atTop || dockTween?.isActive()) return false
+              if (!fly.scrollTrigger || fly.scrollTrigger.progress < 1) return false
+              const b = dialEl.getBoundingClientRect()
+              const r = b.width / 2
+              return Math.hypot(pointer.x - (b.left + r), pointer.y - (b.top + r)) < r * 1.35
             }
             const leaveMid = () => {
               floatingMid = false
@@ -296,24 +305,19 @@ export function HomeSignal({
               pointer.x = e.clientX
               pointer.y = e.clientY
               pointer.known = true
-              // Kursor ruszył się dopiero po zatrzymaniu przewijania — koło przylatuje teraz
-              if (!floatingMid && still && !atTop) return enterMid()
-              if (!floatingMid || holdStill()) return
+              if (!floatingMid) {
+                if (atDock()) pickUp()
+                return
+              }
+              if (holdStill()) return
               const t = companion()
               glide(t.x, t.y)
             }
 
             const onScroll = () => {
               const top = window.scrollY < 2
-              window.clearTimeout(idle)
-              still = false
+              // Faza 2: przewijanie → koło (jeśli towarzyszyło kursorowi) wraca do rogu i tam zostaje
               if (floatingMid) leaveMid()
-              // Przewijanie stanęło poniżej hero → koło wraca do kursora
-              if (!top)
-                idle = window.setTimeout(() => {
-                  still = true
-                  enterMid()
-                }, 450)
               if (atTop && !top) {
                 // Pierwsze przewinięcie: koniec pływania, koło ucieka do rogu ze swojego miejsca
                 // tylko tweeny podążania (lot do rogu też animuje x/y — tego nie ruszamy)
@@ -333,7 +337,6 @@ export function HomeSignal({
               heroEl.removeEventListener('pointermove', follow)
               window.removeEventListener('pointermove', trackPointer)
               window.removeEventListener('scroll', onScroll)
-              window.clearTimeout(idle)
               gsap.ticker.remove(light)
               heroEl.removeAttribute('data-floating')
               heroEl.removeAttribute('data-lit')
