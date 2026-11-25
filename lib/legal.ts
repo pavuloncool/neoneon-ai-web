@@ -48,7 +48,7 @@ const PRIVACY: Record<Locale, LegalDoc> = {
       {
         title: '1. Administrator',
         blocks: [
-          { type: 'p', text: `Administratorem Twoich danych jest [DO UZUPEŁNIENIA: imię i nazwisko albo nazwa firmy, adres, NIP]. W sprawach danych osobowych napisz na ${EMAIL}.` },
+          { type: 'p', text: `Administratorem Twoich danych jest Paweł Kuligowski, ul. Argentyńska 5/17, 03-952 Warszawa. W sprawach danych osobowych napisz na ${EMAIL}.` },
         ],
       },
       {
@@ -78,9 +78,9 @@ const PRIVACY: Record<Locale, LegalDoc> = {
         blocks: [
           { type: 'p', text: 'Dane przetwarzają w moim imieniu dostawcy usług, z których korzysta strona:' },
           { type: 'list', items: [
-            'Vercel Inc. (USA): hosting strony, logi serwera, Vercel Web Analytics i Vercel Speed Insights.',
-            `Sanity AS (Norwegia): system zarządzania treścią, w którym zapisywane są wiadomości z formularza${COMMENTS_ENABLED ? ' i komentarze' : ''}. [ZWERYFIKUJ: lokalizacja serwerów projektu]`,
-            'Resend (USA): wysyłka powiadomień e-mail z formularzy. [ZWERYFIKUJ: pełna nazwa i adres dostawcy]',
+            'Vercel Inc. (USA): hosting strony, logi serwera, Vercel Web Analytics i Vercel Speed Insights. Podmiot odpowiedzialny: 440 N Barranca Ave #4133, Covina, CA 91723, USA.',
+            `Sanity AS (Norwegia): system zarządzania treścią, w którym zapisywane są wiadomości z formularza${COMMENTS_ENABLED ? ' i komentarze' : ''}. Podmiot odpowiedzialny: Trondheimsveien 2K, 0560 Oslo, Norwegia.`,
+            'Resend (USA): wysyłka powiadomień e-mail z formularzy. Podmiot odpowiedzialny: Plus Five Five, Inc., 2261 Market Street, Suite 5039, San Francisco, CA 94114, USA.',
             ...(COMMENTS_ENABLED ? ['Cloudflare, Inc. (USA): Turnstile, ochrona formularza komentarzy przed spamem.'] : []),
           ] },
           { type: 'p', text: 'Część tych firm ma siedzibę albo serwery poza Europejskim Obszarem Gospodarczym. Dane trafiają tam na podstawie decyzji Komisji Europejskiej w sprawie ram ochrony danych UE–USA (EU-US Data Privacy Framework) albo standardowych klauzul umownych zatwierdzonych przez Komisję. [ZWERYFIKUJ: podstawa dla każdego dostawcy]' },
@@ -124,7 +124,7 @@ const PRIVACY: Record<Locale, LegalDoc> = {
       {
         title: '1. Controller',
         blocks: [
-          { type: 'p', text: `The controller of your data is [TO BE COMPLETED: full name or company name, address, tax ID]. For anything related to your personal data, write to ${EMAIL}.` },
+          { type: 'p', text: `The controller of your data is Paweł Kuligowski, ul. Argentyńska 5/17, 03-952 Warsaw, Poland. For anything related to your personal data, write to ${EMAIL}.` },
         ],
       },
       {
@@ -154,9 +154,9 @@ const PRIVACY: Record<Locale, LegalDoc> = {
         blocks: [
           { type: 'p', text: 'Your data is processed on my behalf by the service providers the website uses:' },
           { type: 'list', items: [
-            'Vercel Inc. (USA): website hosting, server logs, Vercel Web Analytics and Vercel Speed Insights.',
-            `Sanity AS (Norway): the content management system where form messages${COMMENTS_ENABLED ? ' and comments' : ''} are stored. [TO BE VERIFIED: project server location]`,
-            'Resend (USA): email notifications from the forms. [TO BE VERIFIED: provider legal name and address]',
+            'Vercel Inc. (USA): website hosting, server logs, Vercel Web Analytics and Vercel Speed Insights. Responsible entity: 440 N Barranca Ave #4133, Covina, CA 91723, USA.',
+            `Sanity AS (Norway): the content management system where form messages${COMMENTS_ENABLED ? ' and comments' : ''} are stored. Responsible entity: Trondheimsveien 2K, 0560 Oslo, Norway.`,
+            'Resend (USA): email notifications from the forms. Responsible entity: Plus Five Five, Inc., 2261 Market Street, Suite 5039, San Francisco, CA 94114, USA.',
             ...(COMMENTS_ENABLED ? ['Cloudflare, Inc. (USA): Turnstile, spam protection for the comment form.'] : []),
           ] },
           { type: 'p', text: 'Some of these companies are based or keep servers outside the European Economic Area. Data is transferred there on the basis of the European Commission decision on the EU-US Data Privacy Framework or standard contractual clauses approved by the Commission. [TO BE VERIFIED: basis for each provider]' },
