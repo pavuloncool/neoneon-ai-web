@@ -30,6 +30,14 @@ const nextConfig: NextConfig = {
       { source: '/en/about', destination: '/en#about', statusCode: 301 as const },
       { source: '/pl/about', destination: '/pl#o-mnie', statusCode: 301 as const },
       { source: '/pl/contact', destination: '/pl/kontakt', statusCode: 301 as const },
+      // Wpis „OTP: od free content do frictionless lead generation” usunięty 25.11.2026 — stare adresy
+      // (przed i po zmianie nazw kategorii) prowadzą do jego dawnej kategorii zamiast na 404
+      { source: '/pl/:cat(strategie-ux|strony-zbudowane-z-ai)/frictionless-lead-generation', destination: '/pl/strony-zbudowane-z-ai', statusCode: 301 as const },
+      {
+        source: '/en/:cat(ux-strategies|ai-assisted-web-development)/free-content-to-frictionless-lead-generation',
+        destination: '/en/ai-assisted-web-development',
+        statusCode: 301 as const,
+      },
     ]
   },
   // Umami (analityka bez cookies) serwowana z własnej domeny — mniej blokowana przez adblockery

@@ -31,6 +31,10 @@ export const CONTACT_EMAIL = 'web@neoneon.online'
 // CONTACT_EMAIL powyżej to adresat powiadomień z formularzy — osobno.
 export const PUBLIC_CONTACT_EMAIL = 'web@neoneon.online'
 
+// Komentarze pod artykułami — „zamrażarka” (decyzja właściciela 25.11.2026): kod, schemat Sanity i API zostają,
+// ale sekcja komentarzy nie pojawia się na stronie, a API nie przyjmuje nowych. Włączenie: true.
+export const COMMENTS_ENABLED = false
+
 // path bez prefiksu języka: '' = strona główna, '/o-mnie', '/ux-strategies/slug'
 export function localeUrl(locale: Locale, path = ''): string {
   return `${SITE_URL}/${locale}${path}`

@@ -8,7 +8,7 @@ import { PageSections } from '@/components/sections/SectionRendererLazy'
 import { CategoryPage } from '@/components/blog/CategoryPage'
 import { resolveCategory } from '@/lib/categoryRoute'
 import { pageMetadata, seoMetadata } from '@/lib/metadata'
-import { SITE_NAME, SITE_URL, localeUrl } from '@/lib/site'
+import { SITE_NAME, SITE_URL, localeUrl, COMMENTS_ENABLED } from '@/lib/site'
 import { DATE_LOCALE, otherLocale, type Locale } from '@/lib/locales'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqJsonLd } from '@/components/seo/FaqJsonLd'
@@ -122,7 +122,7 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
     notFound()
   }
 
-  const comments = await getCommentsByArticle(article.id)
+  const comments = COMMENTS_ENABLED ? await getCommentsByArticle(article.id) : []
   const t = await getTranslations('comments')
   const tArticle = await getTranslations('article')
 
@@ -146,7 +146,7 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
     ...((article.faq ?? []).some((f) => f?.question?.trim() && f?.answer?.trim())
       ? [{ key: 'faq', label: stegaClean(tArticle('faqHeading')), href: '#faq' }]
       : []),
-    { key: COMMENTS_ID[locale], label: t('sectionZero'), href: `#${COMMENTS_ID[locale]}` },
+    ...(COMMENTS_ENABLED ? [{ key: COMMENTS_ID[locale], label: t('sectionZero'), href: `#${COMMENTS_ID[locale]}` }] : []),
   ]
   const readingTime = tArticle('readingTime', { minutes: readingMinutes(article.content) })
 
@@ -207,25 +207,27 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
           {article.content && <PortableTextRenderer content={article.content} />}
           <FaqSection faq={article.faq} heading={tArticle('faqHeading')} />
           <ArticleCta locale={locale} categoryId={article.category_id} />
-          <section id={COMMENTS_ID[locale]} className={a.comments} aria-labelledby="comments-heading">
-            <h2 id="comments-heading" className={a.commentsTitle}>
-              {comments.length === 0 ? t('sectionZero') : comments.length === 1 ? t('sectionOne') : t('sectionMany', { count: comments.length })}
-            </h2>
-            {comments.length > 0 && (
-              <ul className={a.commentList}>
-                {comments.map((comment) => (
-                  <li key={comment.id}>
-                    <div className={a.commentMeta}>
-                      <span>{comment.author_name}</span>
-                      <span>{formatDate(comment.created_at, dateLocale)}</span>
-                    </div>
-                    <p>{comment.body}</p>
-                  </li>
-                ))}
-              </ul>
-            )}
-            <CommentForm articleId={article.id} />
-          </section>
+          {COMMENTS_ENABLED && (
+            <section id={COMMENTS_ID[locale]} className={a.comments} aria-labelledby="comments-heading">
+              <h2 id="comments-heading" className={a.commentsTitle}>
+                {comments.length === 0 ? t('sectionZero') : comments.length === 1 ? t('sectionOne') : t('sectionMany', { count: comments.length })}
+              </h2>
+              {comments.length > 0 && (
+                <ul className={a.commentList}>
+                  {comments.map((comment) => (
+                    <li key={comment.id}>
+                      <div className={a.commentMeta}>
+                        <span>{comment.author_name}</span>
+                        <span>{formatDate(comment.created_at, dateLocale)}</span>
+                      </div>
+                      <p>{comment.body}</p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <CommentForm articleId={article.id} />
+            </section>
+          )}
         </div>
       </article>
     </>

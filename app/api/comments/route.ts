@@ -8,10 +8,12 @@ import { NextResponse } from 'next/server'
 import { client, writeClient } from '@/sanity/lib/client'
 import { clientIp, turnstileUnavailable, verifyTurnstile } from '@/lib/turnstile'
 import { escapeHtml } from '@/lib/utils'
-import { CONTACT_EMAIL, FORM_FROM_EMAIL, SITE_URL } from '@/lib/site'
+import { COMMENTS_ENABLED, CONTACT_EMAIL, FORM_FROM_EMAIL, SITE_URL } from '@/lib/site'
 import { getResend } from '@/lib/email'
 
 export async function POST(request: Request) {
+  // Komentarze w „zamrażarce” (lib/site.ts) — nowych nie przyjmujemy
+  if (!COMMENTS_ENABLED) return NextResponse.json({ error: 'comments_disabled' }, { status: 404 })
   try {
     const { article_id, author_name, author_email, body, turnstileToken } = await request.json()
 
