@@ -23,7 +23,8 @@ export const IS_STAGING = process.env.SITE_STAGING === '1'
 export const IS_INDEXABLE = IS_PRODUCTION && !IS_STAGING
 
 // Adresy e-mail formularzy (Resend): nadawca musi być w domenie zweryfikowanej w Resend
-export const FORM_FROM_EMAIL = 'formularz@neoneon.online'
+// Nadawca powiadomień = adres publiczny strony (decyzja właściciela 25.11.2026); domena zweryfikowana w Resend
+export const FORM_FROM_EMAIL = 'web@neoneon.online'
 export const CONTACT_EMAIL = 'ask@neoneon.online'
 // Adres pokazywany na stronie (formularz kontaktowy: „Wolisz e-mail?”, komunikat błędu wysyłki).
 // CONTACT_EMAIL powyżej to adresat powiadomień z formularzy — osobno.
