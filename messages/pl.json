@@ -348,5 +348,19 @@
     "blog": "Wszystkie artykuły",
     "search": "Szukaj",
     "home": "Strona główna"
+  },
+  "articleCta": {
+    "label": "Rozmowa",
+    "ai": {
+      "title": "Twoja strona też może powstać z AI.",
+      "text": "Najpierw decyzje i tekst, potem kod. Pierwsza rozmowa pokazuje, od czego zacząć i czego nie trzeba robić wcale.",
+      "button": "Porozmawiajmy o stronie"
+    },
+    "content": {
+      "title": "Masz wiedzę. Teraz trzeba ją opisać.",
+      "text": "Plan treści i teksty, które odpowiadają na pytania Twoich klientów — i które asystenci AI mają z czego cytować.",
+      "button": "Zaplanujmy treści"
+    },
+    "email": "albo napisz:"
   }
 }

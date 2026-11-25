@@ -57,6 +57,12 @@ export function SiteMotion() {
         q<HTMLElement>(sel(a.faqList)).forEach((list) => staggerIn(Array.from(list.children), list, 'x'))
         q<HTMLDetailsElement>(`details${sel(a.faqItem)}`).forEach((d) => cleanups.push(accordion(d, () => d.querySelector<HTMLElement>(':scope > p, :scope > div'))))
         q<HTMLElement>(sel(a.commentList)).forEach((list) => staggerIn(Array.from(list.children), list))
+        // CTA pod artykułem: etykieta scramble, nagłówek z maski, reszta z rozmycia
+        q<HTMLElement>(sel(a.cta)).forEach((box) => {
+          revealBlur(box, box, { duration: 0.8 })
+          const label = box.querySelector<HTMLElement>(sel(a.ctaLabel))
+          if (label) scrambleIn(label, 0.2)
+        })
 
         // ── Polityki ──
         q<HTMLElement>(sel(legal.updated)).forEach((el) => scrambleIn(el))

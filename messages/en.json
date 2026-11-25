@@ -348,5 +348,19 @@
     "blog": "All articles",
     "search": "Search",
     "home": "Home"
+  },
+  "articleCta": {
+    "label": "Talk",
+    "ai": {
+      "title": "Your website can be built with AI too.",
+      "text": "Decisions and copy first, code second. The first conversation shows where to start and what you don't need to do at all.",
+      "button": "Let's talk about your website"
+    },
+    "content": {
+      "title": "You have the knowledge. Now it needs the right words.",
+      "text": "A content plan and copy that answer your clients' questions — and give AI assistants something to quote.",
+      "button": "Let's plan the content"
+    },
+    "email": "or write:"
   }
 }

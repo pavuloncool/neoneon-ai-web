@@ -75,9 +75,22 @@ export const navItem = defineType({
   title: 'Pozycja menu',
   type: 'object',
   fields: [
-    defineField({ name: 'label', title: 'Etykieta', type: 'string', validation: (r) => r.required() }),
+    defineField({
+      name: 'label',
+      title: 'Etykieta',
+      description: 'Przy linku do kategorii można zostawić puste — wtedy etykietą jest nazwa kategorii (zmienia się razem z nią).',
+      type: 'string',
+      validation: (r) =>
+        r.custom((value, ctx) => {
+          const linkType = (ctx.parent as { link?: { linkType?: string } })?.link?.linkType
+          return value || linkType === 'category' ? true : 'Podaj etykietę'
+        }),
+    }),
     defineField({ name: 'link', title: 'Link', type: 'link', validation: (r) => r.required() }),
     defineField({ name: 'highlight', title: 'Wyróżnij jako przycisk', description: 'Np. „Kontakt” w nawigacji głównej (desktop).', type: 'boolean', initialValue: false }),
   ],
-  preview: { select: { title: 'label', subtitle: 'link.linkType', highlight: 'highlight' }, prepare: ({ title, subtitle, highlight }) => ({ title, subtitle: `${subtitle ?? ''}${highlight ? ' · przycisk' : ''}` }) },
+  preview: {
+    select: { title: 'label', categoryTitle: 'link.categoryRef.title', subtitle: 'link.linkType', highlight: 'highlight' },
+    prepare: ({ title, categoryTitle, subtitle, highlight }) => ({ title: title || categoryTitle, subtitle: `${subtitle ?? ''}${highlight ? ' · przycisk' : ''}` }),
+  },
 })

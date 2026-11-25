@@ -19,6 +19,7 @@ import { AnchorScroll } from '@/components/blog/AnchorScroll'
 import { TagBadge } from '@/components/blog/TagBadge'
 import { CommentForm } from '@/components/blog/lazy'
 import { ArticleDial } from '@/components/sygnal/ArticleDial'
+import { ArticleCta } from '@/components/sygnal/ArticleCta'
 import a from '@/components/sygnal/article.module.css'
 import { Link } from '@/i18n/navigation'
 import { slugify } from '@/lib/slugify'
@@ -205,6 +206,7 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
         <div className={a.body} data-article-body="">
           {article.content && <PortableTextRenderer content={article.content} />}
           <FaqSection faq={article.faq} heading={tArticle('faqHeading')} />
+          <ArticleCta locale={locale} categoryId={article.category_id} />
           <section id={COMMENTS_ID[locale]} className={a.comments} aria-labelledby="comments-heading">
             <h2 id="comments-heading" className={a.commentsTitle}>
               {comments.length === 0 ? t('sectionZero') : comments.length === 1 ? t('sectionOne') : t('sectionMany', { count: comments.length })}

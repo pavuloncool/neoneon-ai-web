@@ -86,11 +86,11 @@ export const categoryTiles = defineType({
           name: 'tile',
           fields: [
             defineField({ ...categoryRefField(), validation: (r) => r.required() }),
-            defineField({ name: 'title', title: 'Nazwa na kafelku', type: 'string', validation: (r) => r.required() }),
+            defineField({ name: 'title', title: 'Nazwa na kafelku', description: 'Puste = nazwa kategorii (zmienia się razem z nią).', type: 'string' }),
           ],
           preview: {
-            select: { title: 'title', categorySlug: 'categoryRef.slug.current' },
-            prepare: ({ title, categorySlug }) => ({ title, subtitle: categorySlug ?? '' }),
+            select: { title: 'title', categoryTitle: 'categoryRef.title', categorySlug: 'categoryRef.slug.current' },
+            prepare: ({ title, categoryTitle, categorySlug }) => ({ title: title || categoryTitle, subtitle: categorySlug ?? '' }),
           },
         }),
       ],

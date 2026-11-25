@@ -30,6 +30,7 @@ const ARTICLE_PROJECTION = groq`{
   "seo_description": seoDescription,
   content,
   "category": ${ARTICLE_CATEGORY},
+  "category_id": categoryRef._ref,
   "category_title": categoryRef->title,
   "category_previous_slugs": categoryRef->previousSlugs,
   "cover_image_url": coverImage.asset->url,
@@ -205,7 +206,8 @@ export async function getCommentsByArticle(articleId: string): Promise<Comment[]
 // ── Treść strony: ustawienia, strony z sekcji, teksty interfejsu ──────────
 
 const IMAGE_PROJECTION = groq`{ "url": asset->url, alt, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height, hotspot }`
-const NAV_PROJECTION = groq`{ label, highlight, "link": link${LINK_PROJECTION} }`
+// Pusta etykieta linku do kategorii = nazwa kategorii (zmiana nazwy w jednym miejscu)
+const NAV_PROJECTION = groq`{ "label": coalesce(label, link.categoryRef->title), highlight, "link": link${LINK_PROJECTION} }`
 
 // cache(): layout, metadane i strona w jednym żądaniu dzielą jedno zapytanie
 export const getSiteSettings = cache(async (locale: Locale): Promise<SiteSettings | null> =>
@@ -231,7 +233,7 @@ const PAGE_PROJECTION = groq`{
   "sections": sections[]{
     ...,
     _type == "textImage" => { "image": image${IMAGE_PROJECTION}, "ctaLink": ctaLink${LINK_PROJECTION} },
-    _type == "categoryTiles" => { "tiles": tiles[]{ _key, title, "category": ${CATEGORY_SLUG} } }
+    _type == "categoryTiles" => { "tiles": tiles[]{ _key, "title": coalesce(title, categoryRef->title), "category": ${CATEGORY_SLUG} } }
   }
 }`
 
