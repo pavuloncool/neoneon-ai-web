@@ -339,7 +339,8 @@
       "message": "Write a few sentences about your project (at least 20 characters).",
       "privacy": "Confirm that you have read the privacy policy."
     },
-    "preferEmail": "Prefer email?"
+    "preferEmail": "Prefer email?",
+    "preferPhone": "Prefer to call?"
   },
   "notFound": {
     "eyebrow": "Error 404",

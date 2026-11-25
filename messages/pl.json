@@ -339,7 +339,8 @@
       "message": "Napisz kilka zdań o projekcie (min. 20 znaków).",
       "privacy": "Zaznacz, że znasz politykę prywatności."
     },
-    "preferEmail": "Wolisz e-mail?"
+    "preferEmail": "Wolisz e-mail?",
+    "preferPhone": "Wolisz zadzwonić?"
   },
   "notFound": {
     "eyebrow": "Błąd 404",

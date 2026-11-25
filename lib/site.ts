@@ -30,6 +30,8 @@ export const CONTACT_EMAIL = 'web@neoneon.online'
 // Adres pokazywany na stronie (formularz kontaktowy: „Wolisz e-mail?”, komunikat błędu wysyłki).
 // CONTACT_EMAIL powyżej to adresat powiadomień z formularzy — osobno.
 export const PUBLIC_CONTACT_EMAIL = 'web@neoneon.online'
+// Telefon pokazywany przy formularzu kontaktowym („Wolisz zadzwonić?”): tekst do wyświetlenia i numer do linku tel:
+export const PUBLIC_CONTACT_PHONE = { display: '+48 573 363 234', href: '+48573363234' }
 
 // Komentarze pod artykułami — „zamrażarka” (decyzja właściciela 25.11.2026): kod, schemat Sanity i API zostają,
 // ale sekcja komentarzy nie pojawia się na stronie, a API nie przyjmuje nowych. Włączenie: true.
