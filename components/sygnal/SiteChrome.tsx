@@ -13,6 +13,7 @@ import { useLocaleSwitch } from '@/components/layout/LanguageSwitcher'
 import { SignalDial, type DialItem } from './SignalDial'
 import { SignalMap } from './SignalMap'
 import { CHROME_LABELS, DIAL_LABELS, MAP_LABELS } from './labels'
+import { useDialOverride } from './dialStore'
 import type { Locale } from '@/lib/locales'
 import c from './chrome.module.css'
 import d from './dial.module.css'
@@ -82,7 +83,10 @@ export function SiteDial({ locale, items, contactHref, email, langLabels }: { lo
   const opener = useRef<HTMLElement | null>(null)
   const [open, setOpen] = useState(false)
   const [progress, setProgress] = useState(0)
-  const current = matchKey(items, pathname)
+  // Artykuł podmienia pozycje na swój spis treści (ArticleDial → dialStore)
+  const override = useDialOverride()
+  const shown = override?.items ?? items
+  const current = override ? override.current : matchKey(items, pathname)
   const t = CHROME_LABELS[locale]
 
   // Postęp czytania strony → liczba i łuk (bez re-renderu przy każdym przewinięciu)
@@ -110,13 +114,13 @@ export function SiteDial({ locale, items, contactHref, email, langLabels }: { lo
   }, [pathname])
 
 
-  const currentLabel = items.find((i) => i.key === current)?.label
+  const currentLabel = shown.find((i) => i.key === current)?.label
 
   return (
     <>
       <SignalDial
         variant="dock"
-        items={items}
+        items={shown}
         current={current}
         docked
         labels={DIAL_LABELS[locale]}
@@ -134,7 +138,9 @@ export function SiteDial({ locale, items, contactHref, email, langLabels }: { lo
       </p>
       {open && (
         <SignalMap
-          items={items}
+          items={shown}
+          // długie pozycje (śródtytuły artykułu) czytelniej jako lista
+          initialList={shown.some((i) => i.label.length > 28)}
           current={current}
           progress={progress}
           labels={MAP_LABELS[locale]}

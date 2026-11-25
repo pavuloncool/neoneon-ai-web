@@ -49,12 +49,13 @@ export function CommentForm({ articleId }: CommentFormProps) {
     }
   }
 
-  const inputClass = "bg-transparent border border-border dark:border-white px-3 py-2 text-sm text-ink dark:text-white placeholder:text-muted dark:placeholder:text-white/50 focus:outline-none focus:border-ink dark:focus:border-white transition-colors"
-  const labelClass = "text-xs tracking-widest text-muted dark:text-white uppercase"
+  // „Sygnał”: pola jako linia (jak rezerwacja), etykiety mono, przycisk limonkowy
+  const inputClass = "min-h-[46px] bg-transparent border-0 border-b border-white/50 px-0 py-2 text-base text-[#F2F2EE] placeholder:text-white/50 focus:outline-none focus:border-[#CCFF00] transition-colors"
+  const labelClass = "font-[family-name:var(--font-plex-mono)] text-[11px] tracking-[0.2em] text-white/70 uppercase"
 
   return (
-    <div className="mt-12 pt-10 border-t border-border">
-      <h3 className="font-display text-2xl font-light mb-6">{t('heading')}</h3>
+    <div className="mt-12 pt-10 border-t border-white/15">
+      <h3 className="font-[family-name:var(--font-archivo)] text-xl font-extrabold uppercase tracking-tight mb-6">{t('heading')}</h3>
 
       {status === 'success' ? (
         <p className="text-sm text-muted dark:text-white/70 border border-border dark:border-white px-4 py-3">
@@ -102,10 +103,10 @@ export function CommentForm({ articleId }: CommentFormProps) {
               type="submit"
               disabled={status === 'loading' || !turnstileToken}
               className={cn(
-                'self-start text-xs tracking-widest uppercase px-6 py-3 border transition-colors duration-200',
+                'self-start min-h-[48px] rounded-full px-6 font-[family-name:var(--font-plex-mono)] text-[11.5px] font-medium tracking-[0.18em] uppercase transition-shadow duration-300',
                 status === 'loading' || !turnstileToken
-                  ? 'border-border text-muted cursor-not-allowed'
-                  : 'border-ink text-ink hover:bg-ink hover:text-paper dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-ink'
+                  ? 'border border-white/30 text-white/60 cursor-not-allowed'
+                  : 'bg-[#CCFF00] text-[#0A0A0B] hover:shadow-[0_0_32px_rgba(204,255,0,0.45)]'
               )}
             >
               {status === 'loading' ? t('submitting') : t('submit')}

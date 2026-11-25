@@ -34,6 +34,7 @@ interface Props {
   email: string
   aside?: React.ReactNode // lewa kolumna
   language?: React.ReactNode // przełącznik języka
+  initialList?: boolean // start w widoku listy
   onClose: () => void
   onNavigate: (item: DialItem) => void
 }
@@ -78,9 +79,9 @@ function ItemLink({
   )
 }
 
-export function SignalMap({ items, current, progress, labels, talkHref, email, aside, language, onClose, onNavigate }: Props) {
+export function SignalMap({ items, current, progress, labels, talkHref, email, aside, language, initialList = false, onClose, onNavigate }: Props) {
   const root = useRef<HTMLDivElement>(null)
-  const [list, setList] = useState(false)
+  const [list, setList] = useState(initialList)
   const cur = items.find((x) => x.key === current)
   const step = 360 / Math.max(items.length, 1)
   const link = { current, onNavigate, onClose }

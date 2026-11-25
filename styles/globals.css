@@ -133,45 +133,99 @@
 
 /* ── Typografia artykułu ───────────────────────────────────── */
 @layer components {
+  /* Kierunek „Sygnał”: treść do długiego czytania na ciemnym tle — Archivo 19 px, interlinia 1,7,
+     tekst #E6E6E1 (kontrast ok. 15:1 na #0A0A0B), kolumna ok. 68 znaków (szerokość daje strona artykułu).
+     Neon tylko w linkach, cytatach i znacznikach list. */
   .article-body {
-    font-family: var(--font-dm-sans);
-    font-size: 1.0625rem;
-    line-height: 1.8;
+    font-family: var(--font-archivo);
+    font-size: 1.1875rem;
+    line-height: 1.7;
+    color: #e6e6e1;
   }
 
   .article-body h1,
   .article-body h2,
   .article-body h3 {
-    font-family: var(--font-cormorant);
-    font-weight: 600;
-    line-height: 1.2;
-    margin-bottom: 0.75rem;
+    font-family: var(--font-archivo);
+    color: #f2f2ee;
+    line-height: 1.05;
+    margin-bottom: 1rem;
   }
 
-  /* Pogrubienie z edytora nie zmienia grubości nagłówka — wszystkie mają 600 */
+  /* Pogrubienie z edytora nie zmienia grubości nagłówka */
   .article-body :is(h1, h2, h3) strong { font-weight: inherit; }
 
-  .article-body h1 { margin-top: 2.5rem; }
+  .article-body h1 { margin-top: 3rem; font-size: 2.5rem; font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; }
 
   .article-body h2 {
-    font-size: 2rem;
-    margin-top: 1.25rem;
+    font-size: clamp(1.75rem, 2.6vw, 2.25rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    margin-top: 3.5rem;
   }
 
   .article-body h3 {
-    font-size: 1.5rem;
-    margin-top: 1.25rem;
+    font-size: 1.375rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-top: 2.25rem;
+    line-height: 1.2;
   }
 
-  /* Kotwice nie chowają się pod przyklejonym nagłówkiem (h-14 = 3.5rem) */
+  /* Kotwice z koła i spisu treści — mały oddech nad śródtytułem */
   .article-body h2[id],
   .article-body h3[id] {
-    scroll-margin-top: 5rem;
+    scroll-margin-top: 2rem;
   }
+
+  .article-body strong { color: #f2f2ee; font-weight: 700; }
+
+  .article-body blockquote {
+    margin: 2.5rem 0;
+    padding: 0.25rem 0 0.25rem 1.5rem;
+    border-left: 2px solid #ccff00;
+    font-size: 1.375rem;
+    line-height: 1.45;
+    color: #f2f2ee;
+  }
+
+  .article-body code {
+    font-family: var(--font-plex-mono);
+    font-size: 0.85em;
+    padding: 0.1em 0.35em;
+    border-radius: 6px;
+    background: rgba(242, 242, 238, 0.08);
+  }
+
+  .article-body pre {
+    margin: 2rem 0;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+    border-radius: 16px;
+    border: 1px solid rgba(242, 242, 238, 0.14);
+    background: #111113;
+    font-size: 0.875rem;
+    line-height: 1.65;
+  }
+
+  .article-body pre code { padding: 0; background: none; font-size: inherit; color: #dadad5; }
+
+  .article-body hr {
+    margin: 3rem 0;
+    border: 0;
+    height: 1px;
+    background: rgba(242, 242, 238, 0.16);
+  }
+
+  /* Osadzenia (często jasne iframe'y) — w ramce, żeby nie wypadały z ciemnej strony */
+  .article-body .video-container { border-radius: 16px; border: 1px solid rgba(242, 242, 238, 0.14); }
 
   .article-body .embed-container {
     margin: 2rem 0;
     overflow: hidden;
+    border-radius: 16px;
+    border: 1px solid rgba(242, 242, 238, 0.14);
   }
 
   .article-body .embed-container iframe {
@@ -189,29 +243,33 @@
   .article-body .media-embed > .video-container,
   .article-body .media-embed > .embed-container { margin: 0; }
   .article-body .media-embed figcaption {
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
+    margin-top: 0.75rem;
+    font-family: var(--font-plex-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     text-align: center;
-    opacity: 0.7;
+    color: rgba(242, 242, 238, 0.7);
   }
 
   .article-body p { margin-bottom: 1.5rem; }
 
   .article-body a {
-    color: inherit;
-    text-decoration: none;
-    text-underline-offset: 0.18em;
+    color: #f2f2ee;
+    text-decoration: underline;
+    text-decoration-color: #ccff00;
+    text-underline-offset: 0.2em;
     text-decoration-thickness: 0.08em;
-    transition: text-decoration-color 0.2s ease;
+    transition: color 0.2s ease;
   }
 
   .article-body a:hover,
   .article-body a:focus-visible {
-    text-decoration: underline;
+    color: #ccff00;
   }
 
   .article-body a:focus-visible {
-    outline: 2px solid currentColor;
+    outline: 2px solid #ccff00;
     outline-offset: 0.16em;
   }
 
@@ -234,6 +292,10 @@
     margin-bottom: 0.35rem;
   }
 
+  .article-body li::marker {
+    color: #ccff00;
+  }
+
   .article-body li:last-child {
     margin-bottom: 0;
   }
@@ -249,7 +311,7 @@
   .article-body img {
     width: 100%;
     height: auto;
-    border-radius: 2px;
+    border-radius: 16px;
     margin: 2rem 0;
   }
 

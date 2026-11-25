@@ -6,6 +6,7 @@
   min-height: 100vh;
   background: #0a0a0b;
   color: #f2f2ee;
+  font-family: var(--font-archivo);
 }
 .shell::before {
   /* siatka 12 kolumn — tylko tło */

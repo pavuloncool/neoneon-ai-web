@@ -17,8 +17,12 @@ import { PortableTextRenderer } from '@/components/blog/PortableTextRenderer'
 import { FaqSection } from '@/components/blog/FaqSection'
 import { AnchorScroll } from '@/components/blog/AnchorScroll'
 import { TagBadge } from '@/components/blog/TagBadge'
-import { ArticleScroll, CommentForm } from '@/components/blog/lazy'
-import { FadeUp } from '@/components/ui/Motion'
+import { CommentForm } from '@/components/blog/lazy'
+import { ArticleDial } from '@/components/sygnal/ArticleDial'
+import a from '@/components/sygnal/article.module.css'
+import { Link } from '@/i18n/navigation'
+import { slugify } from '@/lib/slugify'
+import { toPlainText, type PortableTextBlock } from '@portabletext/react'
 import { TranslationStore } from '@/components/layout/TranslationStore'
 import type { Metadata } from 'next'
 import { stegaClean } from 'next-sanity'
@@ -47,6 +51,9 @@ function queryString(params: Record<string, string | string[] | undefined>): str
 function articleDescription(article: { seo_description?: string | null; excerpt?: string | null }) {
   return stegaClean(article.seo_description)?.trim() || stegaClean(article.excerpt)
 }
+
+// Kotwica sekcji komentarzy (spis treści w kole)
+const COMMENTS_ID: Record<Locale, string> = { pl: 'komentarze', en: 'comments' }
 
 function getRouteParams(segments: string[]) {
   if (segments.length !== 2) notFound()
@@ -125,6 +132,21 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
   const categoryLabel = article.category_title ?? article.category
 
   const dateLocale = DATE_LOCALE[locale]
+  // Spis treści dla koła: H2 z treści (te same id co w PortableTextRenderer), potem FAQ i komentarze
+  const tocItems = [
+    ...((article.content ?? []) as PortableTextBlock[])
+      .filter((b) => b._type === 'block' && (b as { style?: string }).style === 'h2')
+      .map((b) => {
+        const text = stegaClean(toPlainText([b])).trim()
+        const id = slugify(text)
+        return { key: id, label: text, href: `#${id}` }
+      })
+      .filter((x) => x.label),
+    ...((article.faq ?? []).some((f) => f?.question?.trim() && f?.answer?.trim())
+      ? [{ key: 'faq', label: stegaClean(tArticle('faqHeading')), href: '#faq' }]
+      : []),
+    { key: COMMENTS_ID[locale], label: t('sectionZero'), href: `#${COMMENTS_ID[locale]}` },
+  ]
   const readingTime = tArticle('readingTime', { minutes: readingMinutes(article.content) })
 
   return (
@@ -149,85 +171,59 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
         }}
       />
       <FaqJsonLd faq={article.faq} />
-      <article>
-        {/* Pasek postępu czytania + odsłanianie nagłówków h2 */}
-        <ArticleScroll />
+      {/* Spis treści dla koła (śródtytuły H2, FAQ, komentarze) — koło w layoucie pokazuje je zamiast menu */}
+      <ArticleDial items={tocItems} />
+      <article className={a.article}>
         {/* Kotwica (np. #faq) odporna na dorastanie treści po załadowaniu */}
         <AnchorScroll />
-        <div className="max-w-5xl mx-auto px-6 py-12 md:py-16">
-          <FadeUp lcp="solid">
-            <header className="mb-10 md:mb-14">
-              {article.cover_image_url ? (
-                <div className="grid grid-cols-1 md:grid-cols-[1fr_1.1fr] gap-8 md:gap-12 items-start">
-                  <div className="relative" style={{ paddingBottom: '125%' }}>
-                    <Image src={article.cover_image_url} alt={article.title} fill priority
-                      className="object-cover"
-                      style={{ objectPosition: `${(article.cover_focal_x ?? 0.5) * 100}% ${(article.cover_focal_y ?? 0.5) * 100}%` }}
-                      sizes="(max-width: 768px) 100vw, 45vw" />
-                  </div>
-                  <div className="flex flex-col justify-center md:pt-4">
-                    <h1 className="font-display text-5xl sm:text-6xl md:text-8xl font-light leading-[1.02] tracking-tight mb-8">
-                      {article.title}
-                    </h1>
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <span className="text-xs tracking-widest text-muted dark:text-white/60 uppercase">{categoryLabel}</span>
-                      <span className="text-border">·</span>
-                      <span className="text-xs text-muted dark:text-white/60">{article.published_at ? formatDate(article.published_at, dateLocale) : ''}</span>
-                      <span className="text-border">·</span>
-                      <span className="text-xs text-muted dark:text-white/60">{readingTime}</span>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="max-w-3xl">
-                  <div className="flex items-center gap-3 mb-6 flex-wrap">
-                    <span className="text-xs tracking-widest text-muted dark:text-white/60 uppercase">{categoryLabel}</span>
-                    <span className="text-border">·</span>
-                    <span className="text-xs text-muted dark:text-white/60">{article.published_at ? formatDate(article.published_at, dateLocale) : ''}</span>
-                    <span className="text-border">·</span>
-                    <span className="text-xs text-muted dark:text-white/60">{readingTime}</span>
-                  </div>
-                  <h1 className="font-display text-5xl md:text-8xl font-light leading-tight mb-6">{article.title}</h1>
-                </div>
-              )}
-              {(article.excerpt || (article.tags && article.tags.length > 0)) && (
-                <div className="mt-8 md:mt-10 pt-8 border-t border-border max-w-3xl">
-                  {article.excerpt && <p className="text-muted dark:text-white/70 text-lg leading-relaxed mb-5">{article.excerpt}</p>}
-                  {article.tags && article.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {article.tags.map((tag) => <TagBadge key={tag.id} tag={tag} />)}
-                    </div>
-                  )}
-                </div>
-              )}
-            </header>
-          </FadeUp>
-          <FadeUp delay={0.15}>
-            <div className="max-w-3xl mx-auto" data-article-body="">
-              {article.content && <PortableTextRenderer content={article.content} />}
-              <FaqSection faq={article.faq} heading={tArticle('faqHeading')} />
-              <div className="mt-16 pt-8 border-t border-border" />
-              <section className="mt-2 pb-8">
-                <h2 className="font-display text-3xl font-light mb-8">
-                  {comments.length === 0 ? t('sectionZero') : comments.length === 1 ? t('sectionOne') : t('sectionMany', { count: comments.length })}
-                </h2>
-                {comments.length > 0 && (
-                  <ul className="divide-y divide-border mb-4">
-                    {comments.map((comment) => (
-                      <li key={comment.id} className="py-6">
-                        <div className="flex items-baseline justify-between mb-2">
-                          <span className="text-sm font-medium">{comment.author_name}</span>
-                          <span className="text-xs text-muted dark:text-white/60">{formatDate(comment.created_at, dateLocale)}</span>
-                        </div>
-                        <p className="text-sm text-ink dark:text-white/90 leading-relaxed">{comment.body}</p>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                <CommentForm articleId={article.id} />
-              </section>
+        <header className={`${a.head} ${article.cover_image_url ? a.headCover : ''}`}>
+          <div className={a.headText}>
+            <p className={a.meta}>
+              <Link href={`/${article.category}`} className={a.metaCat}>{categoryLabel}</Link>
+              <span aria-hidden="true">·</span>
+              <span>{article.published_at ? formatDate(article.published_at, dateLocale) : ''}</span>
+              <span aria-hidden="true">·</span>
+              <span>{readingTime}</span>
+            </p>
+            <h1 className={a.title}>{article.title}</h1>
+            {article.excerpt && <p className={a.lead}>{article.excerpt}</p>}
+            {article.tags && article.tags.length > 0 && (
+              <div className={a.tags}>
+                {article.tags.map((tag) => <TagBadge key={tag.id} tag={tag} className={a.tag} />)}
+              </div>
+            )}
+          </div>
+          {article.cover_image_url && (
+            <div className={a.cover}>
+              <Image src={article.cover_image_url} alt={article.title} fill priority
+                className="object-cover"
+                style={{ objectPosition: `${(article.cover_focal_x ?? 0.5) * 100}% ${(article.cover_focal_y ?? 0.5) * 100}%` }}
+                sizes="(max-width: 1023px) 100vw, 40vw" />
             </div>
-          </FadeUp>
+          )}
+        </header>
+        <div className={a.body} data-article-body="">
+          {article.content && <PortableTextRenderer content={article.content} />}
+          <FaqSection faq={article.faq} heading={tArticle('faqHeading')} />
+          <section id={COMMENTS_ID[locale]} className={a.comments} aria-labelledby="comments-heading">
+            <h2 id="comments-heading" className={a.commentsTitle}>
+              {comments.length === 0 ? t('sectionZero') : comments.length === 1 ? t('sectionOne') : t('sectionMany', { count: comments.length })}
+            </h2>
+            {comments.length > 0 && (
+              <ul className={a.commentList}>
+                {comments.map((comment) => (
+                  <li key={comment.id}>
+                    <div className={a.commentMeta}>
+                      <span>{comment.author_name}</span>
+                      <span>{formatDate(comment.created_at, dateLocale)}</span>
+                    </div>
+                    <p>{comment.body}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <CommentForm articleId={article.id} />
+          </section>
         </div>
       </article>
     </>
