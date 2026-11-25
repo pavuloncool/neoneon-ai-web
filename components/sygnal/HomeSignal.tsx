@@ -96,8 +96,9 @@ export function HomeSignal({
     return () => ro.disconnect()
   }, [])
 
-  // Mgła: maska podąża za kursorem
+  // Mgła: maska podąża za kursorem (w trybie pływającego koła — za kołem, ustawia to ticker w useGSAP)
   const onPointerMove = useCallback((e: React.PointerEvent<HTMLElement>) => {
+    if (e.currentTarget.hasAttribute('data-floating')) return
     const fog = e.currentTarget.querySelector<HTMLElement>('[data-fog]')
     if (!fog) return
     const r = fog.getBoundingClientRect()
@@ -153,13 +154,16 @@ export function HomeSignal({
       const mm = gsap.matchMedia()
       mm.add({ motion: '(prefers-reduced-motion: no-preference)', desktop: '(min-width: 1024px)' }, (ctx) => {
         // desktop w warunkach: przy zmianie progu układ (i pin procesu) budujemy od nowa
-        const { motion } = ctx.conditions as { motion: boolean; desktop: boolean }
+        const { motion, desktop } = ctx.conditions as { motion: boolean; desktop: boolean }
         const fades = [rim.current, ...Array.from(dialEl.querySelectorAll('[data-dial-fade]'))].filter(Boolean)
 
         if (motion) {
-          gsap.fromTo(
+          // EKSPERYMENT „pływające koło”: na górze strony koło płynie za kursorem i oświetla napis NEONEON;
+          // ucieka do rogu dopiero z pierwszym przewinięciem — z miejsca, w którym akurat jest (origin).
+          const origin = { x: 0, y: 0, set: false }
+          const fly = gsap.fromTo(
             dialEl,
-            { x: () => delta().x, y: () => delta().y, scale: 1 },
+            { x: () => (origin.set ? origin.x : delta().x), y: () => (origin.set ? origin.y : delta().y), scale: 1 },
             {
               x: () => dockTransform().x,
               y: () => dockTransform().y,
@@ -182,6 +186,75 @@ export function HomeSignal({
             ease: 'none',
             scrollTrigger: { trigger: heroEl, start: 'top top', end: '35% top', scrub: true },
           })
+
+          const floating = desktop && window.matchMedia('(pointer: fine)').matches
+          if (floating) {
+            const fog = heroEl.querySelector<HTMLElement>('[data-fog]')
+            const foot = heroEl.querySelector<HTMLElement>(`.${s.heroFoot}`)
+            const qx = gsap.quickTo(dialEl, 'x', { duration: 1.1, ease: 'power3.out' })
+            const qy = gsap.quickTo(dialEl, 'y', { duration: 1.1, ease: 'power3.out' })
+            let atTop = window.scrollY < 2
+            heroEl.setAttribute('data-floating', '')
+            heroEl.style.setProperty('--lr', `${Math.round(size * 0.62)}px`)
+
+            // Środek koła = kursor, w pasie między górą hero a przyciskami (koło nie zasłania CTA)
+            const follow = (e: PointerEvent) => {
+              if (!atTop) return
+              const r = size / 2
+              const heroTop = heroEl.getBoundingClientRect().top
+              const footTop = foot ? foot.getBoundingClientRect().top : window.innerHeight
+              const minY = heroTop + r * 0.7
+              const maxY = Math.max(minY, footTop - r - 12)
+              const cx = gsap.utils.clamp(r * 0.6, window.innerWidth - r * 0.6, e.clientX)
+              const cy = gsap.utils.clamp(minY, maxY, e.clientY)
+              qx(cx - (window.innerWidth - DOCK.margin - size / 2))
+              qy(cy - (window.innerHeight - DOCK.margin - size / 2))
+            }
+            // Światło spod koła: środek maski mgły i poświaty = środek koła (co klatkę)
+            const light = () => {
+              const b = dialEl.getBoundingClientRect()
+              const h = heroEl.getBoundingClientRect()
+              const cx = b.left + b.width / 2
+              const cy = b.top + b.height / 2
+              if (fog) {
+                const f = fog.getBoundingClientRect()
+                heroEl.style.setProperty('--mx', `${cx - f.left}px`)
+                heroEl.style.setProperty('--my', `${cy - f.top}px`)
+              }
+              heroEl.style.setProperty('--lx', `${cx - h.left}px`)
+              heroEl.style.setProperty('--ly', `${cy - h.top}px`)
+              // Póki koło płynie, start lotu do rogu = jego bieżące położenie
+              if (atTop) {
+                origin.x = Number(gsap.getProperty(dialEl, 'x'))
+                origin.y = Number(gsap.getProperty(dialEl, 'y'))
+                origin.set = true
+                fly.invalidate()
+              }
+            }
+            const onScroll = () => {
+              const top = window.scrollY < 2
+              if (atTop && !top) {
+                // Pierwsze przewinięcie: koniec pływania, koło ucieka do rogu ze swojego miejsca
+                // tylko tweeny podążania (lot do rogu też animuje x/y — tego nie ruszamy)
+                qx.tween.pause()
+                qy.tween.pause()
+                heroEl.removeAttribute('data-lit')
+              }
+              if (!atTop && top) heroEl.setAttribute('data-lit', '')
+              atTop = top
+            }
+            if (atTop) heroEl.setAttribute('data-lit', '')
+            heroEl.addEventListener('pointermove', follow)
+            window.addEventListener('scroll', onScroll, { passive: true })
+            gsap.ticker.add(light)
+            ctx.add(() => () => {
+              heroEl.removeEventListener('pointermove', follow)
+              window.removeEventListener('scroll', onScroll)
+              gsap.ticker.remove(light)
+              heroEl.removeAttribute('data-floating')
+              heroEl.removeAttribute('data-lit')
+            })
+          }
         } else {
           // Bez animacji: koło stoi w hero, po jego minięciu przeskakuje do rogu
           const toHero = () => {
@@ -324,6 +397,7 @@ export function HomeSignal({
       {/* ── HERO — jedyny H1 strony ── */}
       <header id={heroId} ref={heroRef} className={`${s.wrap} ${s.hero}`} onPointerMove={onPointerMove}>
         <div className={s.glow} aria-hidden="true" />
+        <div className={s.dialLight} aria-hidden="true" />
         <p className={`${s.mono} ${s.eyebrow}`}>
           {texts.eyebrow}
           <br />
