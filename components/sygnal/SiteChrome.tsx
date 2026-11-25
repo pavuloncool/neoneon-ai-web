@@ -75,6 +75,25 @@ function matchKey(items: DialItem[], pathname: string): string | null {
   return prefix?.key ?? null
 }
 
+// Boczna kolumna mapy: blog i wyszukiwarka (wspólna dla koła w rogu i koła strony głównej)
+export function MapAside({ locale, onLeave }: { locale: Locale; onLeave: () => void }) {
+  const t = CHROME_LABELS[locale]
+  return (
+    <>
+      <h2>{t.fromBlog}</h2>
+      <p style={{ margin: 0 }}>
+        <Link href="/blog" onClick={onLeave}>
+          {t.allArticles}
+        </Link>
+      </p>
+      <form action={`/${locale}/search`} role="search">
+        <label htmlFor="map-q">{t.search}</label>
+        <input id="map-q" name="q" type="search" placeholder={t.searchPlaceholder} />
+      </form>
+    </>
+  )
+}
+
 export function SiteDial({ locale, items, contactHref, email, langLabels }: { locale: Locale; items: DialItem[]; contactHref: string; email: string; langLabels: { pl: string; en: string } }) {
   const pathname = usePathname()
   const num = useRef<HTMLSpanElement>(null)
@@ -115,6 +134,8 @@ export function SiteDial({ locale, items, contactHref, email, langLabels }: { lo
 
 
   const currentLabel = shown.find((i) => i.key === current)?.label
+  // Strona główna ma własne koło (HomeSignal: z hero do rogu, sekcje strony)
+  if (pathname === '/') return null
 
   return (
     <>
@@ -147,20 +168,7 @@ export function SiteDial({ locale, items, contactHref, email, langLabels }: { lo
           talkHref={contactHref}
           email={email}
           language={<SignalLanguage labels={langLabels} />}
-          aside={
-            <>
-              <h2>{t.fromBlog}</h2>
-              <p style={{ margin: 0 }}>
-                <Link href="/blog" onClick={() => setOpen(false)}>
-                  {t.allArticles}
-                </Link>
-              </p>
-              <form action={`/${locale}/search`} role="search">
-                <label htmlFor="map-q">{t.search}</label>
-                <input id="map-q" name="q" type="search" placeholder={t.searchPlaceholder} />
-              </form>
-            </>
-          }
+          aside={<MapAside locale={locale} onLeave={() => setOpen(false)} />}
           onClose={() => {
             setOpen(false)
             requestAnimationFrame(() => opener.current?.focus())

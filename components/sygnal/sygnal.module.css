@@ -303,3 +303,26 @@
 
 .foot { position: relative; z-index: 1; padding: 40px max(20px, 2.8vw) 140px; display: flex; gap: 24px; flex-wrap: wrap; font-size: 11px; color: var(--muted); border-top: 1px solid var(--line); }
 .foot a { color: var(--muted); }
+
+/* ── Strona główna (HomeSignal): pasek strony (SiteBar) jest nad hero, w normalnym przepływie ── */
+.home {
+  --ink: #0a0a0b;
+  --lime: #ccff00;
+  --paper: #f2f2ee;
+  --muted: rgba(242, 242, 238, 0.7);
+  --line: rgba(242, 242, 238, 0.16);
+  position: relative;
+  overflow-x: clip;
+}
+.home .hero { min-height: calc(100svh - 92px); padding-top: 24px; }
+.home .dialAnchor { top: 8px; }
+.home section[id] { scroll-margin-top: 0; }
+.sub { margin: 24px 0 0; }
+.roleWho { margin: 14px 0 0; font-size: 10.5px; color: var(--muted); }
+.serviceCta { margin-top: 22px; }
+.tagsLine { font-size: 10.5px; color: var(--muted); }
+.svcNo { font-size: 11px; color: var(--muted); }
+@media (max-width: 1023px) {
+  .home .hero { padding-top: 8px; }
+  .home .dialAnchor { top: auto; }
+}

@@ -78,6 +78,10 @@
   },
   "onePager": {
     "heroTitle": "How to build a website with AI",
+    "heroHeadline": [
+      "You know what you offer.",
+      "Now sell it."
+    ],
     "heroEyebrow": "Copy · Content strategy · Websites built with AI",
     "heroSubtitle": "AI writes the code. Decisions stay on the human side.",
     "heroLead": "AI can write a website's code in a few hours. It won't decide what to tell your clients, in what order, or why they should trust you. That's my job: from decisions and copy to a working website.",

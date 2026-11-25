@@ -62,3 +62,44 @@ export const CHROME_LABELS: Record<Locale, { contents: string; search: string; s
     skip: 'Skip to content',
   },
 }
+
+// Strona główna: etykiety sekcji w kole i mapie (klucze = ONE_PAGER_SECTIONS w lib/onePager.ts)
+// oraz drobne podpisy sekcji „Sygnał”
+export const HOME_LABELS: Record<Locale, { sections: Record<string, string>; group: { audience: string; talk: string }; stage: string; who: string }> = {
+  pl: {
+    sections: {
+      hero: 'Start',
+      aiRole: 'Rola AI',
+      problem: 'Pusta strona',
+      audience: 'Dla kogo',
+      services: 'Usługi',
+      process: 'Proces',
+      pricing: 'Cennik',
+      about: 'O mnie',
+      faq: 'FAQ',
+      blog: 'Z bloga',
+      cta: 'Rozmowa',
+    },
+    group: { audience: 'Dla kogo', talk: 'Rozmowa' },
+    stage: 'Etap',
+    who: 'Kto',
+  },
+  en: {
+    sections: {
+      hero: 'Start',
+      aiRole: 'Role of AI',
+      problem: 'Blank page',
+      audience: 'Who it’s for',
+      services: 'Services',
+      process: 'Process',
+      pricing: 'Pricing',
+      about: 'About',
+      faq: 'FAQ',
+      blog: 'From the blog',
+      cta: 'Talk',
+    },
+    group: { audience: 'Who it’s for', talk: 'Talk' },
+    stage: 'Stage',
+    who: 'Who',
+  },
+}

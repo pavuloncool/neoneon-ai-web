@@ -3,9 +3,8 @@
 // Lista bloga (dawna strona główna z page buildera) jest pod /{locale}/blog.
 import { getTranslations } from 'next-intl/server'
 import { JsonLd } from '@/components/seo/JsonLd'
-import { Hero } from '@/components/home/Hero'
 // Sekcje poniżej pierwszego ekranu — osobne pliki JS (components/home/lazy.tsx)
-import { About, AiRole, Audience, Faq, FinalCta, FromBlog, Pricing, Problem, Process, Services } from '@/components/home/lazy'
+import { About, Audience, Faq, FinalCta, FromBlog, Pricing, Problem } from '@/components/home/lazy'
 import type { AiRoleCard } from '@/components/home/AiRole'
 import type { ProblemTexts } from '@/components/home/Problem'
 import type { ServiceItem } from '@/components/home/Services'
@@ -21,8 +20,13 @@ import { formatNumber, priceExamples, rateLine } from '@/lib/pricing'
 import { TranslationStore } from '@/components/layout/TranslationStore'
 import { AnchorScroll } from '@/components/blog/AnchorScroll'
 import { seoMetadata } from '@/lib/metadata'
-import { CONTACT_PATH, contactHrefFor, sectionAnchor } from '@/lib/onePager'
-import { SITE_NAME, SITE_URL, localeUrl } from '@/lib/site'
+import { CONTACT_PATH, ONE_PAGER_SECTIONS, contactHrefFor, sectionAnchor, type OnePagerSectionKey } from '@/lib/onePager'
+import { HomeSignal, type HomeDialItem } from '@/components/sygnal/HomeSignal'
+import { AiRoleSection } from '@/components/sygnal/home/AiRoleSection'
+import { ServicesSection } from '@/components/sygnal/home/ServicesSection'
+import { ProcessSection } from '@/components/sygnal/home/ProcessSection'
+import { HOME_LABELS } from '@/components/sygnal/labels'
+import { PUBLIC_CONTACT_EMAIL, SITE_NAME, SITE_URL, localeUrl } from '@/lib/site'
 import type { Metadata } from 'next'
 
 const PERSON_NAME = 'Paweł Kuligowski'
@@ -116,6 +120,44 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
     ? faqFromSanity
     : (t.raw('faqItems') as { q: string; a: string }[]).map((item, i) => ({ id: `faq-${i}`, question: item.q, answer: item.a }))
 
+  // Koło: sekcje strony głównej (wyceny tylko gdy widoczne); mapa — pełna lista, koło — grupy
+  const L = HOME_LABELS[locale]
+  const tA11y = await getTranslations({ locale, namespace: 'a11y' })
+  const anchor = (key: OnePagerSectionKey) => sectionAnchor(key, locale)
+  const visible = ONE_PAGER_SECTIONS.filter((sec) => sec.key !== 'pricing' || pricing)
+  const sectionLabel = (key: OnePagerSectionKey) =>
+    `${String(visible.findIndex((sec) => sec.key === key) + 1).padStart(2, '0')} · ${L.sections[key]}`
+  const summary: Partial<Record<OnePagerSectionKey, string>> = {
+    hero: (t.raw('heroHeadline') as string[]).join(' '),
+    aiRole: t('aiRoleTitle'),
+    problem: t('problemTitle'),
+    audience: t('audienceTitle'),
+    services: t('servicesTitle'),
+    process: t('processTitle'),
+    pricing: t('pricingTitle'),
+    about: t('aboutTitle'),
+    faq: t('faqTitle'),
+    blog: t('blogTitle'),
+    cta: t('ctaTitle'),
+  }
+  const mapItems = visible.map((sec) => ({ key: anchor(sec.key), href: `#${anchor(sec.key)}`, label: L.sections[sec.key], summary: summary[sec.key] }))
+  const group = (key: string, label: string, keys: OnePagerSectionKey[], target: OnePagerSectionKey): HomeDialItem => ({
+    key,
+    label,
+    href: `#${anchor(target)}`,
+    summary: summary[target],
+    ids: keys.map(anchor),
+  })
+  const dialItems: HomeDialItem[] = [
+    group('start', L.sections.hero, ['hero'], 'hero'),
+    group('ai', L.sections.aiRole, ['aiRole'], 'aiRole'),
+    group('audience', L.group.audience, ['problem', 'audience'], 'problem'),
+    group('services', L.sections.services, ['services'], 'services'),
+    group('process', L.sections.process, ['process'], 'process'),
+    ...(pricing ? [group('pricing', L.sections.pricing, ['pricing'], 'pricing')] : []),
+    group('talk', L.group.talk, ['about', 'faq', 'blog', 'cta'], 'cta'),
+  ]
+
   return (
     <>
       <JsonLd
@@ -176,130 +218,131 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
           dokładają wysokość po załadowaniu — cel ustawiany ponownie po każdej zmianie wysokości */}
       <AnchorScroll />
 
-      {/* Hero — jedyny H1 strony */}
-      <Hero
-        id={sectionAnchor('hero', locale)}
-        contactHref={CONTACT_PATH[locale]}
-        processHref={`#${sectionAnchor('process', locale)}`}
-        texts={{
+      <HomeSignal
+        locale={locale}
+        heroId={anchor('hero')}
+        processId={anchor('process')}
+        hero={{
           eyebrow: t('heroEyebrow'),
-          title: t('heroTitle'),
           subtitle: t('heroSubtitle'),
+          headline: t.raw('heroHeadline') as [string, string],
           lead: t('heroLead'),
           ctaPrimary: t('heroCtaPrimary'),
           ctaSecondary: t('heroCtaSecondary'),
-          prompt: t('heroPrompt'),
-          lastLine: t('heroLastLine'),
         }}
-      />
-
-      <AiRole
-        id={sectionAnchor('aiRole', locale)}
-        texts={{
-          title: t('aiRoleTitle'),
-          lead: t('aiRoleLead'),
-          whoLabel: t('aiRoleWho'),
-          unknown: t('aiRoleUnknown'),
-          cards: t.raw('aiRoleCards') as AiRoleCard[],
-        }}
-      />
-
-      <Problem
-        id={sectionAnchor('problem', locale)}
-        contactHref={contactHrefFor(locale, 'copy')}
-        texts={{
-          title: t('problemTitle'),
-          lead: t('problemLead'),
-          before: t('problemBefore'),
-          note: t('problemNote'),
-          after: t.raw('problemAfter') as string[],
-          caption: t('problemCaption'),
-          gaps: t.raw('problemGaps') as ProblemTexts['gaps'],
-          closing: t('problemClosing'),
-          cta: t('problemCta'),
-        }}
-      />
-
-      <Audience
-        id={sectionAnchor('audience', locale)}
-        texts={{
-          title: t('audienceTitle'),
-          lead: t('audienceLead'),
-          industries: t.raw('audienceIndustries') as string[],
-          rest: t('audienceRest'),
-          text: t('audienceText'),
-          pause: tHome('rotatingPause'),
-          resume: tHome('rotatingResume'),
-        }}
-      />
-
-      <Services
-        id={sectionAnchor('services', locale)}
-        title={t('servicesTitle')}
-        items={(t.raw('servicesItems') as Omit<ServiceItem, 'href'>[]).map((item) => ({ ...item, href: contactHrefFor(locale, item.key) }))}
-      />
-
-      <Process
-        id={sectionAnchor('process', locale)}
-        title={t('processTitle')}
-        lead={t('processLead')}
-        steps={t.raw('processSteps') as ProcessStep[]}
-      />
-
-      {pricing ? (
-        <Pricing
-          id={sectionAnchor('pricing', locale)}
-          locale={locale}
-          ctaHref={CONTACT_PATH[locale]}
-          texts={pricing.texts}
-          cards={pricing.cards}
+        dialItems={dialItems}
+        mapItems={mapItems}
+        contactHref={CONTACT_PATH[locale]}
+        email={PUBLIC_CONTACT_EMAIL}
+        langLabels={{ pl: tA11y('languagePl'), en: tA11y('languageEn') }}
+      >
+        <AiRoleSection
+          id={anchor('aiRole')}
+          label={sectionLabel('aiRole')}
+          texts={{ title: t('aiRoleTitle'), lead: t('aiRoleLead'), cards: t.raw('aiRoleCards') as AiRoleCard[] }}
+          whoLabel={L.who}
         />
-      ) : null}
 
-      <About
-        id={sectionAnchor('about', locale)}
-        portrait={about.portrait}
-        postHref={about.post ? `/${about.post.category}/${about.post.slug}` : null}
-        texts={{
-          eyebrow: t('aboutEyebrow'),
-          title: t('aboutTitle'),
-          paragraphs: t.raw('aboutParagraphs') as string[],
-          strike: t('aboutStrike'),
-          facts: t('aboutFacts'),
-          link: t('aboutLink'),
-          portraitAlt: PERSON_NAME,
-        }}
-      />
+        <Problem
+          id={sectionAnchor('problem', locale)}
+          contactHref={contactHrefFor(locale, 'copy')}
+          texts={{
+            title: t('problemTitle'),
+            lead: t('problemLead'),
+            before: t('problemBefore'),
+            note: t('problemNote'),
+            after: t.raw('problemAfter') as string[],
+            caption: t('problemCaption'),
+            gaps: t.raw('problemGaps') as ProblemTexts['gaps'],
+            closing: t('problemClosing'),
+            cta: t('problemCta'),
+          }}
+        />
 
-      <Faq id={sectionAnchor('faq', locale)} title={t('faqTitle')} items={faq} />
-      {/* FAQPage z tych samych danych co widok */}
-      <FaqJsonLd faq={faq} />
+        <Audience
+          id={sectionAnchor('audience', locale)}
+          texts={{
+            title: t('audienceTitle'),
+            lead: t('audienceLead'),
+            industries: t.raw('audienceIndustries') as string[],
+            rest: t('audienceRest'),
+            text: t('audienceText'),
+            pause: tHome('rotatingPause'),
+            resume: tHome('rotatingResume'),
+          }}
+        />
 
-      <FromBlog
-        id={sectionAnchor('blog', locale)}
-        title={t('blogTitle')}
-        lead={t('blogLead')}
-        cta={t('blogCta')}
-        ctaHref={BLOG_PATH}
-        posts={recentPosts.map((a) => ({
-          id: a.id,
-          href: `/${a.category}/${a.slug}`,
-          title: a.title,
-          excerpt: a.excerpt ?? null,
-          date: a.published_at ? formatDate(a.published_at, DATE_LOCALE[locale]) : null,
-          dateTime: a.published_at ?? null,
-          category: a.category_title ?? null,
-          image: a.cover_image_url ? { url: a.cover_image_url, focalX: a.cover_focal_x ?? null, focalY: a.cover_focal_y ?? null } : null,
-        }))}
-      />
+        <ServicesSection
+          id={anchor('services')}
+          label={sectionLabel('services')}
+          title={t('servicesTitle')}
+          items={(t.raw('servicesItems') as Omit<ServiceItem, 'href'>[]).map((item) => ({ ...item, href: contactHrefFor(locale, item.key) }))}
+        />
 
-      <FinalCta
-        id={sectionAnchor('cta', locale)}
-        title={t('ctaTitle')}
-        text={t('ctaText')}
-        button={t('ctaButton')}
-        href={CONTACT_PATH[locale]}
-      />
+        <ProcessSection
+          id={anchor('process')}
+          label={sectionLabel('process')}
+          title={t('processTitle')}
+          lead={t('processLead')}
+          steps={t.raw('processSteps') as ProcessStep[]}
+          stageLabel={L.stage}
+        />
+
+        {pricing ? (
+          <Pricing
+            id={sectionAnchor('pricing', locale)}
+            locale={locale}
+            ctaHref={CONTACT_PATH[locale]}
+            texts={pricing.texts}
+            cards={pricing.cards}
+          />
+        ) : null}
+
+        <About
+          id={sectionAnchor('about', locale)}
+          portrait={about.portrait}
+          postHref={about.post ? `/${about.post.category}/${about.post.slug}` : null}
+          texts={{
+            eyebrow: t('aboutEyebrow'),
+            title: t('aboutTitle'),
+            paragraphs: t.raw('aboutParagraphs') as string[],
+            strike: t('aboutStrike'),
+            facts: t('aboutFacts'),
+            link: t('aboutLink'),
+            portraitAlt: PERSON_NAME,
+          }}
+        />
+
+        <Faq id={sectionAnchor('faq', locale)} title={t('faqTitle')} items={faq} />
+        {/* FAQPage z tych samych danych co widok */}
+        <FaqJsonLd faq={faq} />
+
+        <FromBlog
+          id={sectionAnchor('blog', locale)}
+          title={t('blogTitle')}
+          lead={t('blogLead')}
+          cta={t('blogCta')}
+          ctaHref={BLOG_PATH}
+          posts={recentPosts.map((a) => ({
+            id: a.id,
+            href: `/${a.category}/${a.slug}`,
+            title: a.title,
+            excerpt: a.excerpt ?? null,
+            date: a.published_at ? formatDate(a.published_at, DATE_LOCALE[locale]) : null,
+            dateTime: a.published_at ?? null,
+            category: a.category_title ?? null,
+            image: a.cover_image_url ? { url: a.cover_image_url, focalX: a.cover_focal_x ?? null, focalY: a.cover_focal_y ?? null } : null,
+          }))}
+        />
+
+        <FinalCta
+          id={sectionAnchor('cta', locale)}
+          title={t('ctaTitle')}
+          text={t('ctaText')}
+          button={t('ctaButton')}
+          href={CONTACT_PATH[locale]}
+        />
+      </HomeSignal>
     </>
   )
 }
