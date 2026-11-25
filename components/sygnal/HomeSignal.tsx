@@ -197,6 +197,13 @@ export function HomeSignal({
             const foot = heroEl.querySelector<HTMLElement>(`.${s.heroFoot}`)
             const qx = gsap.quickTo(dialEl, 'x', { duration: 1.1, ease: 'power3.out' })
             const qy = gsap.quickTo(dialEl, 'y', { duration: 1.1, ease: 'power3.out' })
+            // Lot zawsze z bieżącego położenia koła (quickTo pamięta start z poprzedniego lotu — bez tego
+            // koło przeskakiwało pod kursor zamiast przylecieć z rogu)
+            const glide = (x: number, y: number) => {
+              qx(x, Number(gsap.getProperty(dialEl, 'x')))
+              qy(y, Number(gsap.getProperty(dialEl, 'y')))
+            }
+            let dockTween: gsap.core.Tween | null = null
             let atTop = window.scrollY < 2
             heroEl.setAttribute('data-floating', '')
             heroEl.style.setProperty('--lr', `${Math.round(size * 0.62)}px`)
@@ -211,8 +218,7 @@ export function HomeSignal({
               const maxY = Math.max(minY, footTop - r - 12)
               const cx = gsap.utils.clamp(r * 0.6, window.innerWidth - r * 0.6, e.clientX)
               const cy = gsap.utils.clamp(minY, maxY, e.clientY)
-              qx(cx - (window.innerWidth - DOCK.margin - size / 2))
-              qy(cy - (window.innerHeight - DOCK.margin - size / 2))
+              glide(cx - (window.innerWidth - DOCK.margin - size / 2), cy - (window.innerHeight - DOCK.margin - size / 2))
             }
             // Światło spod koła: środek maski mgły i poświaty = środek koła (co klatkę)
             const light = () => {
@@ -273,9 +279,10 @@ export function HomeSignal({
               floatingMid = true
               setDocked(false)
               const t = companion()
-              gsap.to(dialEl, { scale: midScale, duration: 0.9, ease: 'power3.out', overwrite: 'auto' })
-              qx(t.x)
-              qy(t.y)
+              // Start z rogu (albo z miejsca, w którym przerwano powrót do rogu)
+              dockTween?.kill()
+              gsap.to(dialEl, { scale: midScale, duration: 1.1, ease: 'power3.out' })
+              glide(t.x, t.y)
               gsap.to(fades, { opacity: 1, duration: 0.5, delay: 0.3 })
             }
             const leaveMid = () => {
@@ -283,7 +290,7 @@ export function HomeSignal({
               qx.tween.pause()
               qy.tween.pause()
               gsap.to(fades, { opacity: 0, duration: 0.25 })
-              gsap.to(dialEl, { ...dockTransform(), duration: 0.6, ease: 'power3.inOut', overwrite: 'auto', onComplete: () => setDocked(true) })
+              dockTween = gsap.to(dialEl, { ...dockTransform(), duration: 0.6, ease: 'power3.inOut', onComplete: () => setDocked(true) })
             }
             const trackPointer = (e: PointerEvent) => {
               pointer.x = e.clientX
@@ -293,8 +300,7 @@ export function HomeSignal({
               if (!floatingMid && still && !atTop) return enterMid()
               if (!floatingMid || holdStill()) return
               const t = companion()
-              qx(t.x)
-              qy(t.y)
+              glide(t.x, t.y)
             }
 
             const onScroll = () => {
