@@ -1,5 +1,19 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Copy strony — gdzie edytować
+
+Każdy tekst widoczny na stronie albo indeksowalny jest w Sanity Studio (`/studio`). W kodzie nie ma copy ani tekstów zapasowych.
+
+| Co | Studio |
+|---|---|
+| Strona główna (hero, sekcje, SEO, JSON-LD, etykiety koła) | Strona główna — teksty PL/EN |
+| Koło, mapa, pasek, stopka, formularz kontaktowy, 404, a11y, zachęta pod artykułem, wyszukiwarka, kategorie, komentarze | Teksty interfejsu PL/EN |
+| Polityka prywatności i cookies | Polityki |
+| Tytuł i opis domyślny, nazwa witryny, logo, nawigacja, tekst w stopce | Ustawienia strony PL/EN |
+| Wyceny, FAQ, artykuły, kategorie, strony | osobne listy w Studio |
+
+Nowy tekst w kodzie: dodaj pole w `sanity/copyFields.ts`, uruchom `npm run copy:types` i wpisz wartość w Studio. `npm run lint` odrzuca tekst wpisany w JSX.
+
 ## Getting Started
 
 First, run the development server:

@@ -12,7 +12,7 @@
 // na „Wysyłam…”; sukces — formularz zwija się (Flip), w jego miejscu rysuje się znak ✓ (DrawSVG) i komunikat.
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { useLocale, useTranslations } from 'next-intl'
+import { useLocale, useMessages, useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { gsap } from '@/lib/gsap'
 import '@/lib/gsap-text'
@@ -41,6 +41,7 @@ const reduceMotion = () => typeof window !== 'undefined' && window.matchMedia('(
 
 export function ContactForm({ children }: { children?: React.ReactNode }) {
   const t = useTranslations('contactForm')
+  const copy = useMessages().contactForm
   const locale = toLocale(useLocale())
   const [status, setStatus] = useState<Status>('idle')
   const [form, setForm] = useState({ name: '', email: '', company: '', start: '', budget: '', message: '', website: '' })
@@ -212,7 +213,7 @@ export function ContactForm({ children }: { children?: React.ReactNode }) {
           <option value="" className="bg-[#0a0a0b]">—</option>
           {options.map((o) => (
             <option key={o} value={o} className="bg-[#0a0a0b]">
-              {t(`${optionKey}.${o}`)}
+              {(copy[optionKey] as Record<string, string>)[o]}
             </option>
           ))}
         </select>
@@ -305,6 +306,8 @@ export function ContactForm({ children }: { children?: React.ReactNode }) {
 
             {/* Honeypot — niewidoczne dla ludzi i czytników; wypełnione = bot */}
             <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
+              {/* Pułapka dla botów (aria-hidden, poza ekranem) — nazwa pola, nie copy strony */}
+              {/* eslint-disable-next-line react/jsx-no-literals */}
               <label htmlFor="contact-website">Website</label>
               <input
                 id="contact-website"

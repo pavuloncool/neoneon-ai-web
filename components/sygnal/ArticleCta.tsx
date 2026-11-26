@@ -1,6 +1,6 @@
 // components/sygnal/ArticleCta.tsx
 // CTA pod każdym artykułem: tekst zależny od kategorii (strony z AI / treści), przycisk do formularza
-// z zaznaczoną usługą i adres e-mail. Teksty: messages/{locale}.json → articleCta.
+// z zaznaczoną usługą i adres e-mail. Teksty: Sanity „Teksty interfejsu” → articleCta.
 
 import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'

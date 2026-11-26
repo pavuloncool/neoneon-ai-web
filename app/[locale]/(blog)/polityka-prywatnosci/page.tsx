@@ -1,4 +1,4 @@
-// /pl/polityka-prywatnosci — ⚠️ TREŚĆ ROBOCZA, wymaga weryfikacji prawnej przed publikacją produkcyjną (lib/legal.ts)
+// /pl/polityka-prywatnosci — treść w Sanity (Studio → „Polityki”), odczyt: lib/legal.ts
 import { legalRoute } from '@/components/legal/legalRoute'
 
 const route = legalRoute('privacy', 'pl')

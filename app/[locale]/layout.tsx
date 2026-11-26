@@ -10,7 +10,7 @@ import { BootScript } from '@/components/layout/BootScript'
 import { SpeedInsightsClient } from '@/components/layout/SpeedInsightsClient'
 import { AnalyticsClient } from '@/components/layout/AnalyticsClient'
 import { getSiteSettings } from '@/lib/queries'
-import { IS_PRODUCTION, SITE_NAME, SITE_URL, localeUrl } from '@/lib/site'
+import { IS_PRODUCTION, SITE_URL, localeUrl } from '@/lib/site'
 import { OG_LOCALE, isLocale, toLocale } from '@/lib/locales'
 import type { Metadata } from 'next'
 
@@ -29,12 +29,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const settings = await getSiteSettings(lang)
   if (!settings) return {}
   const og = settings.ogImage?.url
-    ? { url: settings.ogImage.url, width: settings.ogImage.width ?? undefined, height: settings.ogImage.height ?? undefined, alt: settings.logoAlt ?? 'neoneon' }
+    ? { url: settings.ogImage.url, width: settings.ogImage.width ?? undefined, height: settings.ogImage.height ?? undefined, alt: settings.logoAlt ?? undefined }
     : null
   return {
     ...(settings.siteTitle ? { title: { default: settings.siteTitle, template: settings.titleTemplate ?? '%s' } } : {}),
     ...(settings.description ? { description: settings.description } : {}),
-    ...(og ? { openGraph: { type: 'website', url: localeUrl(lang), siteName: SITE_NAME, locale: OG_LOCALE[lang], images: [og] } } : {}),
+    ...(og ? { openGraph: { type: 'website', url: localeUrl(lang), ...(settings.siteName ? { siteName: settings.siteName } : {}), locale: OG_LOCALE[lang], images: [og] } } : {}),
   }
 }
 
@@ -79,10 +79,10 @@ export default async function LocaleLayout({
         <ThemeProvider>
           <NextIntlClientProvider messages={messages}>
             {children}
+            {/* Podgląd szkiców z Presentation Tool w Studio — klikalna edycja treści (baner bierze tekst z Sanity) */}
+            {isDraftMode && <DraftTools />}
           </NextIntlClientProvider>
         </ThemeProvider>
-        {/* Podgląd szkiców z Presentation Tool w Studio — klikalna edycja treści */}
-        {isDraftMode && <DraftTools />}
         {/* Umami — analityka bez cookies; data-domains pomija podglądy Vercel i localhost */}
         {!isDraftMode && umamiWebsiteId && (
           <Script

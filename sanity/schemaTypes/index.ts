@@ -4,7 +4,9 @@ import { category } from './category'
 import { comment } from './comment'
 import { contactMessage } from './contactMessage'
 import { faqEntry } from './faqEntry'
+import { homeCopy } from './homeCopy'
 import { hourlyRate } from './hourlyRate'
+import { legalDoc } from './legalDoc'
 import { link, navItem } from './link'
 import { page } from './page'
 import { pricingExample } from './pricingExample'
@@ -21,6 +23,8 @@ export const schemaTypes = [
   page,
   siteSettings,
   uiStrings,
+  homeCopy,
+  legalDoc,
   hourlyRate,
   pricingExample,
   pricingSettings,

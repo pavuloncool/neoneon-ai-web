@@ -1,10 +1,10 @@
 // Strona główna /{locale} — one-pager usługowy (brief neoneon-AI-web). Sekcje powstają po kolei,
-// po jednej na iterację (lib/onePager.ts). Teksty: messages/{locale}.json, przestrzeń „onePager”.
+// po jednej na iterację (lib/onePager.ts). Teksty: Sanity „Strona główna — teksty” (homeCopy), w next-intl jako „onePager”.
 // Lista bloga (dawna strona główna z page buildera) jest pod /{locale}/blog.
 import { getTranslations } from 'next-intl/server'
 import { JsonLd } from '@/components/seo/JsonLd'
 // Sekcje „Sygnał”: components/sygnal/home (serwerowe), hero i koło — components/sygnal/HomeSignal.tsx
-import { getAboutData, getArticles, getHomeFaq, getPricing } from '@/lib/queries'
+import { getAboutData, getArticles, getHomeFaq, getPricing, getSiteSettings } from '@/lib/queries'
 import { BLOG_PATH } from '@/lib/links'
 import type { Locale } from '@/lib/locales'
 import { FaqJsonLd } from '@/components/seo/FaqJsonLd'
@@ -25,11 +25,8 @@ import { FaqSection } from '@/components/sygnal/home/FaqSection'
 import { FromBlogSection } from '@/components/sygnal/home/FromBlogSection'
 import { TalkSection } from '@/components/sygnal/home/TalkSection'
 import type { AiRoleCard, FaqItemView, PricingCard, PricingTexts, ProblemTexts, ProcessStep, ServiceItem } from '@/components/sygnal/home/types'
-import { HOME_LABELS } from '@/components/sygnal/labels'
-import { PUBLIC_CONTACT_EMAIL, SITE_NAME, SITE_URL, localeUrl } from '@/lib/site'
+import { PUBLIC_CONTACT_EMAIL, SITE_URL, localeUrl } from '@/lib/site'
 import type { Metadata } from 'next'
-
-const PERSON_NAME = 'Paweł Kuligowski'
 
 // Wyceny: dane z Sanity → karty z gotowymi tekstami. Wyłączone w Ustawieniach wycen = brak sekcji.
 // Błąd Sanity nie wywraca strony — sekcja po prostu się nie pokazuje.
@@ -110,18 +107,17 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   })
   // Z bloga: trzy najnowsze wpisy w języku strony (getArticles przy błędzie zwraca pustą listę)
   const recentPosts = await getArticles({ limit: 3, locale })
-  // FAQ: opublikowane „Pytania FAQ” z Sanity; bez nich (albo przy błędzie Sanity) — teksty z messages
-  const faqFromSanity = await getHomeFaq(locale).catch((error) => {
+  // FAQ: opublikowane „Pytania FAQ” z Sanity (bez zapasu w kodzie — przy błędzie Sanity sekcja jest pusta)
+  const faq: FaqItemView[] = await getHomeFaq(locale).catch((error) => {
     console.error('FAQ: nie udało się pobrać danych z Sanity', error)
     return []
   })
-  const faq: FaqItemView[] = faqFromSanity.length
-    ? faqFromSanity
-    : (t.raw('faqItems') as { q: string; a: string }[]).map((item, i) => ({ id: `faq-${i}`, question: item.q, answer: item.a }))
+  const settings = await getSiteSettings(locale)
+  const siteName = settings?.siteName ?? ''
+  const personName = t('personName')
 
   // Koło: sekcje strony głównej (wyceny tylko gdy widoczne); mapa — pełna lista, koło — grupy
-  const L = HOME_LABELS[locale]
-  const tA11y = await getTranslations({ locale, namespace: 'a11y' })
+  const L = t.raw('wheel') as { sections: Record<OnePagerSectionKey, string>; group: { audience: string; talk: string }; stage: string; who: string }
   const anchor = (key: OnePagerSectionKey) => sectionAnchor(key, locale)
   // Wyceny bez opublikowanych przykładów: na produkcji sekcji nie ma (w dev — komunikat), więc i pozycji w kole
   const showPricing = Boolean(pricing && (pricing.cards.length > 0 || process.env.NODE_ENV === 'development'))
@@ -165,11 +161,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
         data={{
           '@context': 'https://schema.org',
           '@type': 'WebSite',
-          name: SITE_NAME,
+          name: siteName,
           url: localeUrl(locale),
           inLanguage: locale,
           description: t('heroLead'),
-          publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+          publisher: { '@type': 'Organization', name: siteName, url: SITE_URL },
         }}
       />
       {/* Autor: bez worksFor i bez nazwy magazynu; sameAs — do uzupełnienia (brief 3.3) */}
@@ -178,7 +174,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
           '@context': 'https://schema.org',
           '@type': 'Person',
           '@id': personId,
-          name: PERSON_NAME,
+          name: personName,
           jobTitle: t('personJobTitle'),
           url: `${localeUrl(locale)}#${sectionAnchor('about', locale)}`,
           knowsLanguage: ['pl', 'en'],
@@ -190,10 +186,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
           '@context': 'https://schema.org',
           '@type': 'ProfessionalService',
           '@id': `${localeUrl(locale)}#service`,
-          name: SITE_NAME,
+          name: siteName,
           url: localeUrl(locale),
           description: t('heroLead'),
-          areaServed: [{ '@type': 'Country', name: locale === 'pl' ? 'Polska' : 'Poland' }, { '@type': 'Place', name: locale === 'pl' ? 'Zdalnie' : 'Remote' }],
+          areaServed: [{ '@type': 'Country', name: t('areaServed.country') }, { '@type': 'Place', name: t('areaServed.remote') }],
           availableLanguage: ['pl', 'en'],
           founder: { '@id': personId },
           ...(pricing && pricing.rates.length
@@ -235,7 +231,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
         mapItems={mapItems}
         contactHref={CONTACT_PATH[locale]}
         email={PUBLIC_CONTACT_EMAIL}
-        langLabels={{ pl: tA11y('languagePl'), en: tA11y('languageEn') }}
       >
         <AiRoleSection
           id={anchor('aiRole')}
@@ -312,7 +307,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
             strike: t('aboutStrike'),
             facts: t('aboutFacts'),
             link: t('aboutLink'),
-            portraitAlt: PERSON_NAME,
+            portraitAlt: personName,
           }}
         />
 

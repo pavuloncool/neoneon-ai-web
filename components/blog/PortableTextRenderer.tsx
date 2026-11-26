@@ -7,7 +7,8 @@ import { PortableText, toPlainText, type PortableTextBlock, type PortableTextCom
 import { EmbedActivator, SocialEmbed } from './lazy'
 import { urlFor } from '@/sanity/lib/image'
 import { slugify } from '@/lib/slugify'
-import { EMBED_PROVIDER_NAMES, parseEmbedUrl } from '@/lib/embeds'
+import { getMessages } from 'next-intl/server'
+import { parseEmbedUrl, type EmbedProvider } from '@/lib/embeds'
 
 // Wymiary obrazka z identyfikatora zasobu Sanity (image-<hash>-<szer>x<wys>-<format>), z uwzględnieniem
 // przycięcia (crop). Atrybuty width/height pozwalają przeglądarce zarezerwować miejsce przed załadowaniem
@@ -23,7 +24,8 @@ function imageSize(value: { asset?: { _ref?: string }; crop?: Crop }): { width: 
   return width > 0 && height > 0 ? { width, height } : null
 }
 
-const components: PortableTextComponents = {
+// Nazwy serwisów (tytuł ramki bez podpisu) z Sanity: „Teksty interfejsu” → „Osadzone media”
+const makeComponents = (providers: Record<EmbedProvider, string>): PortableTextComponents => ({
   // H2 i H3 dostają id z treści — kotwice do linkowania (#tytul-sekcji) w tekście i z zewnątrz
   block: {
     // data-reveal: odsłanianie z maski przy przewijaniu (ArticleScroll)
@@ -63,7 +65,7 @@ const components: PortableTextComponents = {
           >
             <iframe
               src={parsed.src}
-              title={value.caption || EMBED_PROVIDER_NAMES[parsed.provider]}
+              title={value.caption || providers[parsed.provider]}
               width="100%"
               height={parsed.height}
               loading="lazy"
@@ -89,13 +91,14 @@ const components: PortableTextComponents = {
       </pre>
     ),
   },
-}
+})
 
 interface PortableTextRendererProps {
   content: PortableTextBlock[]
 }
 
-export function PortableTextRenderer({ content }: PortableTextRendererProps) {
+export async function PortableTextRenderer({ content }: PortableTextRendererProps) {
+  const components = makeComponents((await getMessages()).embed.providers)
   return (
     <>
       <div className="article-body">

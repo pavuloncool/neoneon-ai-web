@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-11-26
+
+### Całe copy strony w Sanity Studio (bez tekstów w kodzie)
+
+- **Nowe dokumenty w Studio** (na górze listy „Treści”):
+  - „Strona główna — teksty” PL/EN (`homeCopy`): zakładki według sekcji (Hero, Rola AI, Pusta strona, Dla kogo, Usługi, Proces, Wyceny, O mnie, FAQ, Z bloga, Rozmowa), do tego „SEO i dane strukturalne” i „Koło i mapa”;
+  - „Polityki” (`legalDoc`: prywatności i cookies, PL/EN): sekcje z akapitami, listami i tabelą. Przełącznik widoczności zastępuje dawne warunki `COMMENTS_ENABLED`, a `{email}` w tekście działa.
+- **„Teksty interfejsu”** obejmują teraz wszystko poza stroną główną: koło, mapę, pasek i stopkę (w tym hasło „Wiesz, co oferujesz. Teraz to sprzedaj.”, środek koła, napis marki), formularz kontaktowy, 404, zachętę pod artykułem, dostępność (przeniesioną z Ustawień strony), artykuł, kategorie, wyszukiwarkę, komentarze i nazwy serwisów w osadzonych mediach. Usunięte martwe pola: stary formularz `contact` i nieużywane etykiety a11y.
+- **Ustawienia strony:** nowe pole „Nazwa witryny” (og:site_name, wydawca w JSON-LD). Tekst alternatywny logo i tekst w stopce są wymagane.
+- **Runtime:** `i18n/request.ts` ładuje wiadomości next-intl wyłącznie z Sanity. `messages/*.json`, `components/sygnal/labels.ts`, treść w `lib/legal.ts` i teksty wpisane w JSX zostały usunięte. Brak dokumentu w Sanity to błąd, nie tekst zapasowy z kodu.
+- **Jedno źródło definicji:** `sanity/copyFields.ts` → schemat Studio (`sanity/copySchema.ts`, pola wymagane) i typy `types/messages.d.ts` (`npm run copy:types`). `t('…')` z kluczem spoza Studio nie przechodzi typecheck.
+- **Pilnowanie:** `npm run lint` = ESLint `react/jsx-no-literals` (dozwolone tylko znaki typograficzne) + `scripts/audit-copy.ts` (aria-label, alt, title, placeholder, teksty zapasowe `?? '…'`) + kontrola aktualności typów.
+- **Dane:** obecne teksty wpisane i opublikowane w Sanity (yj3w3w1l) skryptem jednorazowym, istniejące wartości zostały zachowane. Porównanie 14 adresów z produkcją (tekst, aria-label, alt, meta, Open Graph, JSON-LD): identyczne, poza świadomą poprawką: środek koła w EN pokazywał polski tekst („kod — ai / decyzje — człowiek”), teraz „code — ai / decisions — human”.
+
 ## 2026-11-10
 
 ### Porządki techniczne — etap 1: bez `legacy-peer-deps`

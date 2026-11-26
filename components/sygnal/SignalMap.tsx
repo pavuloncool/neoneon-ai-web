@@ -12,6 +12,7 @@ import { gsap } from '@/lib/gsap'
 import { Link } from '@/i18n/navigation'
 import { linkHref } from '@/lib/links'
 import type { DialItem } from './SignalDial'
+import { useChrome } from './useChrome'
 import s from './dial.module.css'
 
 export interface MapLabels {
@@ -80,6 +81,7 @@ function ItemLink({
 }
 
 export function SignalMap({ items, current, progress, labels, talkHref, email, aside, language, initialList = false, onClose, onNavigate }: Props) {
+  const { brand } = useChrome()
   const root = useRef<HTMLDivElement>(null)
   const [list, setList] = useState(initialList)
   const cur = items.find((x) => x.key === current)
@@ -156,7 +158,7 @@ export function SignalMap({ items, current, progress, labels, talkHref, email, a
     <div ref={root} className={s.map} role="dialog" aria-modal="true" aria-label={labels.dialog} onKeyDown={onKeyDown}>
       <div className={s.mapBar}>
         <span className={s.mapLogo} aria-hidden="true">
-          NEONEON
+          {brand}
         </span>
         <button type="button" className={s.pill} aria-pressed={list} onClick={() => setList((v) => !v)} style={{ marginLeft: 'auto' }}>
           {list ? labels.wheel : labels.list}

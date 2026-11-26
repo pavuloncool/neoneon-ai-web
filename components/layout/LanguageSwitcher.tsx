@@ -27,8 +27,8 @@ export function useLocaleSwitch() {
 export function LanguageSwitcher({
   dark = false,
   className,
-  labels = { pl: 'Polski', en: 'English' },
-}: { dark?: boolean; className?: string; labels?: { pl: string; en: string } }) {
+  labels,
+}: { dark?: boolean; className?: string; labels: { pl: string; en: string } }) {
   const { locale, switchTo } = useLocaleSwitch()
 
   return (

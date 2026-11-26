@@ -1,4 +1,4 @@
-// /pl/polityka-cookies — ⚠️ TREŚĆ ROBOCZA, wymaga weryfikacji prawnej przed publikacją produkcyjną (lib/legal.ts)
+// /pl/polityka-cookies — treść w Sanity (Studio → „Polityki”), odczyt: lib/legal.ts
 import { legalRoute } from '@/components/legal/legalRoute'
 
 const route = legalRoute('cookies', 'pl')

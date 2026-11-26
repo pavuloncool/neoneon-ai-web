@@ -213,15 +213,14 @@ const NAV_PROJECTION = groq`{ "label": coalesce(label, link.categoryRef->title),
 export const getSiteSettings = cache(async (locale: Locale): Promise<SiteSettings | null> =>
   sanityFetch<SiteSettings | null>(
     groq`*[_type == "siteSettings" && locale == $locale][0]{
-      siteTitle, titleTemplate, description,
+      siteName, siteTitle, titleTemplate, description,
       "ogImage": ogImage${IMAGE_PROJECTION},
       "logoLight": logoLight${IMAGE_PROJECTION},
       "logoDark": logoDark${IMAGE_PROJECTION},
       logoAlt,
       "navigation": navigation[]${NAV_PROJECTION},
       footerText,
-      "footerLinks": footerLinks[]${NAV_PROJECTION},
-      a11y
+      "footerLinks": footerLinks[]${NAV_PROJECTION}
     }`,
     { locale }
   )
@@ -277,12 +276,21 @@ export async function getSitemapData(): Promise<SitemapData> {
   }`)
 }
 
-// Teksty interfejsu — nakładane na messages/*.json w i18n/request.ts
-export const getUiStrings = cache(async (locale: string): Promise<Record<string, Record<string, string>> | null> =>
-  sanityFetch<Record<string, Record<string, string>> | null>(
-    groq`*[_type == "uiStrings" && locale == $locale][0]`,
+// Całe copy interfejsu i strony głównej (next-intl): „Teksty interfejsu” + „Strona główna — teksty”.
+// Bez zapasu w kodzie — brak dokumentu to błąd (i18n/request.ts).
+export const getSiteCopy = cache(async (locale: string): Promise<{ ui: Record<string, unknown> | null; home: Record<string, unknown> | null }> =>
+  sanityFetch(
+    groq`{
+      "ui": *[_type == "uiStrings" && locale == $locale][0],
+      "home": *[_type == "homeCopy" && locale == $locale][0]
+    }`,
     { locale }
   )
+)
+
+// Polityka (prywatności / cookies) w danym języku — dokument legal-{key}-{locale}
+export const getLegalDocument = cache(async (key: string, locale: string) =>
+  sanityFetch<Record<string, unknown> | null>(groq`*[_type == "legalDoc" && _id == $id][0]{ title, description, updated, sections }`, { id: `legal-${key}-${locale}` })
 )
 
 // ── Strona główna (one-pager): wyceny i FAQ ──────────────────────────────────

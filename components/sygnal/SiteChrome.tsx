@@ -12,7 +12,7 @@ import { Link, usePathname } from '@/i18n/navigation'
 import { useLocaleSwitch } from '@/components/layout/LanguageSwitcher'
 import { SignalDial, type DialItem } from './SignalDial'
 import { SignalMap } from './SignalMap'
-import { CHROME_LABELS, DIAL_LABELS, MAP_LABELS } from './labels'
+import { useChrome } from './useChrome'
 import { useDialOverride } from './dialStore'
 import type { Locale } from '@/lib/locales'
 import c from './chrome.module.css'
@@ -20,8 +20,9 @@ import d from './dial.module.css'
 
 export function SignalLanguage({ labels }: { labels: { pl: string; en: string } }) {
   const { locale, switchTo } = useLocaleSwitch()
+  const { bar } = useChrome()
   return (
-    <div className={c.lang} role="group" aria-label={CHROME_LABELS[locale].language}>
+    <div className={c.lang} role="group" aria-label={bar.language}>
       {(['pl', 'en'] as const).map((l) => (
         <button key={l} type="button" aria-pressed={locale === l} aria-label={`${l.toUpperCase()}, ${labels[l]}`} onClick={() => switchTo(l)}>
           {l}
@@ -32,7 +33,6 @@ export function SignalLanguage({ labels }: { labels: { pl: string; en: string } 
 }
 
 export function SiteBar({
-  locale,
   logo,
   contactHref,
   langLabels,
@@ -42,7 +42,7 @@ export function SiteBar({
   contactHref: string
   langLabels: { pl: string; en: string }
 }) {
-  const t = CHROME_LABELS[locale]
+  const t = useChrome().bar
   return (
     <header className={c.bar}>
       <Link href="/" className={c.logo}>
@@ -77,7 +77,7 @@ function matchKey(items: DialItem[], pathname: string): string | null {
 
 // Boczna kolumna mapy: blog i wyszukiwarka (wspólna dla koła w rogu i koła strony głównej)
 export function MapAside({ locale, onLeave }: { locale: Locale; onLeave: () => void }) {
-  const t = CHROME_LABELS[locale]
+  const t = useChrome().bar
   return (
     <>
       <h2>{t.fromBlog}</h2>
@@ -106,7 +106,7 @@ export function SiteDial({ locale, items, contactHref, email, langLabels }: { lo
   const override = useDialOverride()
   const shown = override?.items ?? items
   const current = override ? override.current : matchKey(items, pathname)
-  const t = CHROME_LABELS[locale]
+  const { bar: t, dial: dialLabels, map: mapLabels } = useChrome()
 
   // Postęp czytania strony → liczba i łuk (bez re-renderu przy każdym przewinięciu)
   useEffect(() => {
@@ -144,7 +144,7 @@ export function SiteDial({ locale, items, contactHref, email, langLabels }: { lo
         items={shown}
         current={current}
         docked
-        labels={DIAL_LABELS[locale]}
+        labels={dialLabels}
         numRef={num}
         arcRef={arc}
         onOpen={() => {
@@ -164,7 +164,7 @@ export function SiteDial({ locale, items, contactHref, email, langLabels }: { lo
           initialList={shown.some((i) => i.label.length > 28)}
           current={current}
           progress={progress}
-          labels={MAP_LABELS[locale]}
+          labels={mapLabels}
           talkHref={contactHref}
           email={email}
           language={<SignalLanguage labels={langLabels} />}

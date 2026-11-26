@@ -6,7 +6,7 @@
 import type { Metadata } from 'next'
 import { getPageTranslation, getSiteSettings } from '@/lib/queries'
 import { pagePath } from '@/lib/links'
-import { SITE_NAME, localeUrl } from '@/lib/site'
+import { localeUrl } from '@/lib/site'
 import { HREFLANG, OG_LOCALE, otherLocale, type Locale } from '@/lib/locales'
 import type { Page, SanityImage } from '@/types'
 
@@ -35,11 +35,11 @@ export async function seoMetadata({ locale, path, altPath, title, description, i
   const img = image?.url ? image : settings?.ogImage
   const common = {
     url,
-    siteName: SITE_NAME,
+    ...(settings?.siteName ? { siteName: settings.siteName } : {}),
     locale: OG_LOCALE[locale],
     ...(altPath !== null ? { alternateLocale: OG_LOCALE[other] } : {}),
     ...(img?.url
-      ? { images: [{ url: img.url, width: img.width ?? undefined, height: img.height ?? undefined, alt: img.alt ?? settings?.logoAlt ?? SITE_NAME }] }
+      ? { images: [{ url: img.url, width: img.width ?? undefined, height: img.height ?? undefined, alt: img.alt ?? settings?.logoAlt ?? undefined }] }
       : {}),
   }
 

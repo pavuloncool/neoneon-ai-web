@@ -1,5 +1,5 @@
 // components/sygnal/home/types.ts
-// Kształty tekstów i danych sekcji strony głównej (teksty: messages/{locale}.json → onePager; dane: Sanity).
+// Kształty tekstów i danych sekcji strony głównej (teksty: Sanity „Strona główna — teksty” → onePager; dane: Sanity).
 
 export interface AiRoleCard {
   title: string

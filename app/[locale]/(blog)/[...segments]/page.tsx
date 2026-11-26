@@ -3,12 +3,12 @@ export const dynamic = 'force-dynamic'
 import { getTranslations } from 'next-intl/server'
 import { notFound, permanentRedirect } from 'next/navigation'
 import Image from 'next/image'
-import { getArticleBySlug, getCommentsByArticle, getArticleTranslation, getCategorySlugByPreviousSlug, getPage } from '@/lib/queries'
+import { getArticleBySlug, getCommentsByArticle, getArticleTranslation, getCategorySlugByPreviousSlug, getPage, getSiteSettings } from '@/lib/queries'
 import { PageSections } from '@/components/sections/SectionRendererLazy'
 import { CategoryPage } from '@/components/blog/CategoryPage'
 import { resolveCategory } from '@/lib/categoryRoute'
 import { pageMetadata, seoMetadata } from '@/lib/metadata'
-import { SITE_NAME, SITE_URL, localeUrl, COMMENTS_ENABLED } from '@/lib/site'
+import { SITE_URL, localeUrl, COMMENTS_ENABLED } from '@/lib/site'
 import { DATE_LOCALE, otherLocale, type Locale } from '@/lib/locales'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqJsonLd } from '@/components/seo/FaqJsonLd'
@@ -125,6 +125,7 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
   const comments = COMMENTS_ENABLED ? await getCommentsByArticle(article.id) : []
   const t = await getTranslations('comments')
   const tArticle = await getTranslations('article')
+  const siteName = (await getSiteSettings(locale))?.siteName ?? ''
 
   const targetLocale = otherLocale(locale)
   const translation = await getArticleTranslation(article.id, targetLocale)
@@ -167,8 +168,8 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
           inLanguage: locale,
           url: localeUrl(locale, `/${article.category}/${article.slug}`),
           mainEntityOfPage: localeUrl(locale, `/${article.category}/${article.slug}`),
-          author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
-          publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+          author: { '@type': 'Organization', name: siteName, url: SITE_URL },
+          publisher: { '@type': 'Organization', name: siteName, url: SITE_URL },
         }}
       />
       <FaqJsonLd faq={article.faq} />

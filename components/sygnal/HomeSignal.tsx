@@ -15,7 +15,8 @@ import { ScrollTrigger, refreshAfterFonts } from '@/lib/gsap-scroll'
 import { SignalDial, type DialItem } from './SignalDial'
 import { SignalMap } from './SignalMap'
 import { MapAside, SignalLanguage } from './SiteChrome'
-import { CHROME_LABELS, DIAL_LABELS, MAP_LABELS } from './labels'
+import { useTranslations } from 'next-intl'
+import { useChrome } from './useChrome'
 import type { Locale } from '@/lib/locales'
 import s from './sygnal.module.css'
 import d from './dial.module.css'
@@ -45,7 +46,6 @@ export function HomeSignal({
   mapItems,
   contactHref,
   email,
-  langLabels,
   children,
 }: {
   locale: Locale
@@ -56,7 +56,6 @@ export function HomeSignal({
   mapItems: DialItem[]
   contactHref: string
   email: string
-  langLabels: { pl: string; en: string }
   children: React.ReactNode
 }) {
   const page = useRef<HTMLDivElement>(null)
@@ -553,7 +552,9 @@ export function HomeSignal({
 
   const currentGroup = dialItems.find((i) => i.ids.includes(section))?.key ?? null
   const curLabel = dialItems.find((i) => i.key === currentGroup)?.label ?? ''
-  const t = CHROME_LABELS[locale]
+  const { bar: t, dial: dialLabels, map: mapLabels, brand } = useChrome()
+  const a11y = useTranslations('a11y')
+  const langLabels = { pl: a11y('languagePl'), en: a11y('languageEn') }
 
   return (
     <div ref={page} className={s.home} onClick={onPageClick}>
@@ -570,8 +571,8 @@ export function HomeSignal({
         </p>
 
         <div className={s.fog} aria-hidden="true" data-fog="">
-          <p className={s.fogBlur}>NEONEON</p>
-          <p className={s.fogSharp}>NEONEON</p>
+          <p className={s.fogBlur}>{brand}</p>
+          <p className={s.fogSharp}>{brand}</p>
         </div>
         <div ref={anchor} className={s.dialAnchor} aria-hidden="true" />
 
@@ -603,7 +604,7 @@ export function HomeSignal({
         current={currentGroup}
         docked={docked}
         size={size}
-        labels={DIAL_LABELS[locale]}
+        labels={dialLabels}
         numRef={num}
         arcRef={arc}
         rimRef={rim}
@@ -620,7 +621,7 @@ export function HomeSignal({
           initialList
           current={section}
           progress={progress}
-          labels={MAP_LABELS[locale]}
+          labels={mapLabels}
           talkHref={contactHref}
           email={email}
           language={<SignalLanguage labels={langLabels} />}

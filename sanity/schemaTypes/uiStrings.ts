@@ -1,27 +1,27 @@
 // sanity/schemaTypes/uiStrings.ts
 // Teksty interfejsu — jeden dokument na język (uiStrings-pl, uiStrings-en).
-// Pola generowane z sanity/uiStringFields.ts.
+// Pola generowane z sanity/copyFields.ts (UI_GROUPS): jedna zakładka i jedno pole-obiekt na grupę.
 
 import { defineField, defineType } from 'sanity'
-import { UI_STRING_GROUPS } from '../uiStringFields'
+import { UI_GROUPS } from '../copyFields'
+import { copyFieldToSchema } from '../copySchema'
 
 export const uiStrings = defineType({
   name: 'uiStrings',
   title: 'Teksty interfejsu',
   type: 'document',
-  groups: UI_STRING_GROUPS.map((g, i) => ({ name: g.namespace, title: g.title, default: i === 0 })),
+  groups: UI_GROUPS.map((g, i) => ({ name: g.name, title: g.title, default: i === 0 })),
   fields: [
     defineField({ name: 'locale', title: 'Język', type: 'string', readOnly: true, hidden: true }),
-    ...UI_STRING_GROUPS.map((g) =>
+    ...UI_GROUPS.map((g) =>
       defineField({
-        name: g.namespace,
+        name: g.name,
         title: g.title,
+        description: g.description,
         type: 'object',
-        group: g.namespace,
+        group: g.name,
         options: { collapsible: false },
-        fields: g.fields.map((f) =>
-          defineField({ name: f.key, title: f.title, description: f.description, type: 'string' })
-        ),
+        fields: g.fields.map((f) => copyFieldToSchema(f)),
       })
     ),
   ],

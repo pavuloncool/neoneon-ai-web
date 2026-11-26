@@ -22,6 +22,9 @@ export interface DialLabels {
   nav: string // nazwa nawigacji (aria-label)
   open: string // „Otwórz spis strony”
   now: string // „Teraz”
+  core: string // napis nad liczbą („signal”)
+  coreSub: string // pierwsza linia pod liczbą
+  coreSubStrong: string // druga linia (wyróżniona)
 }
 
 interface Props {
@@ -122,7 +125,7 @@ export const SignalDial = forwardRef<HTMLElement, Props>(function SignalDial(
       <div className={s.core}>
         {!isDock && (
           <span className={s.coreLbl} data-dial-fade="">
-            signal
+            {labels.core}
           </span>
         )}
         <span ref={numRef} className={s.num}>
@@ -130,9 +133,9 @@ export const SignalDial = forwardRef<HTMLElement, Props>(function SignalDial(
         </span>
         {!isDock && (
           <span className={s.coreSub} data-dial-fade="">
-            kod — ai
+            {labels.coreSub}
             <br />
-            <b>decyzje — człowiek</b>
+            <b>{labels.coreSubStrong}</b>
           </span>
         )}
       </div>

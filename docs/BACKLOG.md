@@ -198,7 +198,7 @@ uzupełnić 3–5 pytaniami — trafiają do danych strukturalnych FAQPage.
 ### Kod (Claude)
 - [ ] Wersja angielska przykładów wycen (dziś sekcja wycen jest tylko po polsku).
 - [ ] Rezerwacja terminu rozmowy (kalendarz) — w projekcie „Sygnał” przewidziana, niezrobiona.
-- [ ] Ewentualne przeniesienie polityk z kodu (`lib/legal.ts`) do Sanity, żeby edytować je w Studio.
+- [x] Polityki przeniesione do Sanity (Studio → „Polityki”, 26.11.2026).
 - [ ] Komentarze: decyzja, czy wracają z zamrażarki (`COMMENTS_ENABLED` w `lib/site.ts`).
 
 ---
@@ -211,8 +211,11 @@ uzupełnić 3–5 pytaniami — trafiają do danych strukturalnych FAQPage.
 | Ruch | `components/sygnal/motionKit.ts`, `components/sygnal/home/homeMotion.ts`, `components/sygnal/SiteMotion.tsx` |
 | Koło i mapa | `components/sygnal/SignalDial.tsx`, `SignalMap.tsx`, `SiteChrome.tsx` |
 | Artykuł | `app/[locale]/(blog)/[...segments]/page.tsx`, `components/sygnal/ArticleCta.tsx` |
-| Teksty strony głównej (PL/EN) | `messages/pl.json`, `messages/en.json` → `onePager` |
-| Polityki | `lib/legal.ts` |
+| Teksty strony głównej (PL/EN) | Studio → „Strona główna — teksty” (homeCopy-pl/en) |
+| Polityki | Studio → „Polityki” (legal-privacy/cookies-pl/en) |
+| Pozostałe copy (koło, pasek, stopka, formularze, 404, a11y, embed…) | Studio → „Teksty interfejsu” (uiStrings-pl/en) |
+| Definicja wszystkich pól copy | `sanity/copyFields.ts` → schemat Studio + `types/messages.d.ts` (`npm run copy:types`) |
+| Pilnowanie „zero copy w kodzie” | `npm run lint` (ESLint `react/jsx-no-literals` + `scripts/audit-copy.ts`) |
 | Adresy e-mail, przełącznik komentarzy | `lib/site.ts` |
 | Przekierowania | `next.config.ts` + `previousSlugs` kategorii w Sanity |
 | Historia porządków technicznych | `CHANGELOG.md` |

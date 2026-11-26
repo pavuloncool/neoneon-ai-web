@@ -11,7 +11,6 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL).r
 if (!process.env.NEXT_PUBLIC_SITE_URL && typeof window === 'undefined') {
   console.warn(`NEXT_PUBLIC_SITE_URL: brak zmiennej — używam ${DEFAULT_SITE_URL}`)
 }
-export const SITE_NAME = 'neoneon'
 
 // Środowisko Vercel: 'production' | 'preview' | 'development'; lokalnie brak = nie-produkcja.
 // W przeglądarce dostępne tylko NEXT_PUBLIC_VERCEL_ENV (Vercel ustawia je sam dla Next.js).

@@ -5,6 +5,6 @@
 
 export const APP_RESERVED_SLUGS = [
   'search', 'studio', 'api', 'home', 'blog',
-  // Polityki w kodzie (lib/legal.ts) — trasy app/[locale]/(blog)/{slug}
+  // Polityki: treść w Sanity, adresy w lib/legal.ts — trasy app/[locale]/(blog)/{slug}
   'polityka-prywatnosci', 'privacy-policy', 'polityka-cookies', 'cookie-policy',
 ]

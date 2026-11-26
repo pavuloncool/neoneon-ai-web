@@ -78,6 +78,7 @@ export interface NavItem {
 }
 
 export interface SiteSettings {
+  siteName?: string | null
   siteTitle?: string | null
   titleTemplate?: string | null
   description?: string | null
@@ -88,17 +89,6 @@ export interface SiteSettings {
   navigation?: NavItem[] | null
   footerText?: string | null
   footerLinks?: NavItem[] | null
-  a11y?: {
-    skipToContent?: string | null
-    mainNav?: string | null
-    mobileNav?: string | null
-    footerNav?: string | null
-    search?: string | null
-    menu?: string | null
-    themeToggle?: string | null
-    languagePl?: string | null
-    languageEn?: string | null
-  } | null
 }
 
 // Sekcje page buildera (sanity/schemaTypes/sections) w kształcie z PAGE_PROJECTION w lib/queries.ts

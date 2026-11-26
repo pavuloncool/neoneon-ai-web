@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint .",
+    "lint": "eslint . && node --no-warnings --experimental-strip-types scripts/audit-copy.ts && node --no-warnings --experimental-strip-types scripts/gen-copy-types.ts --check",
+    "copy:types": "node --no-warnings --experimental-strip-types scripts/gen-copy-types.ts",
     "typecheck": "node node_modules/typescript/bin/tsc --noEmit"
   },
   "dependencies": {

@@ -1,6 +1,5 @@
 // components/legal/LegalPage.tsx
-// Strona polityki (prywatności / cookies) z treści w lib/legal.ts.
-// ⚠️ Treść robocza — wymaga weryfikacji prawnej przed publikacją produkcyjną (komentarz w lib/legal.ts).
+// Strona polityki (prywatności / cookies) z treści w Sanity (Studio → „Polityki”, odczyt: lib/legal.ts).
 
 import { TranslationStore } from '@/components/layout/TranslationStore'
 import { LEGAL_PATHS, getLegalDoc, type LegalKey } from '@/lib/legal'
@@ -8,8 +7,8 @@ import { otherLocale, type Locale } from '@/lib/locales'
 import lists from '@/components/sygnal/lists.module.css'
 import styles from '@/components/sygnal/legal.module.css'
 
-export function LegalPage({ docKey, locale }: { docKey: LegalKey; locale: Locale }) {
-  const doc = getLegalDoc(docKey, locale)
+export async function LegalPage({ docKey, locale }: { docKey: LegalKey; locale: Locale }) {
+  const doc = await getLegalDoc(docKey, locale)
   return (
     <article className={styles.legal}>
       {/* Przełącznik języka: ta sama polityka w drugim języku */}

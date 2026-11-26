@@ -47,20 +47,21 @@ export default async function BlogLayout({
   const { locale } = await params
   const settings = await getSiteSettings(toLocale(locale))
   const hidden = await hiddenSectionHrefs(toLocale(locale))
-  const a11y = settings?.a11y ?? {}
-  // Zapasowe etykiety a11y (gdy pole w Ustawieniach strony jest puste) — w języku strony
-  const fallback = await getTranslations({ locale: toLocale(locale), namespace: 'a11y' })
-
   const lang = toLocale(locale)
+  // Etykiety dostępności i chrome'u — Sanity „Teksty interfejsu”
+  const a11y = await getTranslations({ locale: lang, namespace: 'a11y' })
+  const tc = await getTranslations({ locale: lang, namespace: 'chrome' })
+  const legalDocs = await Promise.all((['privacy', 'cookies'] as const).map((key) => getLegalDoc(key, lang)))
+
   const navLinks = toLinks(settings?.navigation, hidden)
   // Pozycje koła = menu z Sanity; „Start” na początku, jeśli menu go nie ma
   const dialItems = [
-    ...(navLinks.some((l) => l.href === '/') ? [] : [{ key: 'start', label: 'Start', href: '/' }]),
+    ...(navLinks.some((l) => l.href === '/') ? [] : [{ key: 'start', label: tc('start'), href: '/' }]),
     ...navLinks.filter((l) => !l.external).map((l) => ({ key: l.href, label: l.label, href: l.href })),
-    ...(navLinks.some((l) => l.href === BLOG_PATH) ? [] : [{ key: BLOG_PATH, label: 'Blog', href: BLOG_PATH }]),
+    ...(navLinks.some((l) => l.href === BLOG_PATH) ? [] : [{ key: BLOG_PATH, label: tc('bar.fromBlog'), href: BLOG_PATH }]),
   ]
-  const logo = { src: settings?.logoDark?.url ?? '/neoneon-dark.webp', alt: settings?.logoAlt ?? 'neoneon' }
-  const langLabels = { pl: a11y.languagePl ?? fallback('languagePl'), en: a11y.languageEn ?? fallback('languageEn') }
+  const logo = { src: settings?.logoDark?.url ?? '/neoneon-dark.webp', alt: settings?.logoAlt ?? '' }
+  const langLabels = { pl: a11y('languagePl'), en: a11y('languageEn') }
 
   return (
     <div className={chrome.shell}>
@@ -69,7 +70,7 @@ export default async function BlogLayout({
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[#CCFF00] focus:text-black focus:text-sm focus:rounded"
       >
-        {a11y.skipToContent ?? fallback('skipToContent')}
+        {a11y('skipToContent')}
       </a>
       {/* „Sygnał”: bez menu w pasku — nawigacją jest koło w prawym dolnym rogu (SiteDial) */}
       <SiteBar locale={lang} logo={logo} contactHref={CONTACT_PATH[lang]} langLabels={langLabels} />
@@ -79,12 +80,12 @@ export default async function BlogLayout({
       <SiteFooter
         locale={lang}
         logo={logo}
-        text={settings?.footerText ?? '© {year} NEONEON.'}
-        navLabel={a11y.footerNav ?? fallback('footerNav')}
+        text={settings?.footerText ?? ''}
+        navLabel={a11y('footerNav')}
         links={toLinks(settings?.footerLinks, hidden).filter((l) => !LEGAL_HREFS.includes(l.href))}
-        legalLinks={(['privacy', 'cookies'] as const).map((key) => ({
+        legalLinks={(['privacy', 'cookies'] as const).map((key, i) => ({
           href: LEGAL_PATHS[key][lang],
-          label: getLegalDoc(key, lang).title,
+          label: legalDocs[i].title,
         }))}
         contactHref={CONTACT_PATH[lang]}
         email={PUBLIC_CONTACT_EMAIL}
