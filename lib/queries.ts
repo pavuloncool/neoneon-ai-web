@@ -368,7 +368,7 @@ export const getHomeFaq = cache(async (locale: Locale): Promise<FaqEntry[]> =>
   )
 )
 
-// O mnie: portret z sekcji „tekst + obraz” strony „O mnie” (edytowalny w Studio) i adres wpisu o budowie strony
+// O mnie: portret z „Strona główna — teksty” (zakładka O mnie) i adres wpisu o budowie strony
 export interface AboutData {
   portrait: { url: string; width: number; height: number; lqip: string | null; alt: string | null } | null
   post: { slug: string; category: string } | null
@@ -377,8 +377,7 @@ export interface AboutData {
 export const getAboutData = cache(async (locale: Locale, postSlug: string): Promise<AboutData> =>
   sanityFetch<AboutData>(
     groq`{
-      "portrait": *[_type == "page" && locale == $locale && slug.current in ["o-mnie", "about"]][0]
-        .sections[_type == "textImage" && defined(image.asset)][0].image{
+      "portrait": *[_type == "homeCopy" && locale == $locale][0].aboutPortrait{
           "url": asset->url,
           "width": asset->metadata.dimensions.width,
           "height": asset->metadata.dimensions.height,

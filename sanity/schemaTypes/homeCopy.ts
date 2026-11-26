@@ -17,6 +17,16 @@ export const homeCopy = defineType({
   fields: [
     defineField({ name: 'locale', title: 'Język', type: 'string', readOnly: true, hidden: true }),
     ...HOME_GROUPS.flatMap((g) => g.fields.map((f) => copyFieldToSchema(f, g.name))),
+    // Zdjęcie w sekcji „O mnie” (nie jest tekstem, więc poza copyFields / next-intl)
+    defineField({
+      name: 'aboutPortrait',
+      title: 'Portret',
+      description: 'Zdjęcie w sekcji „O mnie”. Tekst alternatywny pusty = imię i nazwisko z zakładki SEO.',
+      type: 'image',
+      group: 'about',
+      options: { hotspot: true },
+      fields: [defineField({ name: 'alt', title: 'Tekst alternatywny', type: 'string' })],
+    }),
   ],
   preview: {
     select: { locale: 'locale' },
